@@ -60,4 +60,6 @@
       };
     };
   };
+
+  services.syncthing.enable = true;
 }
