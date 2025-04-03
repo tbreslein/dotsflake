@@ -20,19 +20,29 @@
 		pkgs-unstable = nixpkgs-unstable.legacyPackages.x86_64-linux;
 	in {
 		nixosConfigurations = {
-			raziel = nixpkgs-stable.lib.nixosSystem {
+			raziel = nixpkgs-unstable.lib.nixosSystem {
 				system = "x86_64-linux";
 				specialArgs = {inherit inputs;};
-				modules = [./system/raziel/configuration.nix];
+				modules = [
+					./system/raziel/configuration.nix
+					home-manager.nixosModules.home-manager
+					{
+						home-manager = {
+							useGlobalPkgs = true;
+							useUserPackages = true;
+							extraSpecialArgs = {inherit inputs pkgs-stable pkgs-unstable;};
+							users.tommy = ./home;
+						};
+					}
+				];
 			};
 		};
 
-		homeConfiguration = {
-			"tommy@raziel" = home-manager.lib.homeManagerConfiguration {
-				# pkgs = pkgs-unstable;
-				extraSpecialArgs = {inherit inputs pkgs-stable pkgs-unstable;};
-				modules = [./home];
-			};
-		};
+		# homeConfiguration = {
+		# 	"tommy@raziel" = home-manager.lib.homeManagerConfiguration {
+		# 		# pkgs = pkgs-unstable;
+		# 		modules = [./home];
+		# 	};
+		# };
 	};
 }
