@@ -6,7 +6,7 @@
 
 		home-manager = {
 			url = "github:nix-community/home-manager/master";
-			nixpkgs.follows = "nixpkgs-unstable";
+			inputs.nixpkgs.follows = "nixpkgs-unstable";
 		};
 	};
 
@@ -19,7 +19,7 @@
 		pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;
 		pkgs-unstable = nixpkgs-unstable.legacyPackages.x86_64-linux;
 	in {
-		nixosConfiguration = {
+		nixosConfigurations = {
 			raziel = nixpkgs-stable.lib.nixosSystem {
 				system = "x86_64-linux";
 				specialArgs = {inherit inputs;};
@@ -27,12 +27,12 @@
 			};
 		};
 
-		#homeConfiguration = {
-		#	"tommy@raziel" = home-manager.lib.homeManagerConfiguration {
-		#		pkgs = pkgs-unstable;
-		#		extraSpecialArgs = {inherit inputs};
-		#		modules = [./home];
-		#	};
-		#};
+		homeConfiguration = {
+			"tommy@raziel" = home-manager.lib.homeManagerConfiguration {
+				# pkgs = pkgs-unstable;
+				extraSpecialArgs = {inherit inputs pkgs-stable pkgs-unstable;};
+				modules = [./home];
+			};
+		};
 	};
 }
