@@ -22,7 +22,7 @@
 		nixosConfigurations = {
 			raziel = nixpkgs-unstable.lib.nixosSystem {
 				system = "x86_64-linux";
-				specialArgs = {inherit inputs;};
+				specialArgs = {inherit inputs pkgs-stable pkgs-unstable;};
 				modules = [
 					./system/raziel/configuration.nix
 					home-manager.nixosModules.home-manager
@@ -37,12 +37,5 @@
 				];
 			};
 		};
-
-		# homeConfiguration = {
-		# 	"tommy@raziel" = home-manager.lib.homeManagerConfiguration {
-		# 		# pkgs = pkgs-unstable;
-		# 		modules = [./home];
-		# 	};
-		# };
 	};
 }

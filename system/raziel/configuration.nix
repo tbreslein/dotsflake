@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports =
@@ -54,16 +54,24 @@
     isNormalUser = true;
     description = "tommy";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    packages = with pkgs-unstable; [];
   };
 
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs-unstable; [
     vim
     git
     neovim
+    gnumake
   ];
+
+  programs = {
+    river = {
+      enable = true;
+      package = pkgs-unstable.river;
+    };
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
