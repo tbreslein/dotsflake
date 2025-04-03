@@ -45,16 +45,30 @@
   };
 
 
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
+  services = {
+    xserver.xkb = {
+      layout = "us";
+      variant = "";
+    };
+    greetd = {
+      enable = true;
+      settings = rec {
+        initial_session = {
+	  command = "${pkgs-unstable.river}/bin/river";
+	  user = "tommy";
+	};
+	default_session = initial_session;
+      };
+    };
   };
 
   users.users.tommy = {
     isNormalUser = true;
     description = "tommy";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs-unstable; [];
+    packages = with pkgs-unstable; [
+      brave
+    ];
   };
 
   nixpkgs.config.allowUnfree = true;
