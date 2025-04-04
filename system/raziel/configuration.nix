@@ -14,7 +14,7 @@
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
-      timeout = 0;
+      timeout = 1;
     };
     initrd.luks.devices."luks-8b57d86d-a385-48d2-b393-ba1cc1e9fdd0".device = "/dev/disk/by-uuid/8b57d86d-a385-48d2-b393-ba1cc1e9fdd0";
   };
