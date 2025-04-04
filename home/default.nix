@@ -5,8 +5,8 @@
     homeDirectory = "/home/tommy";
     packages = with pkgs-unstable; [
       nerd-fonts.hack
-      # (nerdfonts.override { fonts = [ "Hack" ]; })
       htop
+      wlr-randr
     ];
     stateVersion = "24.11";
   };
@@ -33,6 +33,7 @@
       default-layout = "rivertile";
     };
     extraConfig = ''
+      wlr-randr --output eDP-1 --mode 2880x1920@120Hz --scale 2
       rivertile -view-padding 6 -outer-padding 6 &
     '';
   };
@@ -44,7 +45,7 @@
       enable = true;
       settings = {
         main = {
-	  font = "Hack Nerd Font:size=20";
+	  font = "Hack Nerd Font:size=14";
 	};
       };
     };
