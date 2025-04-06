@@ -59,7 +59,7 @@
       enable = true;
       settings = rec {
         initial_session = {
-          command = "${pkgs-unstable.river}/bin/river";
+          command = "${pkgs-unstable.hyprland}/bin/hyprland";
           user = "tommy";
         };
         default_session = initial_session;
@@ -78,15 +78,24 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs-unstable; [
-    vim
-    git
-    neovim
-    gnumake
-    gcc
-  ];
+  environment = {
+    systemPackages = with pkgs-unstable; [
+      vim
+      git
+      neovim
+      gnumake
+      gcc
+    ];
+    sessionVariables = {
+      NIXOS_OZONE_WL = "1";
+    };
+  };
 
   programs = {
+    hyprland = {
+      enable = true;
+      xwayland.enable = true;
+    };
     river = {
       enable = true;
       package = pkgs-unstable.river;
