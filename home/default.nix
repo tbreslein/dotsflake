@@ -19,6 +19,7 @@
       ripgrep
       fd
       lazygit
+      bat
 
       stylua
       lua-language-server
