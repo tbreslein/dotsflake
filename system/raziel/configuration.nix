@@ -6,7 +6,8 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
 
@@ -58,10 +59,10 @@
       enable = true;
       settings = rec {
         initial_session = {
-	  command = "${pkgs-unstable.river}/bin/river";
-	  user = "tommy";
-	};
-	default_session = initial_session;
+          command = "${pkgs-unstable.river}/bin/river";
+          user = "tommy";
+        };
+        default_session = initial_session;
       };
     };
   };
@@ -82,6 +83,7 @@
     git
     neovim
     gnumake
+    gcc
   ];
 
   programs = {
