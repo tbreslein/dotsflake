@@ -20,22 +20,70 @@
       fd
       lazygit
       bat
-
-      stylua
-      lua-language-server
-      bash-language-server
-      nixd
-      statix
-      nixpkgs-fmt
     ];
     stateVersion = "24.11";
-    file."nvim" = {
-      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/nvim";
-      target = ".config/nvim";
-    };
   };
 
   programs.home-manager.enable = true;
+
+  programs.neovim = {
+    enable = true;
+    package = pkgs-unstable.neovim-unwrapped;
+    defaultEditor = true;
+    extraLuaConfig = ''
+      ${builtins.readFile ./init.lua}
+    '';
+    extraPackages = with pkgs-unstable; [
+      stylua
+      luajitPackages.luacheck
+      lua-language-server
+      bash-language-server
+      shellharden
+      nodePackages.prettier
+      eslint
+      nixd
+      statix
+      nixpkgs-fmt
+      tree-sitter
+    ];
+    plugins = with pkgs-unstable.vimPlugins; [
+      # editing/ui
+      nvim-treesitter.withAllGrammars
+      nvim-treesitter-textobjects
+      nvim-treesitter-context
+      mini-nvim
+      gruvbox-material
+      render-markdown-nvim
+      neorg
+      neorg-telescope
+      neogit
+      conform-nvim
+      nvim-lint
+      lsp-progress-nvim
+      tmux-nvim
+      grapple-nvim
+      grug-far-nvim
+
+      # navigation
+      fzf-lua
+
+      # lsp
+      blink-cmp
+      nvim-lspconfig
+      rustaceanvim
+      friendly-snippets
+      tiny-inline-diagnostic-nvim
+
+      # dap
+      nvim-dap
+      nvim-dap-view
+      nvim-dap-go
+      nvim-dap-python
+    ];
+    withNodeJs = false;
+    withPython3 = false;
+    withRuby = false;
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
