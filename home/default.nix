@@ -1,4 +1,39 @@
 { config, pkgs-stable, pkgs-unstable, inputs, ... }:
+
+let
+  tmux-sessionizer = pkgs-unstable.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
+    folders=("''\$HOME")
+    add_dir() {
+      [ -d "''\$HOME/''\$1" ] && folders+=("''\$HOME/''\$1")
+    }
+    add_dir "code"
+    add_dir "repos"
+
+    if [[ ''\$# -eq 1 ]]; then
+      selected=''\$1
+    else
+      selected=''\$(find ''\$(echo "''\${folders[@]}") -mindepth 1 -maxdepth 1 -type d | fzf)
+    fi
+
+    if [[ -z ''\$selected ]]; then
+      exit 0
+    fi
+
+    selected_name=''\$(basename "''\$selected" | tr . _)
+    tmux_running=''\$(pgrep tmux)
+
+    if [[ -z ''\$TMUX ]] && [[ -z ''\$tmux_running ]]; then
+      tmux new-session -s "''\$selected_name" -c "''\$selected"
+      exit 0
+    fi
+
+    if ! tmux has-session -t="''\$selected_name" 2>/dev/null; then
+      tmux new-session -ds "''\$selected_name" -c "''\$selected"
+    fi
+
+    tmux switch-client -t "''\$selected_name"
+  '';
+in
 {
   home = {
     username = "tommy";
@@ -20,11 +55,46 @@
       fd
       lazygit
       bat
+      tmux-sessionizer
     ];
     stateVersion = "24.11";
   };
 
   programs.home-manager.enable = true;
+
+  programs.tmux = {
+    enable = true;
+    escapeTime = 0;
+    historyLimit = 25000;
+    keyMode = "vi";
+    mouse = true;
+    prefix = "C-Space";
+    extraConfig =
+      /*
+        tmux
+      */
+      ''
+            set -g default-terminal "foot"
+            set -sa terminal-overrides ",foot:RGB"
+
+            bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}"
+            bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
+            bind-key C-o command-prompt -p "open app: " "new-window '%%'"
+
+            bind-key C-s split-pane
+            bind-key C-v split-pane -h
+
+          set -g status-position top
+          set -g status-interval 2
+          set -g status-style "fg=colour3 bg=colour0"
+          set -g status-left-length 200
+          set -g status-right-length 300
+          set -g status-left " [#S] "
+          # set -g status-right "#(cd #{pane_current_path}; git_status)"
+
+        bind C-r source-file ~/.config/tmux/tmux.conf
+      '';
+  };
 
   programs.neovim = {
     enable = true;
