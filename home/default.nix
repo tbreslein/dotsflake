@@ -33,8 +33,41 @@ let
 
     tmux switch-client -t "''\$selected_name"
   '';
+
+  git-status = pkgs-unstable.writeShellScriptBin "git-status" /* bash */ ''
+    if git rev-parse >/dev/null 2>&1; then
+        result=" ''\$(git rev-parse --abbrev-ref HEAD) "
+        if [ ''\$(git status --porcelain=v1 | wc -l) -gt 0 ]; then
+            result="''\${result}!"
+        fi
+        status_uno=''\$(git status -uno)
+        if echo "''\$status_uno" | grep -q "Your branch is behind"; then
+            result="''\${result}"
+        fi
+        if echo "''\$status_uno" | grep -q "Your branch is ahead"; then
+            result="''\${result}"
+        fi
+        if echo "''\$status_uno" | grep -q "Your branch and '.*' have diverged"; then
+            result="''\${result}"
+        fi
+        echo "''\$result"
+    else
+        echo ""
+    fi
+  '';
 in
 {
+  nix = {
+    settings.extra-experimental-features = [ "nix-command" "flakes" ];
+    gc.automatic = true;
+  };
+  # launchd = {
+  #   enable = true;
+  #   agents.moco.config = {
+  #     ProgramArguments = [ "${pkgs-stable.poetry}" "run" "python" "moco_client.py" ];
+  #     WorkingDirectory = "${config.home.homeDirectory}/work/repos/mocotrackingclient";
+  #   };
+  # };
   home = {
     username = "tommy";
     homeDirectory = "/home/tommy";
@@ -56,11 +89,13 @@ in
       lazygit
       bat
       tmux-sessionizer
+      git-status
     ];
     stateVersion = "24.11";
   };
 
   programs.home-manager.enable = true;
+  programs.bat.enable = true;
 
   programs.tmux = {
     enable = true;
@@ -74,25 +109,49 @@ in
         tmux
       */
       ''
-            set -g default-terminal "foot"
-            set -sa terminal-overrides ",foot:RGB"
+      set -g default-terminal "foot"
+      set -sa terminal-overrides ",foot:RGB"
 
-            bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}"
-            bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
-            bind-key C-o command-prompt -p "open app: " "new-window '%%'"
+      bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}"
+      bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
+      bind-key C-o command-prompt -p "open app: " "new-window '%%'"
 
-            bind-key C-s split-pane
-            bind-key C-v split-pane -h
+      bind-key C-s split-pane
+      bind-key C-v split-pane -h
 
-          set -g status-position top
-          set -g status-interval 2
-          set -g status-style "fg=colour3 bg=colour0"
-          set -g status-left-length 200
-          set -g status-right-length 300
-          set -g status-left " [#S] "
-          # set -g status-right "#(cd #{pane_current_path}; git_status)"
+      set -g status-position top
+      set -g status-interval 2
+      set -g status-style "fg=colour3 bg=colour0"
+      set -g status-left-length 200
+      set -g status-right-length 300
+      set -g status-left " [#S] "
+      set -g status-right "#(cd #{pane_current_path}; ${git-status})"
 
-        bind C-r source-file ~/.config/tmux/tmux.conf
+      is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?\.?(view|n?vim?x?)(-wrapped)?(diff)?$'"
+
+      bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h' 'select-pane -L'
+      bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j' 'select-pane -D'
+      bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k' 'select-pane -U'
+      bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l' 'select-pane -R'
+
+      bind-key -T copy-mode-vi 'C-h' select-pane -L
+      bind-key -T copy-mode-vi 'C-j' select-pane -D
+      bind-key -T copy-mode-vi 'C-k' select-pane -U
+      bind-key -T copy-mode-vi 'C-l' select-pane -R
+
+      is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
+
+      bind -n 'M-h' if-shell "$is_vim" 'send-keys M-h' 'resize-pane -L 1'
+      bind -n 'M-j' if-shell "$is_vim" 'send-keys M-j' 'resize-pane -D 1'
+      bind -n 'M-k' if-shell "$is_vim" 'send-keys M-k' 'resize-pane -U 1'
+      bind -n 'M-l' if-shell "$is_vim" 'send-keys M-l' 'resize-pane -R 1'
+
+      bind-key -T copy-mode-vi M-h resize-pane -L 1
+      bind-key -T copy-mode-vi M-j resize-pane -D 1
+      bind-key -T copy-mode-vi M-k resize-pane -U 1
+      bind-key -T copy-mode-vi M-l resize-pane -R 1
+
+      bind C-r source-file ~/.config/tmux/tmux.conf
       '';
   };
 
@@ -101,7 +160,7 @@ in
     package = pkgs-unstable.neovim-unwrapped;
     defaultEditor = true;
     extraLuaConfig = ''
-      ${builtins.readFile ./init.lua}
+      require("tvim")
     '';
     extraPackages = with pkgs-unstable; [
       stylua
@@ -115,6 +174,10 @@ in
       statix
       nixpkgs-fmt
       tree-sitter
+      (vimUtils.buildVimPlugin {
+       name = "tvim";
+       src = ./nvim;
+       })
     ];
     plugins = with pkgs-unstable.vimPlugins; [
       # editing/ui
