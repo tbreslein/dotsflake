@@ -109,49 +109,49 @@ in
         tmux
       */
       ''
-      set -g default-terminal "foot"
-      set -sa terminal-overrides ",foot:RGB"
+        set -g default-terminal "foot"
+        set -sa terminal-overrides ",foot:RGB"
 
-      bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}"
-      bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
-      bind-key C-o command-prompt -p "open app: " "new-window '%%'"
+        bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}"
+        bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
+        bind-key C-o command-prompt -p "open app: " "new-window '%%'"
 
-      bind-key C-s split-pane
-      bind-key C-v split-pane -h
+        bind-key C-s split-pane
+        bind-key C-v split-pane -h
 
-      set -g status-position top
-      set -g status-interval 2
-      set -g status-style "fg=colour3 bg=colour0"
-      set -g status-left-length 200
-      set -g status-right-length 300
-      set -g status-left " [#S] "
-      set -g status-right "#(cd #{pane_current_path}; ${git-status})"
+        set -g status-position top
+        set -g status-interval 2
+        set -g status-style "fg=colour3 bg=colour0"
+        set -g status-left-length 200
+        set -g status-right-length 300
+        set -g status-left " [#S] "
+        set -g status-right "#(cd #{pane_current_path}; ${git-status})"
 
-      is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?\.?(view|n?vim?x?)(-wrapped)?(diff)?$'"
+        is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?\.?(view|n?vim?x?)(-wrapped)?(diff)?$'"
 
-      bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h' 'select-pane -L'
-      bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j' 'select-pane -D'
-      bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k' 'select-pane -U'
-      bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l' 'select-pane -R'
+        bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h' 'select-pane -L'
+        bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j' 'select-pane -D'
+        bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k' 'select-pane -U'
+        bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l' 'select-pane -R'
 
-      bind-key -T copy-mode-vi 'C-h' select-pane -L
-      bind-key -T copy-mode-vi 'C-j' select-pane -D
-      bind-key -T copy-mode-vi 'C-k' select-pane -U
-      bind-key -T copy-mode-vi 'C-l' select-pane -R
+        bind-key -T copy-mode-vi 'C-h' select-pane -L
+        bind-key -T copy-mode-vi 'C-j' select-pane -D
+        bind-key -T copy-mode-vi 'C-k' select-pane -U
+        bind-key -T copy-mode-vi 'C-l' select-pane -R
 
-      is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
+        is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
 
-      bind -n 'M-h' if-shell "$is_vim" 'send-keys M-h' 'resize-pane -L 1'
-      bind -n 'M-j' if-shell "$is_vim" 'send-keys M-j' 'resize-pane -D 1'
-      bind -n 'M-k' if-shell "$is_vim" 'send-keys M-k' 'resize-pane -U 1'
-      bind -n 'M-l' if-shell "$is_vim" 'send-keys M-l' 'resize-pane -R 1'
+        bind -n 'M-h' if-shell "$is_vim" 'send-keys M-h' 'resize-pane -L 1'
+        bind -n 'M-j' if-shell "$is_vim" 'send-keys M-j' 'resize-pane -D 1'
+        bind -n 'M-k' if-shell "$is_vim" 'send-keys M-k' 'resize-pane -U 1'
+        bind -n 'M-l' if-shell "$is_vim" 'send-keys M-l' 'resize-pane -R 1'
 
-      bind-key -T copy-mode-vi M-h resize-pane -L 1
-      bind-key -T copy-mode-vi M-j resize-pane -D 1
-      bind-key -T copy-mode-vi M-k resize-pane -U 1
-      bind-key -T copy-mode-vi M-l resize-pane -R 1
+        bind-key -T copy-mode-vi M-h resize-pane -L 1
+        bind-key -T copy-mode-vi M-j resize-pane -D 1
+        bind-key -T copy-mode-vi M-k resize-pane -U 1
+        bind-key -T copy-mode-vi M-l resize-pane -R 1
 
-      bind C-r source-file ~/.config/tmux/tmux.conf
+        bind C-r source-file ~/.config/tmux/tmux.conf
       '';
   };
 
@@ -160,7 +160,7 @@ in
     package = pkgs-unstable.neovim-unwrapped;
     defaultEditor = true;
     extraLuaConfig = ''
-      require("tvim")
+      require("tvim").init()
     '';
     extraPackages = with pkgs-unstable; [
       stylua
@@ -174,45 +174,93 @@ in
       statix
       nixpkgs-fmt
       tree-sitter
-      (vimUtils.buildVimPlugin {
-       name = "tvim";
-       src = ./nvim;
-       })
     ];
-    plugins = with pkgs-unstable.vimPlugins; [
-      # editing/ui
-      nvim-treesitter.withAllGrammars
-      nvim-treesitter-textobjects
-      nvim-treesitter-context
-      mini-nvim
-      gruvbox-material
-      render-markdown-nvim
-      neorg
-      neorg-telescope
-      neogit
-      conform-nvim
-      nvim-lint
-      lsp-progress-nvim
-      tmux-nvim
-      grapple-nvim
-      grug-far-nvim
+	#    configure = {
+	#      customRc = ''
+	#        lua << EOF
+	#   require 'tvim'
+	# EOF
+	#      '';
+	#      packages.main.start = [
+    plugins = [
+      (pkgs-unstable.vimUtils.buildVimPlugin {
+        name = "tvim";
+        src = ./nvim;
+        dependencies = with pkgs-unstable.vimPlugins; [
+          # editing/ui
+          nvim-treesitter.withAllGrammars
+          nvim-treesitter-textobjects
+          nvim-treesitter-context
+          mini-nvim
+          gruvbox-material
+          render-markdown-nvim
+          neorg
+          neorg-telescope
+          neogit
+          conform-nvim
+          nvim-lint
+          lsp-progress-nvim
+          tmux-nvim
+          grapple-nvim
+          grug-far-nvim
 
-      # navigation
-      fzf-lua
+          # navigation
+          fzf-lua
 
-      # lsp
-      blink-cmp
-      nvim-lspconfig
-      rustaceanvim
-      friendly-snippets
-      tiny-inline-diagnostic-nvim
+          # lsp
+          blink-cmp
+          nvim-lspconfig
+          rustaceanvim
+          friendly-snippets
+          tiny-inline-diagnostic-nvim
 
-      # dap
-      nvim-dap
-      nvim-dap-view
-      nvim-dap-go
-      nvim-dap-python
-    ];
+          # dap
+          nvim-dap
+          nvim-dap-view
+          nvim-dap-go
+          nvim-dap-python
+      ];
+    })];
+    # plugins = [
+    #   (pkgs-unstable.vimUtils.buildVimPlugin {
+    #     name = "tvim";
+    #     src = ./nvim;
+    #     dependencies = with pkgs-unstable.vimPlugins; [
+    #       # editing/ui
+    #       nvim-treesitter.withAllGrammars
+    #       nvim-treesitter-textobjects
+    #       nvim-treesitter-context
+    #       mini-nvim
+    #       gruvbox-material
+    #       render-markdown-nvim
+    #       neorg
+    #       neorg-telescope
+    #       neogit
+    #       conform-nvim
+    #       nvim-lint
+    #       lsp-progress-nvim
+    #       tmux-nvim
+    #       grapple-nvim
+    #       grug-far-nvim
+    #
+    #       # navigation
+    #       fzf-lua
+    #
+    #       # lsp
+    #       blink-cmp
+    #       nvim-lspconfig
+    #       rustaceanvim
+    #       friendly-snippets
+    #       tiny-inline-diagnostic-nvim
+    #
+    #       # dap
+    #       nvim-dap
+    #       nvim-dap-view
+    #       nvim-dap-go
+    #       nvim-dap-python
+    #     ];
+    #   })
+    # ];
     withNodeJs = false;
     withPython3 = false;
     withRuby = false;

@@ -1,3 +1,4 @@
+local function init()
 vim.g.rustaceanvim = { server = { default_settings = { ["rust-analyzer"] = { check = { command = "check" } } } } }
 
 local lspconfig = require("lspconfig")
@@ -102,32 +103,32 @@ vim.diagnostic.config({
 	},
 })
 
-Map("n", "gh", vim.diagnostic.open_float)
-Map("n", "]d", function()
+vim.keymap.set("n", "gh", vim.diagnostic.open_float)
+vim.keymap.set("n", "]d", function()
 	vim.diagnostic.jump({ count = 1 })
 end)
-Map("n", "[d", function()
+vim.keymap.set("n", "[d", function()
 	vim.diagnostic.jump({ count = -1 })
 end)
 vim.api.nvim_create_autocmd("LspAttach", {
 	desc = "LSP actions",
 	callback = function(e)
 		vim.bo[e.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
-		Map("n", "gq", vim.diagnostic.setqflist)
-		Map("n", "gQ", vim.diagnostic.setloclist)
-		Map("n", "gd", vim.lsp.buf.definition)
-		Map("n", "gD", vim.lsp.buf.declaration)
-		Map("n", "gwd", ":vsplit | lua vim.lsp.buf.definition()<cr>")
-		Map("n", "gwD", ":vsplit | lua vim.lsp.buf.declaration()<cr>")
-		Map("n", "gt", vim.lsp.buf.type_definition)
-		Map("n", "gi", vim.lsp.buf.implementation)
-		Map("n", "gr", vim.lsp.buf.references)
-		Map("n", "gn", vim.lsp.buf.rename)
-		Map("n", "g.", vim.lsp.buf.code_action)
-		Map("n", "<leader>hi", function()
+		vim.keymap.set("n", "gq", vim.diagnostic.setqflist)
+		vim.keymap.set("n", "gQ", vim.diagnostic.setloclist)
+		vim.keymap.set("n", "gd", vim.lsp.buf.definition)
+		vim.keymap.set("n", "gD", vim.lsp.buf.declaration)
+		vim.keymap.set("n", "gwd", ":vsplit | lua vim.lsp.buf.definition()<cr>")
+		vim.keymap.set("n", "gwD", ":vsplit | lua vim.lsp.buf.declaration()<cr>")
+		vim.keymap.set("n", "gt", vim.lsp.buf.type_definition)
+		vim.keymap.set("n", "gi", vim.lsp.buf.implementation)
+		vim.keymap.set("n", "gr", vim.lsp.buf.references)
+		vim.keymap.set("n", "gn", vim.lsp.buf.rename)
+		vim.keymap.set("n", "g.", vim.lsp.buf.code_action)
+		vim.keymap.set("n", "<leader>hi", function()
 			vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 		end)
-		Map({ "i", "s" }, "<c-s>", vim.lsp.buf.signature_help)
+		vim.keymap.set({ "i", "s" }, "<c-s>", vim.lsp.buf.signature_help)
 	end,
 })
 
@@ -137,3 +138,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 		vim.lsp.buf.format({ async = false })
 	end,
 })
+end
+
+return { init = init }

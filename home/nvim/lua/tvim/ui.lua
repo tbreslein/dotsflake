@@ -1,3 +1,4 @@
+local function init()
 vim.g.gruvbox_material_enable_italic = 1
 vim.g.gruvbox_material_enable_bold = 1
 vim.g.gruvbox_material_better_performance = 1
@@ -7,6 +8,7 @@ vim.g.gruvbox_material_dim_inactive_windows = 1
 vim.g.gruvbox_material_float_style = "dim"
 vim.g.gruvbox_material_transparent_background = 2
 vim.o.background = "dark"
+
 vim.cmd.colorscheme("gruvbox-material")
 
 package.preload["nvim-web-devicons"] = function()
@@ -108,7 +110,7 @@ hipatterns.setup({
 require("mini.trailspace").setup()
 require("mini.indentscope").setup()
 
-Map("n", "<leader>gg", "<cmd>Neogit<cr>")
+vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>")
 local lsp_progress = require("lsp-progress")
 lsp_progress.setup({
 	-- max_size = 20,
@@ -192,3 +194,6 @@ vim.api.nvim_create_autocmd("User", {
 		vim.cmd("redrawstatus")
 	end,
 })
+end
+
+return { init = init }

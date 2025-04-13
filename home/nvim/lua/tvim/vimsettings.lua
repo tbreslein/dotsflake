@@ -1,3 +1,4 @@
+local function init()
 -- VIM SETTINGS
 vim.loader.enable()
 vim.g.mapleader = " "
@@ -51,30 +52,30 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "git", "help", "lspinfo", "man", "query", "vim" },
 	callback = function(event)
 		vim.bo[event.buf].buflisted = false
-		Map("n", "q", "<cmd>close<cr>", { buffer = event.buf })
+		vim.keymap.set("n", "q", "<cmd>close<cr>", { noremap = true, silent = true, buffer = event.buf })
 	end,
 })
 
-Map("n", "Q", "<nop>")
-Map("n", "<esc>", ":noh<cr>")
-Map("v", "P", [["_dP]])
-Map({ "n", "x", "v" }, "x", [["_x]])
-Map("n", "Y", "yg$")
-Map("n", "J", "mzJ`z")
-Map("n", "n", "nzz")
-Map("n", "N", "Nzz")
-Map("n", "*", "*zz")
-Map("n", "#", "#zz")
-Map("n", "g*", "g*zz")
-Map("n", "g#", "g#zz")
-Map("n", "<c-d>", "<c-d>zz")
-Map("n", "<c-u>", "<c-u>zz")
-Map("v", "<", "<gv")
-Map("v", ">", ">gv")
-Map("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true })
-Map("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
-Map("n", "]c", ":cnext<cr>")
-Map("n", "[c", ":cprev<cr>")
+vim.keymap.set("n", "Q", "<nop>", { noremap = true, silent = true })
+vim.keymap.set("n", "<esc>", ":noh<cr>", { noremap = true, silent = true })
+vim.keymap.set("v", "P", [["_dP]], { noremap = true, silent = true })
+vim.keymap.set({ "n", "x", "v" }, "x", [["_x]], { noremap = true, silent = true })
+vim.keymap.set("n", "Y", "yg$", { noremap = true, silent = true })
+vim.keymap.set("n", "J", "mzJ`z", { noremap = true, silent = true })
+vim.keymap.set("n", "n", "nzz", { noremap = true, silent = true })
+vim.keymap.set("n", "N", "Nzz", { noremap = true, silent = true })
+vim.keymap.set("n", "*", "*zz", { noremap = true, silent = true })
+vim.keymap.set("n", "#", "#zz", { noremap = true, silent = true })
+vim.keymap.set("n", "g*", "g*zz", { noremap = true, silent = true })
+vim.keymap.set("n", "g#", "g#zz", { noremap = true, silent = true })
+vim.keymap.set("n", "<c-d>", "<c-d>zz", { noremap = true, silent = true })
+vim.keymap.set("n", "<c-u>", "<c-u>zz", { noremap = true, silent = true })
+vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
+vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
+vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { noremap = true, silent = true, expr = true })
+vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { noremap = true, silent = true, expr = true })
+vim.keymap.set("n", "]c", ":cnext<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "[c", ":cprev<cr>", { noremap = true, silent = true })
 
 vim.opt.confirm = false
 vim.opt.equalalways = false
@@ -115,3 +116,6 @@ vim.g.loaded_python3_provider = 1
 vim.g.loaded_ruby_provider = 1
 vim.g.loaded_perl_provider = 1
 vim.g.loaded_gzip_plugin = 1
+end
+
+return { init = init }

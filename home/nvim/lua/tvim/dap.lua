@@ -1,3 +1,4 @@
+local function init()
 local dap, dv = require("dap"), require("dap-view")
 dv.setup()
 
@@ -17,25 +18,28 @@ end
 require("dap-python").setup("python")
 require("dap-go").setup()
 
-Map("n", "<leader>dt", function()
+vim.keymap.set("n", "<leader>dt", function()
 	dv.toggle()
 end)
-Map("n", "<leader>db", function()
+vim.keymap.set("n", "<leader>db", function()
 	dap.toggle_breakpoint()
 end)
-Map("n", "<leader>dl", function()
+vim.keymap.set("n", "<leader>dl", function()
 	dap.continue()
 end)
-Map("n", "<leader>dj", function()
+vim.keymap.set("n", "<leader>dj", function()
 	dap.step_into()
 end)
-Map("n", "<leader>dk", function()
+vim.keymap.set("n", "<leader>dk", function()
 	dap.step_over()
 end)
-Map("n", "<leader>dt", function()
+vim.keymap.set("n", "<leader>dt", function()
 	if vim.bo.filetype == "python" then
 		require("dap-python").test_method()
 	elseif vim.bo.filetype == "go" then
 		require("dap-go").debug_test()
 	end
 end)
+end
+
+return { init = init }

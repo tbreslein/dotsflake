@@ -1,3 +1,4 @@
+local function init()
 require("conform").setup({
 	formatters = {
 		black = {
@@ -74,3 +75,6 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 		require("lint").try_lint()
 	end,
 })
+end
+
+return { init = init }
