@@ -8,6 +8,10 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =
@@ -15,6 +19,7 @@
     , nixpkgs-stable
     , nixpkgs-unstable
     , home-manager
+    , nix-darwin
     ,
     } @ inputs:
     let
@@ -39,6 +44,23 @@
             }
           ];
         };
+      };
+
+      darwinConfigurations."tommysmbp" = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        specialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
+        modules = [
+          ./system/mbp
+          # home-manager.nixosModules.home-manager
+          # {
+          #   home-manager = {
+          #     useGlobalPkgs = true;
+          #     useUserPackages = true;
+          #     extraSpecialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
+          #     users.tommy = ./home;
+          #   };
+          # }
+        ];
       };
     };
 }
