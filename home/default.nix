@@ -119,13 +119,13 @@ in
         bind-key C-s split-pane
         bind-key C-v split-pane -h
 
-        set -g status-position top
         set -g status-interval 2
         set -g status-style "fg=colour3 bg=colour0"
         set -g status-left-length 200
         set -g status-right-length 300
-        set -g status-left " [#S] "
+        set -g status-left "#S "
         set -g status-right "#(cd #{pane_current_path}; ${git-status})"
+        set -g status-justify absolute-center
 
         is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?\.?(view|n?vim?x?)(-wrapped)?(diff)?$'"
 
@@ -175,13 +175,13 @@ in
       nixpkgs-fmt
       tree-sitter
     ];
-	#    configure = {
-	#      customRc = ''
-	#        lua << EOF
-	#   require 'tvim'
-	# EOF
-	#      '';
-	#      packages.main.start = [
+    #    configure = {
+    #      customRc = ''
+    #        lua << EOF
+    #   require 'tvim'
+    # EOF
+    #      '';
+    #      packages.main.start = [
     plugins = [
       (pkgs-unstable.vimUtils.buildVimPlugin {
         name = "tvim";
@@ -219,8 +219,9 @@ in
           nvim-dap-view
           nvim-dap-go
           nvim-dap-python
-      ];
-    })];
+        ];
+      })
+    ];
     # plugins = [
     #   (pkgs-unstable.vimUtils.buildVimPlugin {
     #     name = "tvim";
