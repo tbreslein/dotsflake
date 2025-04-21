@@ -11,6 +11,8 @@
       ./hardware-configuration.nix
     ];
 
+  home.homeDirectory = "/home/tommy/";
+
   boot = {
     loader = {
       systemd-boot.enable = true;
@@ -51,6 +53,7 @@
 
 
   services = {
+    syncthing.enable = true;
     xserver.xkb = {
       layout = "us";
       variant = "";

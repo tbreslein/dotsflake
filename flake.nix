@@ -22,17 +22,19 @@
     , nix-darwin
     ,
     } @ inputs:
-    let
-      pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;
-      pkgs-unstable = nixpkgs-unstable.legacyPackages.x86_64-linux;
-    in
     {
       nixosConfigurations = {
-        raziel = nixpkgs-unstable.lib.nixosSystem {
+        raziel = let
+        pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;
+        pkgs-unstable = nixpkgs-unstable.legacyPackages.x86_64-linux;
+      in nixpkgs-unstable.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
           modules = [
-            ./system/raziel/configuration.nix
+            ./system/raziel
+            ./modules
+            ./modules/code
+            ./modules/linux-desktop
             home-manager.nixosModules.home-manager
             {
               home-manager = {
@@ -46,20 +48,31 @@
         };
       };
 
-      darwinConfigurations."tommysmbp" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."tommysmbp" = let
+        pkgs-stable = nixpkgs-stable.legacyPackages.aarch64-darwin;
+        pkgs-unstable = nixpkgs-unstable.legacyPackages.aarch64-darwin;
+      in nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         specialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
         modules = [
-          ./system/mbp
-          # home-manager.nixosModules.home-manager
-          # {
-          #   home-manager = {
-          #     useGlobalPkgs = true;
-          #     useUserPackages = true;
-          #     extraSpecialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
-          #     users.tommy = ./home;
-          #   };
-          # }
+          ./hosts/mbp/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            users.users.tommy.home = "/Users/tommy";
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
+              # users.tommy = ./hosts/mbp/home.nix;
+              users.tommy = {
+                imports = [
+                  ./modules/home
+                  ./modules/home/code
+                  ./hosts/mbp/home.nix
+                ];
+              };
+            };
+          }
         ];
       };
     };

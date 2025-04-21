@@ -16,7 +16,6 @@ require("mini.move").setup({
 		right = "<M-l>",
 		down = "<M-j>",
 		up = "<M-k>",
-
 		line_left = nil,
 		line_right = nil,
 		line_down = nil,
@@ -33,10 +32,10 @@ end, { noremap = true, silent = true })
 require("tmux").setup()
 
 require("grapple").setup()
-vim.keymap.set("n", "<leader>a", "<cmd>Grapple tag<cr>", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>e", "<cmd>Grapple toggle_tags<cr>", { noremap = true, silent = true })
-vim.keymap.set("n", "<A-r>", "<cmd>Grapple select index=1<cr>", { noremap = true, silent = true })
-vim.keymap.set("n", "<A-e>", "<cmd>Grapple select index=2<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>aa", "<cmd>Grapple tag<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>at", "<cmd>Grapple toggle_tags<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<A-p>", "<cmd>Grapple select index=1<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<A-f>", "<cmd>Grapple select index=2<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<A-w>", "<cmd>Grapple select index=3<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<A-q>", "<cmd>Grapple select index=4<cr>", { noremap = true, silent = true })
 
