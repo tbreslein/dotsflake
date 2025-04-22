@@ -3,10 +3,7 @@
 {
   environment.systemPackages =
     with pkgs; [
-      cowsay
-      nixd
-      statix
-      nixpkgs-fmt
+      localsend
     ];
 
   nix = {

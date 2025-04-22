@@ -12,7 +12,7 @@ let
       [ -d "''\$HOME/''\$1" ] && folders+=("''\$HOME/''\$1")
     }
     add_dir "code"
-    add_dir "repos"
+    add_dir "work/repos"
 
     if [[ ''\$# -eq 1 ]]; then
       selected=''\$1
@@ -63,12 +63,18 @@ let
 in
 {
   options = {
-    myHome.code.enable = lib.mkEnableOption "Enable coding role";
+    myHome.code = {
+      enable = lib.mkEnableOption "Enable coding role";
+      tmux-terminal = lib.mkOption {
+        type = lib.types.string;
+        default = "";
+        description = "Which default terminal and oversides to set for tmux";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
     home = {
-      # packages = [ tmux-sessionizer git-status ];
       file.".luacheckrc" = {
         text = ''
           globals = { "vim" }
@@ -76,33 +82,33 @@ in
       };
     };
 
-    # editorconfig = {
-    #   enable = true;
-    #   settings = {
-    #     "*" = {
-    #       charset = "utf-8";
-    #       indent_size = 4;
-    #       indent_style = "space";
-    #       max_line_width = 80;
-    #       trim_trailing_whitespace = true;
-    #     };
-    #     "*.{nix,cabal,hs,lua}" = {
-    #       indent_size = 2;
-    #     };
-    #     "*.{json,js,jsx,ts,tsx,cjs,mjs}" = {
-    #       indent_size = 2;
-    #     };
-    #     "*.{yml,yaml,ml,mli,hl,md,mdx,html,astro}" = {
-    #       indent_size = 2;
-    #     };
-    #     "CMakeLists.txt" = {
-    #       indent_size = 2;
-    #     };
-    #     "{m,M}akefile" = {
-    #       indent_style = "tab";
-    #     };
-    #   };
-    # };
+    editorconfig = {
+      enable = true;
+      settings = {
+        "*" = {
+          charset = "utf-8";
+          indent_size = 4;
+          indent_style = "space";
+          max_line_width = 80;
+          trim_trailing_whitespace = true;
+        };
+        "*.{nix,cabal,hs,lua}" = {
+          indent_size = 2;
+        };
+        "*.{json,js,jsx,ts,tsx,cjs,mjs}" = {
+          indent_size = 2;
+        };
+        "*.{yml,yaml,ml,mli,hl,md,mdx,html,astro}" = {
+          indent_size = 2;
+        };
+        "CMakeLists.txt" = {
+          indent_size = 2;
+        };
+        "{m,M}akefile" = {
+          indent_style = "tab";
+        };
+      };
+    };
 
     programs = {
       jq.enable = true;
@@ -182,10 +188,10 @@ in
         tmux
           */
           ''
-            # set -g default-terminal "foot"
-            # set -sa terminal-overrides ",foot:RGB"
-            set -g default-terminal "xterm-ghostty"
-            set -sa terminal-overrides ",xterm-ghostty:RGB"
+            ${if cfg.tmux-terminal == "" then "" else ''
+              set -g default-terminal "${cfg.tmux-terminal}"
+              set -sa terminal-overrides ",${cfg.tmux-terminal}:RGB"
+            ''}
 
             bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g new-window -n gitu -c "#{pane_current_path}" "gitu"

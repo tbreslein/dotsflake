@@ -3,7 +3,10 @@
 {
   # home.homeDirectory = "/Users/tommy/";
   myHome = {
-    code.enable = true;
+    code = {
+      enable = true;
+      tmux-terminal = "xterm-ghostty";
+    };
   };
   # launchd = {
   #   enable = true;
