@@ -68,7 +68,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home = {
-      packages = [ tmux-sessionizer git-status ];
+      # packages = [ tmux-sessionizer git-status ];
       file.".luacheckrc" = {
         text = ''
           globals = { "vim" }
@@ -187,8 +187,8 @@ in
             set -g default-terminal "xterm-ghostty"
             set -sa terminal-overrides ",xterm-ghostty:RGB"
 
-            bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}"
-            bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
+            bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
+            bind-key C-g new-window -n gitu -c "#{pane_current_path}" "gitu"
             bind-key C-o command-prompt -p "open app: " "new-window '%%'"
 
             bind-key C-s split-pane
@@ -199,8 +199,8 @@ in
             set -g status-left-length 200
             set -g status-right-length 300
             set -g status-left "#S "
-            set -g status-right "#(cd #{pane_current_path}; ${git-status})"
-            # set -g status-justify absolute-center
+            set -g status-right "#(cd #{pane_current_path}; ${git-status}/bin/git-status)"
+            set -g status-justify centre
 
             is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?\.?(view|n?vim?x?)(-wrapped)?(diff)?$'"
 
