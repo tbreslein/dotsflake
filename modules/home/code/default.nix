@@ -1,6 +1,5 @@
 { config
 , lib
-, pkgs-stable
 , pkgs-unstable
 , ...
 }:
@@ -66,7 +65,7 @@ in
     myHome.code = {
       enable = lib.mkEnableOption "Enable coding role";
       tmux-terminal = lib.mkOption {
-        type = lib.types.string;
+        type = lib.types.str;
         default = "";
         description = "Which default terminal and oversides to set for tmux";
       };
@@ -145,17 +144,15 @@ in
               gruvbox-material
               render-markdown-nvim
               neorg
-              neorg-telescope
               neogit
               conform-nvim
               nvim-lint
-              lsp-progress-nvim
               tmux-nvim
-              grapple-nvim
-              grug-far-nvim
+              harpoon2
+              plenary-nvim
 
               # navigation
-              fzf-lua
+              hop-nvim
 
               # lsp
               blink-cmp
@@ -194,7 +191,7 @@ in
             ''}
 
             bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
-            bind-key C-g new-window -n gitu -c "#{pane_current_path}" "gitu"
+            bind-key C-g new-window -n gitu -c "#{pane_current_path}" "lazygit"
             bind-key C-o command-prompt -p "open app: " "new-window '%%'"
 
             bind-key C-s split-pane
