@@ -1,6 +1,11 @@
 { pkgs-unstable, ... }:
 
 {
+  imports = [
+    ./code
+    ./linux-desktop
+  ];
+
   nix = {
     settings.extra-experimental-features = [ "nix-command" "flakes" ];
     gc.automatic = true;
@@ -9,6 +14,8 @@
     username = "tommy";
     packages = with pkgs-unstable; [
       nerd-fonts.hack
+      nerd-fonts._3270
+      nerd-fonts.departure-mono
       htop
 
       fzf
