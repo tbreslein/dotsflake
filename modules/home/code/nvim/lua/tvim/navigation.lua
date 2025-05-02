@@ -7,7 +7,12 @@ local function init()
     },
   })
   vim.keymap.set("n", "<leader>ff", function()
-    MiniPick.builtin.files({ tool = "git" })
+    local in_git = vim.system({ "git", "rev-parse", "--is-inside-worktree" }):wait()
+    if in_git.code == 0 then
+      MiniPick.builtin.files({ tool = "git" })
+    else
+      MiniPick.builtin.files()
+    end
   end, { noremap = true, silent = true })
   vim.keymap.set("n", "<leader>fs", MiniPick.builtin.grep_live, { noremap = true, silent = true })
   vim.keymap.set("n", "<leader>fh", MiniPick.builtin.help, { noremap = true, silent = true })
