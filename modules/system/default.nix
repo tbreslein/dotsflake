@@ -1,7 +1,6 @@
 { config, lib, pkgs-stable, pkgs-unstable, ... }: {
   imports = [
-    ./gaming
-    ./linux-desktop
+    ./desktop
   ];
 
   boot = {

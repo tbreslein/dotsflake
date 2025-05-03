@@ -1,12 +1,14 @@
 { config, pkgs, ... }:
 
 {
-  # home.homeDirectory = "/Users/tommy/";
   myHome = {
     code = {
       enable = true;
       tmux-terminal = "xterm-ghostty";
     };
+    # desktop.darwin = {
+    #   enable = true;
+    # };
   };
   # launchd = {
   #   enable = true;

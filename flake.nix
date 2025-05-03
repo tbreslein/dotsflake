@@ -23,79 +23,80 @@
     ,
     } @ inputs:
     let
-      supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
+      supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
       forAllSystems = nixpkgs-stable.lib.genAttrs supportedSystems;
-      nixpkgsFor-stable = forAllSystems (system: import nixpkgs-stable { inherit system; });
-      nixpkgsFor-unstable = forAllSystems (system: import nixpkgs-unstable { inherit system; });
+
+      mkSystem = system: hostname:
+        let
+          pkgs-stable = nixpkgs-stable.legacyPackages.${system};
+          pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
+          isLinux = pkgs-stable.lib.hasSuffix system "-linux";
+
+          sysfunc =
+            if isLinux
+            then nixpkgs-unstable.lib.nixosSystem
+            else nix-darwin.lib.darwinSystem;
+          hmModules =
+            if isLinux
+            then home-manager.nixosModules.home-manager
+            else home-manager.darwinModules.home-manager;
+          home =
+            if isLinux
+            then "/home/tommy"
+            else "/Users/tommy";
+          uname =
+            if isLinux
+            then "linux"
+            else "darwin";
+        in
+        {
+          "${hostname}" = sysfunc {
+            inherit system;
+            specialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
+            modules = [
+              ./hosts/${hostname}/configuration.nix
+              ./modules/system/desktop/${uname}
+
+              (if isLinux
+              then { networking.hostName = hostname; }
+              else { networking.computerName = hostname; })
+
+              hmModules
+              {
+                users.users.tommy.home = "${home}";
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  extraSpecialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
+                  users.tommy = {
+                    imports = [
+                      ./modules/home
+                      ./hosts/${hostname}/home.nix
+                    ];
+                  };
+                };
+              }
+            ];
+          };
+        };
     in
     {
-      nixosConfigurations = {
-        raziel =
-          let
-            pkgs-stable = nixpkgs-stable.legacyPackages.x86_64-linux;
-            pkgs-unstable = nixpkgs-unstable.legacyPackages.x86_64-linux;
-          in
-          nixpkgs-unstable.lib.nixosSystem {
-            system = "x86_64-linux";
-            specialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
-            modules = [
-              ./hosts/raziel/configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                users.users.tommy.home = "/home/tommy";
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  extraSpecialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
-                  users.tommy = {
-                    imports = [
-                      ./modules/home
-                      ./hosts/raziel/home.nix
-                    ];
-                  };
-                };
-              }
-            ];
-          };
-      };
-
-      darwinConfigurations."tommysmbp" =
-        let
-          pkgs-stable = nixpkgs-stable.legacyPackages.aarch64-darwin;
-          pkgs-unstable = nixpkgs-unstable.legacyPackages.aarch64-darwin;
-        in
-        nix-darwin.lib.darwinSystem
-          {
-            system = "aarch64-darwin";
-            specialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
-            modules = [
-              ./hosts/tommysmbp/configuration.nix
-              home-manager.darwinModules.home-manager
-              {
-                users.users.tommy.home = "/Users/tommy";
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  extraSpecialArgs = { inherit inputs pkgs-stable pkgs-unstable; };
-                  users.tommy = {
-                    imports = [
-                      ./modules/home
-                      ./hosts/tommysmbp/home.nix
-                    ];
-                  };
-                };
-              }
-            ];
-          };
+      nixosConfigurations =
+        (mkSystem "x86_64-linux" "kain") //
+        (mkSystem "x86_64-linux" "raziel");
+      darwinConfigurations = mkSystem "aarch64-darwin" "tommysmbp";
 
       packages = forAllSystems (system:
         let
-          pkgs = nixpkgsFor-stable.${system};
+          pkgs = nixpkgs-unstable.legacyPackages.${system};
           homeRoot = if pkgs.lib.hasSuffix system "linux" then "/home" else "/Users";
           flakeDir = "${homeRoot}/tommy/dotsflake";
           upgradeCmd =
             let
-              cmdPrefix = if pkgs.lib.hasSuffix system "linux" then "sudo nixos" else "darwin";
+              cmdPrefix =
+                if pkgs.lib.hasSuffix system "linux"
+                then "sudo nixos"
+                else "darwin";
             in
             "${cmdPrefix}-rebuild switch --flake ${flakeDir}";
           updateCmd = "nix flake update --flake ${flakeDir}";
@@ -148,5 +149,3 @@
       });
     };
 }
-
-

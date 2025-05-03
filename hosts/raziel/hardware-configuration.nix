@@ -11,6 +11,7 @@
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "thunderbolt" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
+  boot.initrd.luks.devices."luks-8b57d86d-a385-48d2-b393-ba1cc1e9fdd0".device = "/dev/disk/by-uuid/8b57d86d-a385-48d2-b393-ba1cc1e9fdd0";
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 

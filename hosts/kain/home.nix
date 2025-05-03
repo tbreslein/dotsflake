@@ -8,7 +8,7 @@ _:
     };
     desktop.linux = {
       enable = true;
-      terminalFontSize = 14;
+      terminalFontSize = 17;
     };
   };
 }

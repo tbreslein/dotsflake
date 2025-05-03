@@ -1,15 +1,16 @@
 { config, lib, pkgs-stable, pkgs-unstable, ... }:
 
 let
-  cfg = config.mySystem.linux-desktop;
+  cfg = config.mySystem.linux.desktop;
 in
 {
   imports = [
+    ./gaming
   ];
 
   options = {
-    mySystem.linux-desktop = {
-      enable = lib.mkEnableOption "Enable system/linux-desktop role";
+    mySystem.linux.desktop = {
+      enable = lib.mkEnableOption "Enable system linux.desktop role";
       extraUserPackages = lib.mkOption {
         type = lib.types.listOf lib.types.package;
         default = [ ];

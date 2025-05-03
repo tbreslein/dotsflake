@@ -3,7 +3,7 @@
 {
   imports = [
     ./code
-    ./linux-desktop
+    ./desktop
   ];
 
   nix = {

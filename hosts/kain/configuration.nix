@@ -12,6 +12,6 @@
       extraUserPackages = [ ];
       extraSystemPackages = [ ];
     };
-    gaming.enable = false;
+    gaming.enable = true;
   };
 }

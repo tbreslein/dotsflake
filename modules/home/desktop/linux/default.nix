@@ -1,9 +1,15 @@
 { config, lib, pkgs-unstable, ... }:
 let
-  cfg = config.myConf.linux.desktop;
+  cfg = config.myHome.desktop.linux;
 in
 {
-  options.myConf.linux.desktop.enable = lib.mkEnableOption "Enable linux desktop role";
+  options.myHome.desktop.linux = {
+    enable = lib.mkEnableOption "Enable home desktop.linux role";
+    terminalFontSize = lib.mkOption {
+      type = lib.types.int;
+      description = "font size for the terminal";
+    };
+  };
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs-unstable; [
@@ -209,7 +215,7 @@ in
         enable = true;
         settings = {
           main = {
-            font = "Hack Nerd Font:size=14";
+            font = "Hack Nerd Font:size=${cfg.terminalFontSize}";
           };
         };
       };
