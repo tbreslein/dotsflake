@@ -22,6 +22,12 @@
     , nix-darwin
     ,
     } @ inputs:
+    let
+      supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
+      forAllSystems = nixpkgs-stable.lib.genAttrs supportedSystems;
+      nixpkgsFor-stable = forAllSystems (system: import nixpkgs-stable { inherit system; });
+      nixpkgsFor-unstable = forAllSystems (system: import nixpkgs-unstable { inherit system; });
+    in
     {
       nixosConfigurations = {
         raziel =
@@ -81,5 +87,66 @@
               }
             ];
           };
+
+      packages = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor-stable.${system};
+          homeRoot = if pkgs.lib.hasSuffix system "linux" then "/home" else "/Users";
+          flakeDir = "${homeRoot}/tommy/dotsflake";
+          upgradeCmd =
+            let
+              cmdPrefix = if pkgs.lib.hasSuffix system "linux" then "sudo nixos" else "darwin";
+            in
+            "${cmdPrefix}-rebuild switch --flake ${flakeDir}";
+          updateCmd = "nix flake update --flake ${flakeDir}";
+        in
+        rec {
+          syke = pkgs.writeShellScriptBin "syke" /* bash */ ''
+            update() {
+              ${updateCmd}
+            }
+            upgrade() {
+              ${upgradeCmd}
+            }
+            sync() {
+              update
+              upgrade
+            }
+
+            if [[ $# -eq 0 ]]; then
+              sync
+              exit 0
+            fi
+
+            while [[ $# -gt 0 ]] do
+              case $1 in
+                update)
+                  update
+                  shift
+                  ;;
+                upgrade)
+                  upgrade
+                  shift
+                  ;;
+                sync)
+                  sync
+                  shift
+                  ;;
+              esac
+            done
+          '';
+
+          default = syke;
+        });
+
+      apps = forAllSystems (system: rec {
+        syke = {
+          type = "app";
+          program = "${self.packages.${system}.default}/bin/syke";
+        };
+        default = syke;
+      });
     };
 }
+
+

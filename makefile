@@ -1,2 +1,12 @@
-all:
-	if [[ $(shell uname -s) == "Linux" ]]; then sudo nixos-rebuild switch --flake .; else darwin-rebuild switch --flake .; fi
+.PHONY: all upgrade update sync
+
+all: sync
+
+upgrade:
+	nix run .# -- upgrade
+
+update:
+	nix run .# -- update
+
+sync:
+	nix run .# -- sync
