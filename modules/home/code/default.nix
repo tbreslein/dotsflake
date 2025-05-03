@@ -197,7 +197,7 @@ in
             bind-key C-s split-pane
             bind-key C-v split-pane -h
 
-            set -g status-interval 2
+            # set -g status-interval 2
             set -g status-style "fg=colour3 bg=colour0"
             set -g status-left-length 200
             set -g status-right-length 300
