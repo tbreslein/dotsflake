@@ -215,7 +215,7 @@ in
         enable = true;
         settings = {
           main = {
-            font = "Hack Nerd Font:size=${cfg.terminalFontSize}";
+            font = "Hack Nerd Font:size=${toString cfg.terminalFontSize}";
           };
         };
       };
