@@ -25,7 +25,6 @@
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
       forAllSystems = nixpkgs-stable.lib.genAttrs supportedSystems;
-
       mkSystem = system: hostname:
         let
           pkgs-stable = nixpkgs-stable.legacyPackages.${system};
