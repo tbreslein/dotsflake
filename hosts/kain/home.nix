@@ -6,9 +6,13 @@ _:
       enable = true;
       tmux-terminal = "foot";
     };
-    desktop.linux = {
+    linux = {
       enable = true;
       terminalFontSize = 17;
+      extraWMEnv = [
+        "LIBVA_DRIVER_NAME,nvidia"
+        "__GLX_VENDOR_LIBRARY_NAME,nvidia"
+      ];
     };
   };
 }

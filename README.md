@@ -33,7 +33,6 @@ modules
 
 continue home manager settings at programs.c
 
-- modularisation
 - shell module (zsh, fzf, ripgrep, etc.)
 - coding module
 - desktop/linux:

@@ -1,20 +1,26 @@
 { config, lib, pkgs-unstable, ... }:
 let
-  cfg = config.myHome.desktop.linux;
+  cfg = config.myHome.linux;
 in
 {
-  options.myHome.desktop.linux = {
+  options.myHome.linux = {
     enable = lib.mkEnableOption "Enable home desktop.linux role";
     terminalFontSize = lib.mkOption {
       type = lib.types.int;
-      description = "font size for the terminal";
+    };
+    extraWMEnv = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
     };
   };
 
   config = lib.mkIf cfg.enable {
+    targets.genericLinux.enable = true;
+
     home.packages = with pkgs-unstable; [
       wdisplays
       pamixer
+      pavucontol
       playerctl
       brightnessctl
       grim
@@ -31,6 +37,7 @@ in
         exec = [
           # "wlsunset"
         ];
+        monitor = ", highres@highrr, auto, 1";
         exec-once = [
           "waybar"
           "wl-paste --type text --watch cliphist store"
@@ -50,7 +57,7 @@ in
           # "QT_AUTO_SCREEN_SCALE_FACTOR,1"
           "MOZ_ENABLE_WAYLAND,1"
           "ELECTRON_OZONE_PLATFORM_HINT,wayland"
-        ];
+        ] ++ cfg.extraWMEnv;
         decoration = {
           rounding = 2;
         };
@@ -69,10 +76,6 @@ in
           repeat_delay = 300;
           repeat_rate = 35;
         };
-        master = {
-          mfact = 0.5;
-          orientation = "right";
-        };
         misc = {
           disable_splash_rendering = true;
           disable_hyprland_logo = true;
@@ -80,27 +83,29 @@ in
           mouse_move_enables_dpms = true;
         };
         windowrulev2 = [
-          "float,title:^(Picture(.)in(.)picture$"
+          "float,title:^(Picture(.)in(.)picture)$"
           "pin,title:^(Picture(.)in(.)picture)$"
-          "float,class:^(steam)$,title:^(Friends list)$"
-          "float,class:^(steam)$,title:^(Steam Settings)$"
-          "workspace 3,class:^(steam)$"
-          "workspace 3,class:^(lutris)$"
-          "workspace 3,title:^(Wine System Tray)$"
-          "workspace 4,class:^(battle.net.exe)$"
+          # "float,class:^(steam)$,title:^(Friends list)$"
+          # "float,class:^(steam)$,title:^(Steam Settings)$"
+          # "workspace 3,class:^(steam)$"
+          # "workspace 3,class:^(lutris)$"
+          # "workspace 3,title:^(Wine System Tray)$"
+          # "workspace 4,class:^(battle.net.exe)$"
         ];
         bind = [
           "$mod, Space, exec, fuzzel"
           "$mod, Return, exec, [workspace 2] foot"
-          "$mod, b, exec, [workspace 1] brave"
+          "$mod, b, exec, [workspace 1] zen"
           "$mod, q, killactive"
           "$mod ALT, q, exit"
           "$mod, f, fullscreen, 1"
           "$mod ALT, f, fullscreen, 0"
           "$mod ALT, v, togglefloating,"
 
-          "$mod, j, cyclenext,"
-          "$mod, k, cyclenext, prev"
+          "$mod, h, movefocus, l"
+          "$mod, j, movefocus, d"
+          "$mod, k, movefocus, u"
+          "$mod, l, movefocus, r"
           "$mod CTRL, h, swapwindow, l"
           "$mod CTRL, j, swapwindow, d"
           "$mod CTRL, k, swapwindow, u"
@@ -210,9 +215,11 @@ in
     programs = {
       fuzzel = {
         enable = true;
+        # package = null;
       };
       foot = {
         enable = true;
+        # package = null;
         settings = {
           main = {
             font = "Hack Nerd Font:size=${toString cfg.terminalFontSize}";
@@ -221,11 +228,12 @@ in
       };
       waybar = {
         enable = true;
+        # package = null;
         settings.mainBar = {
           layer = "top";
           position = "top";
           height = 30;
-          modules-left = [ "river/tags" ];
+          modules-left = [ "hyprland/workspaces" ];
           modules-center = [ ];
           modules-right = [ "pulseaudio" "battery" "cpu" "memory" "tray" "clock" ];
         };
@@ -235,6 +243,7 @@ in
     services = {
       mako = {
         enable = true;
+        # package = null;
       };
     };
   };

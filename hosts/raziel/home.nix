@@ -6,7 +6,7 @@ _:
       enable = true;
       tmux-terminal = "foot";
     };
-    desktop.linux = {
+    linux = {
       enable = true;
       terminalFontSize = 14;
     };

@@ -3,7 +3,7 @@
 {
   imports = [
     ./code
-    ./desktop
+    ./linux
   ];
 
   nix = {
@@ -24,6 +24,8 @@
       bat
       lazygit
       gitu
+
+      nh
     ];
     stateVersion = "24.11";
   };

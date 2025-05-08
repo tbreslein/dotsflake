@@ -14,6 +14,8 @@
     };
   };
 
+  # networking.computerName = hostname;
+
   # # Create /etc/zshrc that loads the nix-darwin environment.
   # programs = {
   #   gnupg.agent.enable = true;
