@@ -29,7 +29,7 @@ cryptsetup close target
 
 ```sh
 # create a 512MB efi partition, and a luks partition for the rest of the system
-sgdisk -n 0:0:+512MiB -t 0:ef00 -c 0:esp $disk
+sgdisk -n 0:0:+1G -t 0:ef00 -c 0:esp $disk
 sgdisk -n 0:0:0 -t 0:8309 -c 0:luks $disk
 partprobe $disk
 
@@ -82,7 +82,7 @@ swapon /mnt/swap/swapfile
 pacman -Syy
 export microcode="amd-ucode" # or intel-ucode respectively
 reflector --verbose --protocol https --latest 15 --sort rate --country Germany --country France --save /etc/pacman.d/mirrorlist
-pacstrap /mnt base base-devel $microcode btrfs-progs linux linux-firmware cryptsetup htop man-db neovim vim networkmanager openssh pacman-contrib pkgfile reflector sudo tmux zsh
+pacstrap /mnt base base-devel $microcode btrfs-progs linux-lts linux-firmware cryptsetup man-db vim networkmanager openssh pacman-contrib pkgfile reflector sudo zsh
 genfstab -U -p /mnt >> /mnt/etc/fstab
 arch-chroot /mnt /bin/bash
 ```
@@ -101,7 +101,7 @@ cat > /etc/hosts <<EOF
 127.0.1.1 foobar.localdomain foobar
 EOF
 
-nvim /etc/systemd/timesyncd.conf
+vim /etc/systemd/timesyncd.conf
 # [TIME]
 # NTP=0.arch.pool.ntp.org 1.arch.pool.ntp.org 2.arch.pool.ntp.org 3.arch.pool.ntp.org
 # FallbackNTP=0.pool.ntp.org 1.pool.ntp.org 2.pool.ntp.org 3.pool.ntp.org
@@ -125,16 +125,24 @@ systemctl enable NetworkManager
 
 vim /etc/mkinitcpio.conf
 # # first, add btrfs to MODULES
-# MODULES=(btrfs)
-# # then, add encrypt hook before filesystems, and resume after it
-# HOOKS=(base udev ... consolefont block encrypt filesystems resume fsck)
+# MODULES=(btrfs vfat)
+# # then, add encrypt hook before filesystems, and resume after it; remove fsck
+# HOOKS=(base udev keyboard autodetect microcode modconf keymap consolefont block encrypt filesystems resume)
 mkinitcpio -P
 
-reflector --verbose --protocol https --latest 15 --sort rate --country Germany --country France --save /etc/pacman.d/mirrorlist
-pacman -S grub efibootmgr
+vim /etc/pacman.conf # enable verbosepkgslist, paralleldownloads, color, and multilib
+pacman -Syu
+vim /etc/xdg/reflector/reflector.conf # set countries to France,Germany, --latest 15, --sort rate
+systemctl enable reflector.service
+systemctl enable reflector.timer
+systemctl enable paccache.timer
+
+pacman -S efibootmgr
 __blkid=$(blkid -s UUID -o value ${disk}p2)
 # this should go into a bash script
-efibootmgr --create --disk ${disk} --part 1 --label 'Arch' --load /vmlinuz-linux --unicode "cryptdevice=UUID=${__blkid}:crypt root=/dev/mapper/crypt rw rootflags=noatime,nodiratime,ssd,compress-force=zstd:1,space_cache=v2,subvol=@ initrd=\amd-ucode.img initrd=\initramfs-linux.img" --verbose
+efibootmgr --create --disk ${disk} --part 1 --label 'Arch-LTS' --load /vmlinuz-linux-lts --unicode "cryptdevice=UUID=${__blkid}:crypt root=/dev/mapper/crypt rw rootflags=noatime,nodiratime,ssd,compress-force=zstd:1,space_cache=v2,subvol=@ initrd=\amd-ucode.img initrd=\initramfs-linux-lts.img" --verbose
+
+# make sure the bootorder is correct
 
 exit
 swapoff -a
@@ -147,172 +155,106 @@ reboot
 login into user
 
 ```sh
-nmtui # setup wifi
-sudo vim /etc/pacman.conf # enable verbosepkgslist, paralleldownloads, color, and multilib
-sudo pacman -Syu
-sudo systemctl enable fstrim.timer
-sudo vim /etc/xdg/reflector/reflector.conf # set countries to France,Germany
-sudo systemctl enable reflector.service
-sudo systemctl start reflector.service
-sudo systemctl enable reflector.timer
-sudo systemctl start reflector.timer
+nmtui # setup wifi, if necessary
 
-sudo pacman -S git
-cd
-git clone https://github.com/tbreslein/dots.git
-~/dots/dm/bootstrap.bash
+sudo pacman -S ufw syncthing
+sudo ufw enable
+sudo ufw allow syncthing
+systemctl --user enable --now syncthing
+
+sudo pacman -S --needed git base-devel
+git clone https://aur.archlinux.org/yay.git
+cd yay
+makepkg -si
+
+yay linux-cachyos
+
+# add another boot entry for cachy kernel:
+efibootmgr --create --disk ${disk} --part 1 --label 'Arch-Cachy' --load /vmlinuz-linux-cachyos --unicode "cryptdevice=UUID=${__blkid}:crypt root=/dev/mapper/crypt rw rootflags=noatime,nodiratime,ssd,compress-force=zstd:1,space_cache=v2,subvol=@ initrd=\amd-ucode.img initrd=\initramfs-linux-cachyos.img" --verbose
+
+# make sure the bootorder is correct
+```
+
+nvidia specific:
+
+```sh
+sudo pacman -S linux-lts-headers
+yay linux-cachyos-headers
+sudo pacman -S nvidia-open-dkms nvidia-utils lib32-nvidia-utils nvidia-settings
+sudo vim /etc/mkinitcpio.conf
+# add to MODULES: nvidia nvidia_modeset nvidia_uvm nvidia_drm
+# remove from HOOKS: kms
+sudo mkinitcpio -P
 
 reboot # just see that everything works and that wifi connects automatically
 ```
 
 ```sh
-~/dots/dm/dm stow nix pkgs
-
-# re-login, then startx, setup brave, extensions, bitwarden, syncthing...
-dm # sync
+# install nix
+sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
 ```
 
-### first snapshot
-
-when everything is up and running, it's time to configure btrfs snapshots
+## packages
 
 ```sh
-sudo pacman -S snapper snap-pac
+#base
+base
+base-devel
+btrfs-progs
+linux-lts
+linux-firmware
+cryptsetup
+man-db
+vim
+networkmanager
+openssh
+pacman-contrib
+pkgfile
+reflector
+sudo
+zsh
+efibootmgr
+git
+ufw
 
-# snapper assumes that the snapshots subvolume is not mounted when creating the
-# config
-sudo umount /.snapshots
-sudo rm -fr /.snapshots # BE VERY CAREFUL NOT TO MISTYPE THIS ONE!
-sudo snapper -c root create-config /
+#base-aur
+linux-cachyos
 
-sudo btrfs subvolume list /
-# as you can see, it created a new subvolume called .snapshots, but we want our
-# subvolume from earlier
-sudo btrfs subvolume delete /.snapshots
-sudo mkdir /.snapshots
-sudo mount /.snapshots # mount config still exists if /etc/fstab after all
-sudo chmod 750 /.snapshots
-sudo chown :wheel /.snapshots
+#amd
+amd-ucode
 
-# create the first snapshot
-sudo snapper -c root create -d "**BASE INSTALL**"
+#nvidia
+linux-lts-headers
+nvidia-open-dkms
+nvidia-utils
+lib32-nvidia-utils
+nvidia-settings
 
-sudo vim /etc/snapper/configs/root
-# ALLOW_USERS="tommy"
-# ...
-# TIMELINE_MIN_AGE="1800"
-# TIMELINE_LIMIT_HOURLY="5"
-# TIMELINE_LIMIT_DAILY="7"
-# TIMELINE_LIMIT_WEEKLY="0"
-# TIMELINE_LIMIT_MONTHLY="0"
-# TIMELINE_LIMIT_YEARLY="0"
+#nvidia-aur
+linux-cachyos-headers
 
-sudo systemctl enable snapper-timeline.timer
-sudo systemctl enable snapper-cleanup.timer
+#desktop
+hyprland
+hyprpolkitagent
+xdg-desktop-portal-hyprland
+qt5-wayland
+qt6-wayland
+greetd
+pipewire
+pipewire-alsa
+pipewire-pulse
+wireplumber
+egl-wayland
+xorg-xwayland
+wayland-protocols
+alacritty
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+noto-fonts-extra
+ttf-liberation
+ttf-roboto
 
-# EXAMPLES
-snapper -c root list # list all current snapshots
-
-sudo pacman -S md-tui
-
-# should now list a pre and post snapshot for the pacman command, thanks to the
-# snap-pac pacman hooks
-snapper -c root list
-
-sudo btrfs subvolume list / # now also lists our snapshots
+#desktop-aur
+brave-bin
 ```
-
-now, set up grub-btrfs
-
-```sh
-sudo pacman -S grub-btrfs
-
-# in case your grub config does not live in /boot/grub...
-sudo vim /etc/default/grub-btrfs/config
-# #edit GRUB_BTRFS_GRUB_DIRNAME to point at the correct directory
-
-# this enables automatically adding snapshots to the boot menu
-sudo systemctl enable --now grub-btrfsd.service
-```
-
-### in case of emergency
-
-when you cannot boot into your system due to an update and want to roll back,
-boot into an old snapshot using grub and see if it works.
-Take note of the snapshot number, you need it for later!
-
-Then boot into a live usb and...
-
-```sh
-cryptsetup open /dev/nvme1n1p2 crypt
-
-# mount WITHOUT the @
-mount -t btrfs -o subvol=/ /dev/mapper/crypt /mnt
-
-# check whether any snapper-unit.timer services are running and stop them!
-
-# move the broken subvolume out of the way (that's why we didn't include the @)
-mv /mnt/@ /mnt/@borked
-
-# search for the snapshot you wanted to boot into in /.snapshots/
-# you can look through their info.xml files to find the snapshot you are looking
-# for, if you didn't remember the snapshot number from earlier.
-# let's say the snapshot number is 69
-
-# snapshot that snapshot into place
-btrfs subvolume snapshot /mnt/@snapshots/69/snapshot /mnt/@
-
-umount -R /mnt
-reboot
-
-# and after the reboot, if everything worked, remember to remove @borked
-```
-
-## links:
-
-### setup with grub
-
-- https://www.dwarmstrong.org/archlinux-install/
-
-### setup with systemdboot
-
-- https://nerdstuff.org/posts/2020/2020-004_arch_linux_luks_btrfs_systemd-boot/
-- https://gist.github.com/noghartt/8388f7d8543e3eb1777cb6ed4a3d7807
-- https://root.nix.dk/en/manjaro-cli-install/systemd-boot-luks-btrfs
-- https://infertux.com/posts/2023/05/05/how-to-install-linux-systemd-boot-btrfs-luks-together/
-- https://btrfs.readthedocs.io/en/latest/Introduction.html
-
-### setup with efistub
-
-- https://www.reddit.com/r/archlinux/comments/11aqxnk/install_with_luks_btrfs_efistub_sdencrypt/
-- https://linustechtips.com/topic/1490301-arch-install-with-luks-btrf-efistub-and-sd-encrypt-hook/
-- https://gist.github.com/jirutka/a914c442f42f78a8a22847d57ba3900d
-- https://wiki.archlinux.org/title/EFISTUB
-
-## Setup: macbook
-
-## Just use simple tools
-
-This repo contains my dotfiles and scripts to setup my systems.
-At its core is simply a little justfile script that controls everything.
-The idea is to use simple tools (only justfile, stow, and pacman/yay/homebrew),
-and don't use tools that put on layers upon layers of abstraction upon how the
-system is configured.
-
-Just as a reminder to my future self, as to why I no longer use nix(OS) for
-package management / system configuration / as an operating system:
-
-- nixOS + home-mananager couples your system configuration and upgrades, to your
-  program configuration, and that's BS because you cannot tweak your config if
-  your system cannot upgrade (whether that's because something broke upstream,
-  or because SOPHOS decides that compiling a program from source should take
-  30 minutes instead of 30 seconds)
-- it puts a layer on top of system and tool configuration that makes it less
-  clear how that configuration actually works, and this lack of clarity and
-  knowledge makes it harder to analyse and fix errors
-- I don't need a programming language to configure my system
-
-I also used ansible in the past, but the fact that it is a) slow, b) isn't
-declarative (otherwise the order of your tasks wouldn't matter), and c) forces
-me to have way more structure than I need, makes using it a chore more than
-anything else.
