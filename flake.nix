@@ -33,17 +33,17 @@
       mkArgs = system:
         let
           pkgs-stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
-          pkgs = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
+          pkgs-unstable = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
         in
-        { inherit inputs pkgs-stable pkgs userConf; };
+        { inherit inputs pkgs-stable pkgs-unstable userConf; };
 
       mkHome = system: hostname:
         let
           args = mkArgs system;
         in
         {
-          "${userConf.name}@${hostname}" = home-manager.lib.homeManagerConfiguration {
-            pkgs = { inherit (args) pkgs; };
+          "${hostname}" = home-manager.lib.homeManagerConfiguration {
+            pkgs = args.pkgs-unstable;
             extraSpecialArgs = args;
             modules = [
               ./hm-modules
@@ -53,7 +53,6 @@
         };
     in
     {
-      # homeConfigurations = mkHome "x86_64-linux" "kain";
       homeConfigurations =
         (mkHome "x86_64-linux" "kain")
         // (mkHome "x86_64-linux" "raziel");
@@ -94,16 +93,22 @@
       packages = forAllSystems (system:
         let
           pkgs = nixpkgs-unstable.legacyPackages.${system};
-          homeRoot = if pkgs.lib.hasSuffix system "linux" then "/home" else "/Users";
+          isLinux = pkgs.lib.hasSuffix "linux" system;
+          homeRoot = if isLinux then "/home" else "/Users";
           flakeDir = "${homeRoot}/${userConf.name}/dotsflake";
           upgradeCmd =
             let
               cmdPrefix =
-                if pkgs.lib.hasSuffix system "linux"
+                if isLinux
                 then "home-manager"
                 else "darwin-rebuild";
+              flake =
+                "--flake ${flakeDir}" +
+                (if isLinux
+                then "#$(cat /etc/hostname)"
+                else "");
             in
-            "${cmdPrefix} switch --flake ${flakeDir}";
+            "${cmdPrefix} switch ${flake}";
           updateCmd = "nix flake update --flake ${flakeDir}";
         in
         rec {

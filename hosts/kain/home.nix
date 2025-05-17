@@ -1,10 +1,11 @@
 _:
 
 {
+  home.homeDirectory = "/home/tommy";
   myHome = {
     code = {
       enable = true;
-      tmux-terminal = "foot";
+      tmux-terminal = "alacritty";
     };
     linux = {
       enable = true;

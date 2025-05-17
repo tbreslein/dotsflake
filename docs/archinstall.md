@@ -191,7 +191,9 @@ reboot # just see that everything works and that wifi connects automatically
 
 ```sh
 # install nix
-sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
+sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
+
+# TODO: explain how to set up my flake
 ```
 
 ## packages
@@ -256,5 +258,16 @@ ttf-liberation
 ttf-roboto
 
 #desktop-aur
-brave-bin
+zen-browser-bin
+```
+
+after installing desktop stuff:
+
+```sh
+sudo systemctl enable greetd
+sudo vim /etc/greetd/config.toml
+# add these lines
+# [default_session]
+# user = "tommy"
+# command = "Hyprland"
 ```

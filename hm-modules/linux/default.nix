@@ -17,19 +17,20 @@ in
   config = lib.mkIf cfg.enable {
     targets.genericLinux.enable = true;
 
-    home.packages = with pkgs-unstable; [
-      wdisplays
-      pamixer
-      pavucontol
-      playerctl
-      brightnessctl
-      grim
-      slurp
-      wl-clipboard
-    ];
+    fonts.fontconfig.enable = true;
+    #home.packages = with pkgs-unstable; [
+    #  wdisplays
+    #  pamixer
+    #  pavucontol
+    #  playerctl
+    #  brightnessctl
+    #  grim
+    #  slurp
+    #  wl-clipboard
+    #];
 
     wayland.windowManager.hyprland = {
-      enable = true;
+      enable = false;
       package = null;
       portalPackage = null;
       settings = {
@@ -214,39 +215,51 @@ in
 
     programs = {
       fuzzel = {
-        enable = true;
+        enable = false;
         # package = null;
       };
-      foot = {
+      alacritty = {
         enable = true;
-        # package = null;
+        package = null;
+        # get theme names from: https://github.com/alacritty/alacritty-theme
+        # theme = "gruvbox_material_hard_dark";
         settings = {
-          main = {
-            font = "Hack Nerd Font:size=${toString cfg.terminalFontSize}";
+          window = {
+            dynamic_padding = true;
+            decorations = "None";
+            opacity = 0.95;
+            blur = true;
+            option_as_alt = "Both";
           };
+          font = {
+            # normal.family = "Hack Nerd Font";
+            normal.family = "DepartureMono Nerd Font";
+            size = cfg.terminalFontSize;
+          };
+          cursor.style.blinking = "Never";
         };
       };
-      waybar = {
-        enable = true;
-        # package = null;
-        settings.mainBar = {
-          layer = "top";
-          position = "top";
-          height = 30;
-          modules-left = [ "hyprland/workspaces" ];
-          modules-center = [ ];
-          modules-right = [ "pulseaudio" "battery" "cpu" "memory" "tray" "clock" ];
-        };
-      };
+
+      #   waybar = {
+      #     enable = true;
+      #     # package = null;
+      #     settings.mainBar = {
+      #       layer = "top";
+      #       position = "top";
+      #       height = 30;
+      #       modules-left = [ "hyprland/workspaces" ];
+      #       modules-center = [ ];
+      #       modules-right = [ "pulseaudio" "battery" "cpu" "memory" "tray" "clock" ];
+      #     };
+      #   };
+      # };
     };
 
     services = {
       mako = {
-        enable = true;
+        enable = false;
         # package = null;
       };
     };
   };
-
 }
-

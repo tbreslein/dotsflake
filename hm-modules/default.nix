@@ -6,15 +6,12 @@
     ./linux
   ];
 
-  nix = {
-    settings.extra-experimental-features = [ "nix-command" "flakes" ];
-    gc.automatic = true;
-  };
+  nix.gc.automatic = true;
+
   home = {
     username = "tommy";
     packages = with pkgs-unstable; [
       nerd-fonts.hack
-      nerd-fonts._3270
       nerd-fonts.departure-mono
       htop
 
@@ -28,9 +25,11 @@
       nh
     ];
     stateVersion = "24.11";
+
+    file.".config/nix/nix.conf".text = ''
+      experimental-features = nix-command flakes pipe-operators
+    '';
   };
 
-  programs = {
-    home-manager.enable = true;
-  };
+  programs.home-manager.enable = true;
 }
