@@ -192,8 +192,9 @@ reboot # just see that everything works and that wifi connects automatically
 ```sh
 # install nix
 sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
-
-# TODO: explain how to set up my flake
+git clone https://www.github.com/tbreslein/dotsflake.git ~/dotsflake
+cd ~/dotsflake
+nix run --extra-experimental-features "nix-command flakes" home-manager/master -- switch --extra-experimental-features "nix-command flakes" --flake .#$(cat /etc/hostname)
 ```
 
 after installing desktop stuff:
