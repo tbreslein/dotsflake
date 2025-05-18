@@ -111,6 +111,7 @@ in
 
     programs = {
       jq.enable = true;
+      lazygit.enable = true;
       neovim = {
         enable = true;
         package = pkgs-unstable.neovim-unwrapped;
