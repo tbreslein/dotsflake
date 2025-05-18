@@ -46,7 +46,7 @@
             pkgs = args.pkgs-unstable;
             extraSpecialArgs = args;
             modules = [
-              ./hm-modules
+              ./modules
               ./hosts/${hostname}/home.nix
             ];
           };
@@ -80,7 +80,7 @@
                     extraSpecialArgs = args;
                     users.tommy = {
                       imports = [
-                        ./hm-modules
+                        ./modules
                         ./hosts/${hostname}/home.nix
                       ];
                     };
