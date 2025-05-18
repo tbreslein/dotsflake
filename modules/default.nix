@@ -4,6 +4,7 @@
   imports = [
     ./code
     ./linux
+    ./syke
   ];
 
   nix.gc.automatic = true;

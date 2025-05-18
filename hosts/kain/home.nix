@@ -72,6 +72,12 @@ _:
         "pipewire-pulse"
         "pipewire-jack"
         "wireplumber"
+        # "pavucontrol"
+        # "playerctl"
+        # "brightnessctl"
+        # "grim"
+        # "slurp"
+        # "wl-clipboard"
         "egl-wayland"
         "xorg-xwayland"
         "wayland-protocols"
@@ -86,7 +92,6 @@ _:
         #gaming
         "steam"
         "steam-native-runtime"
-        "lutris"
 
         "gamescope"
         "alsa-lib"
@@ -134,6 +139,12 @@ _:
 
         #desktop
         "zen-browser-bin"
+
+        #gaming
+        "dxvk-bin"
+        "proton-ge-custom-bin"
+        "protontricks"
+        "wine-installer"
       ];
     };
   };

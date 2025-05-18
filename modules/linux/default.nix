@@ -18,16 +18,14 @@ in
     targets.genericLinux.enable = true;
 
     fonts.fontconfig.enable = true;
-    #home.packages = with pkgs-unstable; [
-    #  wdisplays
-    #  pamixer
-    #  pavucontol
-    #  playerctl
-    #  brightnessctl
-    #  grim
-    #  slurp
-    #  wl-clipboard
-    #];
+    home.packages = with pkgs-unstable; [
+      pavucontrol
+      playerctl
+      brightnessctl
+      grim
+      slurp
+      wl-clipboard
+    ];
 
     wayland.windowManager.hyprland = {
       enable = false;
