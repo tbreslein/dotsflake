@@ -7,7 +7,7 @@ _:
     };
     linux = {
       enable = true;
-      terminalFontSize = 14;
+      terminalFontSize = 22;
     };
   };
 }

@@ -41,7 +41,7 @@ in
           "systemctl --user hyprpolkitagent"
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
-          "waybar &"
+          "${pkgs-unstable.waybar}/bin/waybar &"
           # "blueman-applet"
           # "nm-applet"
           # "hyprpaper"
@@ -102,7 +102,7 @@ in
         ];
         "$mod" = "SUPER";
         bind = [
-          "$mod, Space, exec, fuzzel"
+          "$mod, Space, exec, ${pkgs-unstable.fuzzel}/bin/fuzzel"
           "$mod, Return, exec, [workspace 2] alacritty"
           "$mod, b, exec, [workspace 1] zen-browser"
           "$mod CTRL, q, killactive"
@@ -220,7 +220,7 @@ in
 
     programs = {
       fuzzel = {
-        enable = false;
+        enable = true;
         # package = null;
       };
       alacritty = {
@@ -237,8 +237,8 @@ in
             option_as_alt = "Both";
           };
           font = {
-            # normal.family = "Hack Nerd Font";
-            normal.family = "DepartureMono Nerd Font";
+            normal.family = "Hack Nerd Font";
+            # normal.family = "DepartureMono Nerd Font";
             size = cfg.terminalFontSize;
           };
           cursor.style.blinking = "Never";
