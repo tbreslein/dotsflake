@@ -1,11 +1,9 @@
 _:
 
 {
-  home.homeDirectory = "/home/tommy";
   myHome = {
     code = {
       enable = true;
-      tmux-terminal = "alacritty";
     };
     linux = {
       enable = true;
@@ -35,6 +33,7 @@ _:
         # "efibootmgr"
         # "git"
         # "ufw"
+        # "amd-ucode"
 
         #base
         "pacman-contrib"
@@ -49,9 +48,6 @@ _:
         "make"
         "ninja"
         "meson"
-
-        #amd
-        "amd-ucode"
 
         #nvidia
         "linux-lts-headers"
@@ -86,7 +82,6 @@ _:
         #gaming
         "steam"
         "steam-native-runtime"
-
         "gamescope"
         "alsa-lib"
         "alsa-plugins"
@@ -122,8 +117,8 @@ _:
         "wine-mono"
         "wine-nine"
         "winetricks"
-
       ];
+
       aur-pkgs = [
         #base-aur
         "linux-cachyos"

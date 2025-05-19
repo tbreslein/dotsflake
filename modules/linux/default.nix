@@ -15,6 +15,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.homeDirectory = "/home/tommy";
     targets.genericLinux.enable = true;
 
     fonts.fontconfig.enable = true;

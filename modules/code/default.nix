@@ -66,7 +66,7 @@ in
       enable = lib.mkEnableOption "Enable coding role";
       tmux-terminal = lib.mkOption {
         type = lib.types.str;
-        default = "";
+        default = "alacritty";
         description = "Which default terminal and oversides to set for tmux";
       };
     };

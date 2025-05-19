@@ -191,6 +191,7 @@ reboot # just see that everything works and that wifi connects automatically
 
 ```sh
 # install nix
+sudo chown -R tommy:tommy /nix
 sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
 git clone https://www.github.com/tbreslein/dotsflake.git ~/dotsflake
 cd ~/dotsflake
