@@ -241,7 +241,7 @@ in
 
       waybar = {
         enable = true;
-        package = null;
+        package = pkgs-unstable.emptyDirectory;
         settings.mainBar = {
           layer = "top";
           position = "top";
