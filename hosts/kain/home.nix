@@ -78,6 +78,13 @@ _:
         "noto-fonts-extra"
         "ttf-liberation"
         "ttf-roboto"
+        ## NEW
+        "waybar"
+        "wl-clipboard"
+        "pavucontrol"
+        "wmenu"
+        "wlsunset"
+        "hyprpaper"
 
         #gaming
         "steam"
@@ -117,6 +124,9 @@ _:
         "wine-mono"
         "wine-nine"
         "winetricks"
+
+        #laptop
+        "tlp"
       ];
 
       aur-pkgs = [

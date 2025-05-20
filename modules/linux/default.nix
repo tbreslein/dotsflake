@@ -20,12 +20,10 @@ in
 
     fonts.fontconfig.enable = true;
     home.packages = with pkgs-unstable; [
-      pavucontrol
       playerctl
       brightnessctl
       grim
       slurp
-      wl-clipboard
     ];
 
     wayland.windowManager.hyprland = {
@@ -41,7 +39,7 @@ in
           "systemctl --user hyprpolkitagent"
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
-          "${pkgs-unstable.waybar}/bin/waybar &"
+          "waybar &"
           # "blueman-applet"
           # "nm-applet"
           # "hyprpaper"
@@ -102,7 +100,7 @@ in
         ];
         "$mod" = "SUPER";
         bind = [
-          "$mod, Space, exec, ${pkgs-unstable.fuzzel}/bin/fuzzel"
+          "$mod, Space, exec, wmenu-run -i -f \"Hack Nerd Font Normal 24\""
           "$mod, Return, exec, [workspace 2] alacritty"
           "$mod, b, exec, [workspace 1] zen-browser"
           "$mod CTRL, q, killactive"
@@ -219,10 +217,6 @@ in
     };
 
     programs = {
-      fuzzel = {
-        enable = true;
-        # package = null;
-      };
       alacritty = {
         enable = true;
         package = null;
@@ -247,6 +241,7 @@ in
 
       waybar = {
         enable = true;
+        package = null;
         settings.mainBar = {
           layer = "top";
           position = "top";

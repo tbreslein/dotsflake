@@ -208,3 +208,12 @@ sudo vim /etc/greetd/config.toml
 # user = "tommy"
 # command = "Hyprland"
 ```
+
+laptop specific
+
+```sh
+sudo pacman -S tlp
+sudo systemctl enable tlp
+sudo systemctl mask systemd-rfkill.socket
+sudo systemctl mask systemd-rfkill.service
+```
