@@ -7,13 +7,13 @@ local function init()
   blink.setup({
     keymap = {
       preset = "default",
-      ["<c-n>"] = { "select_next" },
+      ["<c-a>"] = { "select_next" },
       ["<c-e>"] = { "select_prev" },
       ["<c-y>"] = { "accept" },
-      ["<c-k>"] = { "scroll_documentation_up" },
-      ["<c-j>"] = { "scroll_documentation_down" },
-      ["<Tab>"] = { "snippet_forward", "fallback" },
-      ["<S-Tab>"] = { "snippet_backward", "fallback" },
+      ["<c-u>"] = { "scroll_documentation_up" },
+      ["<c-o>"] = { "scroll_documentation_down" },
+      ["<c-f>"] = { "snippet_forward", "fallback" },
+      ["<c-p>"] = { "snippet_backward", "fallback" },
     },
     completion = {
       accept = { auto_brackets = { enabled = false } },

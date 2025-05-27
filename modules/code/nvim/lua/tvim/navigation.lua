@@ -21,17 +21,11 @@ local function init()
 
   local mini_files = require("mini.files")
   mini_files.setup()
-  vim.keymap.set("n", "<leader>fp", function()
+  vim.keymap.set("n", "<leader>fo", function()
     mini_files.open(vim.api.nvim_buf_get_name(0))
   end, { noremap = true, silent = true })
 
   require("tmux").setup()
-
-  require("hop").setup({
-    keys = "ntesiroalpufyw",
-    multi_windows = true,
-  })
-  vim.keymap.set({ "n", "v" }, "<leader>n", ":HopWord<cr>", { noremap = true })
 
   local harpoon = require("harpoon")
   harpoon:setup({
@@ -46,16 +40,16 @@ local function init()
   vim.keymap.set("n", "<leader>e", function()
     harpoon.ui:toggle_quick_menu(harpoon:list())
   end)
-  vim.keymap.set("n", "<a-p>", function()
+  vim.keymap.set("n", "<a-s>", function()
     harpoon:list():select(1)
   end)
-  vim.keymap.set("n", "<a-f>", function()
+  vim.keymap.set("n", "<a-t>", function()
     harpoon:list():select(2)
   end)
-  vim.keymap.set("n", "<a-w>", function()
+  vim.keymap.set("n", "<a-r>", function()
     harpoon:list():select(3)
   end)
-  vim.keymap.set("n", "<a-q>", function()
+  vim.keymap.set("n", "<a-n>", function()
     harpoon:list():select(4)
   end)
 end

@@ -101,7 +101,7 @@
               cmdPrefix =
                 if isLinux
                 then "home-manager"
-                else "darwin-rebuild";
+                else "sudo darwin-rebuild";
               flake =
                 "--flake ${flakeDir}" +
                 (if isLinux

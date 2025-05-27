@@ -72,11 +72,6 @@ local function init()
   require("treesitter-context").setup({ multiline_threshold = 2 })
   vim.cmd([[hi TreesitterContextBottom gui=underline]])
 
-  require("render-markdown").setup({
-    -- latex = { enabled = false },
-    completions = { lsp = { enabled = true }, blink = { enabled = true } },
-  })
-
   local hipatterns = require("mini.hipatterns")
   local hi_words = require("mini.extra").gen_highlighter.words
   hipatterns.setup({
@@ -91,7 +86,6 @@ local function init()
     },
   })
   require("mini.trailspace").setup()
-  require("mini.indentscope").setup()
 
   vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>")
 
@@ -102,66 +96,6 @@ local function init()
     WARN = { duration = 3000 },
     INFO = { duration = 2000 },
   })
-
-  require("mini.surround").setup()
-  require("mini.pairs").setup()
-
-  -- Statusline = {}
-  -- local filepath = function()
-  --   local fpath = vim.fn.fnamemodify(vim.fn.expand("%"), ":.")
-  --   if fpath == "" or fpath == "." then
-  --     return " "
-  --   end
-  --   return string.format(" %%<%s", fpath) .. "%m | "
-  -- end
-  --
-  -- local lsp = function()
-  --   local count = {}
-  --
-  --   count["errors"] = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
-  --   count["warnings"] = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
-  --   count["hints"] = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
-  --   count["info"] = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
-  --
-  --   local err_string = ""
-  --
-  --   if count["errors"] ~= 0 then
-  --     err_string = err_string .. " %#LspDiagnosticsSignError#" .. vim.g.diag_symbol_error .. " " .. count["errors"]
-  --   end
-  --   if count["warnings"] ~= 0 then
-  --     err_string = err_string .. " %#LspDiagnosticsSignWarning#" .. vim.g.diag_symbol_warn .. " " .. count["warnings"]
-  --   end
-  --   if count["hints"] ~= 0 then
-  --     err_string = err_string .. " %#LspDiagnosticsSignHint#" .. vim.g.diag_symbol_hint .. " " .. count["hints"]
-  --   end
-  --   if count["info"] ~= 0 then
-  --     err_string = err_string .. " %#LspDiagnosticsSignInformation#" .. vim.g.diag_symbol_info .. " " .. count["info"]
-  --   end
-  --
-  --   if #err_string > 0 then
-  --     err_string = err_string .. "%#Normal#" .. " | "
-  --   end
-  --   -- return err_string .. lsp_progress.progress()
-  --   return err_string
-  -- end
-  --
-  -- Statusline.active = function()
-  --   return table.concat({
-  --     filepath(),
-  --     lsp(),
-  --     "%=%P | %l:%c ",
-  --   })
-  -- end
-  --
-  -- vim.api.nvim_exec2(
-  --   [[
-  --   augroup Statusline
-  --   au!
-  --   au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
-  --   augroup END
-  -- ]],
-  --   {}
-  -- )
 end
 
 return { init = init }

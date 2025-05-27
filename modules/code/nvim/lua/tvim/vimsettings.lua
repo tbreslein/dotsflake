@@ -1,5 +1,4 @@
 local function init()
-  -- VIM SETTINGS
   vim.loader.enable()
   vim.g.mapleader = " "
   vim.g.maplocalleader = ","
@@ -57,6 +56,7 @@ local function init()
   })
 
   vim.keymap.set("n", "Q", "<nop>", { noremap = true, silent = true })
+  vim.keymap.set("n", "<leader>w", ":w<cr>", { noremap = true, silent = true })
   vim.keymap.set("n", "<esc>", ":noh<cr>", { noremap = true, silent = true })
   vim.keymap.set("v", "P", [["_dP]], { noremap = true, silent = true })
   vim.keymap.set({ "n", "x", "v" }, "x", [["_x]], { noremap = true, silent = true })

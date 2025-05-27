@@ -143,17 +143,12 @@ in
               nvim-treesitter-context
               mini-nvim
               gruvbox-material
-              render-markdown-nvim
-              neorg
               neogit
               conform-nvim
               nvim-lint
               tmux-nvim
               harpoon2
               plenary-nvim
-
-              # navigation
-              hop-nvim
 
               # lsp
               blink-cmp
@@ -195,16 +190,15 @@ in
             bind-key C-g new-window -n gitu -c "#{pane_current_path}" "lazygit"
             bind-key C-o command-prompt -p "open app: " "new-window '%%'"
 
-            bind-key C-s split-pane
-            bind-key C-v split-pane -h
+            bind-key C-s split-pane -l 30%
+            bind-key C-v split-pane -h -b -l 40%
 
             # set -g status-interval 2
             set -g status-style "fg=colour3 bg=colour0"
             set -g status-left-length 200
             set -g status-right-length 300
-            set -g status-left "#S "
+            set -g status-left "#S || "
             set -g status-right "#(cd #{pane_current_path}; ${git-status}/bin/git-status)"
-            set -g status-justify centre
 
             is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?\.?(view|n?vim?x?)(-wrapped)?(diff)?$'"
 
