@@ -197,7 +197,7 @@ in
             set -g status-style "fg=colour3 bg=colour0"
             set -g status-left-length 200
             set -g status-right-length 300
-            set -g status-left "#S || "
+            #set -g status-left "#S || "
             set -g status-right "#(cd #{pane_current_path}; ${git-status}/bin/git-status)"
 
             is_vim="ps -o state= -o comm= -t '#{pane_tty}' | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?\.?(view|n?vim?x?)(-wrapped)?(diff)?$'"
