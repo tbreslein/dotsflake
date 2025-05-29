@@ -7,20 +7,20 @@ _:
     };
     linux = {
       enable = true;
-      terminalFontSize = 17;
+      terminalFontSize = 24;
       extraWMEnv = [
         "LIBVA_DRIVER_NAME,nvidia"
         "__GLX_VENDOR_LIBRARY_NAME,nvidia"
       ];
     };
     syke = {
-      services = [
-        #base
-        "systemd-timesyncd"
-
-        #desktop
-        "bluetooth"
-      ];
+      # services = [
+      #   #base
+      #   "systemd-timesyncd"
+      #
+      #   #desktop
+      #   "bluetooth"
+      # ];
       pacman-pkgs = [
         #(syke should never touch these)
         # "base"
