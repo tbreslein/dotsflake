@@ -76,7 +76,7 @@ local function init()
   vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { noremap = true, silent = true, expr = true })
   vim.keymap.set("n", "]c", ":cnext<cr>", { noremap = true, silent = true })
   vim.keymap.set("n", "[c", ":cprev<cr>", { noremap = true, silent = true })
-  vim.keymap.set("n", "<F4>", ":cnext<cr>", { noremap = true, silent = true })
+  vim.keymap.set("n", "<F1>", ":cnext<cr>", { noremap = true, silent = true })
   vim.keymap.set("n", "<F3>", ":cprev<cr>", { noremap = true, silent = true })
 
   vim.opt.confirm = false

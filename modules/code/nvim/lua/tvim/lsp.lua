@@ -7,13 +7,13 @@ local function init()
   blink.setup({
     keymap = {
       preset = "default",
-      ["<c-a>"] = { "select_next" },
+      ["<c-n>"] = { "select_next" },
       ["<c-e>"] = { "select_prev" },
       ["<c-y>"] = { "accept" },
-      ["<c-u>"] = { "scroll_documentation_up" },
-      ["<c-o>"] = { "scroll_documentation_down" },
-      ["<c-f>"] = { "snippet_forward", "fallback" },
-      ["<c-p>"] = { "snippet_backward", "fallback" },
+      ["<c-k>"] = { "scroll_documentation_up" },
+      ["<c-j>"] = { "scroll_documentation_down" },
+      ["<c-u>"] = { "snippet_forward", "fallback" },
+      ["<c-l>"] = { "snippet_backward", "fallback" },
     },
     completion = {
       accept = { auto_brackets = { enabled = false } },
@@ -97,10 +97,10 @@ local function init()
   vim.keymap.set("n", "[d", function()
     vim.diagnostic.jump({ count = -1 })
   end)
-  vim.keymap.set("n", "<F8>", function()
+  vim.keymap.set("n", "<F10>", function()
     vim.diagnostic.jump({ count = 1 })
   end)
-  vim.keymap.set("n", "<F7>", function()
+  vim.keymap.set("n", "<F2>", function()
     vim.diagnostic.jump({ count = -1 })
   end)
   vim.api.nvim_create_autocmd("LspAttach", {
