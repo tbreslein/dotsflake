@@ -1,14 +1,11 @@
-{ config, pkgs, ... }:
+_:
 
 {
   myHome = {
-    code = {
-      enable = true;
-      tmux-terminal = "xterm-ghostty";
-    };
-    # desktop.darwin = {
-    #   enable = true;
-    # };
+    code.enable = true;
+    syke.enable = true;
+    desktop.enable = true;
+    desktop.terminalFontSize = 24;
   };
   # launchd = {
   #   enable = true;

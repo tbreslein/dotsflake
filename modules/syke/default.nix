@@ -5,21 +5,175 @@
 }:
 let
   cfg = config.myHome.syke;
+
+  concatStrList = lib.strings.concatStringsSep " ";
+  codeDir = config.home.homeDirectory + "/code/";
 in
 {
   options = {
     myHome.syke = {
       enable = lib.mkEnableOption "Enable syke";
-      pacman-pkgs = lib.mkOption {
-        type = with lib.types; listOf str;
-        default = [ ];
+
+      arch = {
+        enable = lib.mkEnableOption "Enable syke.arch";
+        pacman-pkgs = lib.mkOption {
+          type = with lib.types; listOf str;
+          default = [ ];
+        };
+        aur-pkgs = lib.mkOption {
+          type = with lib.types; listOf str;
+          default = [ ];
+        };
       };
-      aur-pkgs = lib.mkOption {
+
+      systemd = {
+        enable = lib.mkEnableOption "Enable syke.systemd";
+        services-masked = lib.mkOption {
+          type = with lib.types; listOf str;
+          default = [ ];
+        };
+        services-enabled = lib.mkOption {
+          type = with lib.types; listOf str;
+          default = [ ];
+        };
+        user-services-enabled = lib.mkOption {
+          type = with lib.types; listOf str;
+          default = [ ];
+        };
+      };
+
+      code-repos = lib.mkOption {
         type = with lib.types; listOf str;
         default = [ ];
       };
     };
   };
 
-  config = lib.mkIf cfg.enable { };
+  config = lib.mkIf cfg.enable {
+    home.activation = lib.mkMerge [
+      (lib.mkIf cfg.arch.enable {
+        arch-pkgs =
+          let
+            mk-pkgs = xs: lib.strings.concatStringsSep "\n" (lib.lists.naturalSort (lib.lists.unique xs));
+            pacman-pkgs = mk-pkgs cfg.arch.pacman-pkgs;
+            aur-pkgs = mk-pkgs cfg.arch.aur-pkgs;
+
+            state-dir = config.home.homeDirectory + "/.local/state/syke";
+            awk = "${pkgs-unstable.gawk}/bin/awk";
+            yay = "/usr/bin/yay";
+          in
+          lib.hm.dag.entryAfter [ "writeBoundary" "installPackages" "awk" ]
+            (lib.strings.concatLines [
+              /*bash*/
+              ''
+                prep_pkgs() {
+                  pkg_manager="''\$1"
+                  state_base="${state-dir}/$pkg_manager"
+
+                  current_state="''\${state_base}_current"
+                  want="''\${state_base}_want"
+                  install="''\${state_base}_install"
+                  remove="''\${state_base}_remove"
+
+                  touch $current_state
+
+                  mkdir -p ${state-dir}
+
+                  if [[ "$pkg_manager" == "pacman" ]]; then
+                    echo "${pacman-pkgs}" > "$want"
+                  elif [[ "$pkg_manager" == "aur" ]]; then
+                    echo "${aur-pkgs}" > "$want"
+                  else
+                    echo "invalid pkg_manager: $pkg_manager"
+                    exit 1
+                  fi
+
+                  comm -23 "$want" "$current_state" >"$install"
+                  comm -13 "$want" "$current_state" >"$remove"
+                }
+
+                set -euo pipefail
+
+                prep_pkgs pacman
+                pacman_want=$want
+                pacman_current=$current_state
+                pacman_install=$install
+                pacman_remove=$remove
+
+                prep_pkgs aur
+                aur_want=$want
+                aur_current=$current_state
+                aur_install=$install
+                aur_remove=$remove
+
+                if [ -s "$pacman_remove" ]; then
+                  ${yay} -R $(${awk} '{print $1}' $pacman_remove)
+                fi
+                if [ -s "$aur_remove" ]; then
+                  ${yay} -R $(${awk} '{print $1}' $aur_remove)
+                fi
+
+                ${yay}
+
+                if [ -s "$pacman_install" ]; then
+                  ${yay} --needed -S $(${awk} '{print $1}' $pacman_install)
+                fi
+                if [ -s "$aur_install" ]; then
+                  ${yay} --needed -S $(${awk} '{print $1}' $aur_install)
+                fi
+
+                mv $pacman_want $pacman_current
+                rm $pacman_install
+                rm $pacman_remove
+
+                mv $aur_want $aur_current
+                rm $aur_install
+                rm $aur_remove
+              ''
+            ]);
+      })
+
+      (lib.mkIf cfg.systemd.enable {
+        systemd-services =
+          lib.hm.dag.entryAfter [ "writeBoundary" "arch-pkgs" ]
+            (lib.strings.concatLines [
+              (if lib.length cfg.systemd.user-services-enabled > 0
+              then "systemd --user enable ${concatStrList cfg.systemd.user-services-enabled}"
+              else ""
+              )
+
+              (if lib.length cfg.systemd.services-enabled > 0
+              then "sudo systemd enable ${concatStrList cfg.systemd.services-enabled}"
+              else ""
+              )
+
+              (if lib.length cfg.systemd.services-masked > 0
+              then "sudo systemd mask ${concatStrList cfg.systemd.services-masked}"
+              else ""
+              )
+            ]);
+      })
+
+      {
+        code-repos =
+          let
+            clone = remote:
+              let dir = codeDir + (lib.strings.removeSuffix ".git" (lib.lists.last (builtins.split "/" remote)));
+              in
+                /* bash */
+              ''
+                if [ ! -d ${codeDir} ]; then
+                  mkdir -p ${codeDir}
+                fi
+                if [ ! -d ${dir} ]; then
+                  ${pkgs-unstable.git}/bin/git clone ${remote} ${dir} \
+                    --config core.sshCommand="${pkgs-unstable.openssh}/bin/ssh -i ${config.home.homeDirectory}/.ssh/id_rsa"
+                fi
+              '';
+          in
+          lib.hm.dag.entryAfter [ "writeBoundary" "installPackages" "git" "ssh" ]
+            (lib.strings.concatMapStringsSep "\n" clone cfg.code-repos);
+      }
+    ];
+  };
 }

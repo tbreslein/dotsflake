@@ -2,12 +2,17 @@ _:
 
 {
   myHome = {
-    code = {
-      enable = true;
-    };
+    code.enable = true;
     linux = {
       enable = true;
-      terminalFontSize = 22;
+      desktop.enable = true;
+      desktop.terminalFontSize = 22;
+      amd-cpu.enable = true;
+    };
+    syke = {
+      enable = true;
+      arch.enable = true;
+      systemd.enable = true;
     };
   };
 }

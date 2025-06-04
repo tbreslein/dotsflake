@@ -61,24 +61,30 @@ let
   '';
 in
 {
-  options = {
-    myHome.code = {
-      enable = lib.mkEnableOption "Enable coding role";
-      tmux-terminal = lib.mkOption {
-        type = lib.types.str;
-        default = "alacritty";
-        description = "Which default terminal and oversides to set for tmux";
-      };
-    };
-  };
+  options.myHome.code.enable = lib.mkEnableOption "Enable coding role";
 
   config = lib.mkIf cfg.enable {
-    home = {
-      file.".luacheckrc" = {
-        text = ''
-          globals = { "vim" }
-        '';
-      };
+    home.file.".luacheckrc".text = ''
+      globals = { "vim" }
+    '';
+    home.packages = [ pkgs-unstable.gitu ];
+    myHome.syke = {
+      code-repos =
+        let
+          buildUrl = x: "git@github.com:tbreslein/" + x + ".git";
+        in
+        lib.lists.map buildUrl [
+          "capturedlambdav2"
+        ];
+
+      arch.pacman-pkgs = [
+        "clang"
+        "go"
+        "cmake"
+        "make"
+        "ninja"
+        "meson"
+      ];
     };
 
     editorconfig = {
@@ -176,18 +182,16 @@ in
         keyMode = "vi";
         mouse = true;
         prefix = "C-Space";
+        terminal = "alacritty";
         extraConfig =
           /*
         tmux
           */
           ''
-            ${if cfg.tmux-terminal == "" then "" else ''
-              set -g default-terminal "${cfg.tmux-terminal}"
-              set -sa terminal-overrides ",${cfg.tmux-terminal}:RGB"
-            ''}
+            set -sa terminal-overrides ",alacritty:RGB"
 
             bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
-            bind-key C-g new-window -n gitu -c "#{pane_current_path}" "lazygit"
+            bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
             bind-key C-o command-prompt -p "open app: " "new-window '%%'"
 
             bind-key C-s split-pane -l 30%

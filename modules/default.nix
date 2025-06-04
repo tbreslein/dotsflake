@@ -5,6 +5,7 @@
     ./code
     ./linux
     ./syke
+    ./desktop
   ];
 
   nix.gc.automatic = true;
