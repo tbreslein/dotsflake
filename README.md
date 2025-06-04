@@ -45,6 +45,3 @@ continue home manager settings at programs.c
   - wlsunset
 - desktop/darwin:
   - brew
-- deploy to darwin (idea: deploy the modules slowly, one by one)
-- scetch out kain and vorador
-- overhaul nvim config (configure neorg, and redo my notes)
