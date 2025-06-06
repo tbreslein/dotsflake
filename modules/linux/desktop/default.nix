@@ -38,6 +38,7 @@ in
           "hyprlock"
           "hyprpaper"
           "waybar"
+          "mako"
 
           # wayland stuff
           "qt5-wayland"
@@ -406,7 +407,7 @@ in
       services = {
         mako = {
           enable = true;
-          # package = null;
+          package = pkgs-unstable.emptyDirectory;
           # TODO
         };
       };
