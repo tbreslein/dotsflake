@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, userConf, ... }:
 let
   cfg = config.myHome.desktop;
 in
@@ -12,44 +12,47 @@ in
 
   config = lib.mkIf cfg.enable {
     myHome.syke.arch.pacman-pkgs = [
-      "alacritty"
+      userConf.terminal
     ];
 
-    programs.alacritty = {
-      enable = true;
-      package = null;
-      settings = {
-        window = {
-          dynamic_padding = true;
-          decorations = "None";
-          opacity = 0.95;
-          blur = true;
-          option_as_alt = "Both";
-        };
-        font = {
-          normal.family = "Terminess Nerd Font";
-          # normal.family = "Hack Nerd Font";
-          size = cfg.terminalFontSize;
-        };
-        cursor.style.blinking = "Never";
-        colors = rec {
-          primary = {
-            background = "0x1d2021";
-            foreground = "0xd4be98";
+    programs = {
+      alacritty = {
+        enable = userConf.terminal == "alacritty";
+        package = null;
+        settings = {
+          window = {
+            dynamic_padding = true;
+            decorations = "None";
+            opacity = 0.95;
+            blur = true;
+            option_as_alt = "Both";
           };
-          normal = {
-            black = "0x32302f";
-            red = "0xea6962";
-            green = "0xa9b665";
-            yellow = "0xd8a657";
-            blue = "0x7daea3";
-            magenta = "0xd3869b";
-            cyan = "0x89b482";
-            white = "0xd4be98";
+          font = {
+            normal.family = userConf.monofont;
+            size = cfg.terminalFontSize;
           };
-          bright = normal;
+          cursor.style.blinking = "Never";
+          colors = rec {
+            primary = {
+              background = "0x${userConf.colors.primary.background}";
+              foreground = "0x${userConf.colors.primary.foreground}";
+            };
+            normal = {
+              black = "0x${userConf.colors.normal.black}";
+              red = "0x${userConf.colors.normal.red}";
+              green = "0x${userConf.colors.normal.green}";
+              yellow = "0x${userConf.colors.normal.yellow}";
+              blue = "0x${userConf.colors.normal.blue}";
+              magenta = "0x${userConf.colors.normal.magenta}";
+              cyan = "0x${userConf.colors.normal.cyan}";
+              white = "0x${userConf.colors.normal.white}";
+            };
+            bright = normal;
+          };
         };
       };
+
+      tealdeer.enable = true;
     };
   };
 }

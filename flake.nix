@@ -28,6 +28,33 @@
 
       userConf = {
         name = "tommy";
+        github_name = "tbreslein";
+        work_gitlab_name = "Tommy Breslein";
+        email = "tommy.breslein@protonmail.com";
+        work_email = "tommy.breslein@pailot.com";
+        # monofont = "Terminess Nerd Font";
+        monofont = "Hack Nerd Font";
+        terminal = "alacritty";
+        colors = rec {
+          primary = {
+            background = "1d2021";
+            foreground = "d4be98";
+            accent = "e78a4e";
+            error = normal.red;
+            border = normal.white;
+          };
+          normal = {
+            black = "32302f";
+            red = "ea6962";
+            green = "a9b665";
+            yellow = "d8a657";
+            blue = "7daea3";
+            magenta = "d3869b";
+            cyan = "89b482";
+            white = "d4be98";
+          };
+          bright = normal;
+        };
       };
 
       mkArgs = system:
@@ -78,7 +105,7 @@
                     useGlobalPkgs = true;
                     useUserPackages = true;
                     extraSpecialArgs = args;
-                    users.tommy = {
+                    users.${userConf.name} = {
                       imports = [
                         ./modules
                         ./hosts/${hostname}/home.nix

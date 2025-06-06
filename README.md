@@ -33,8 +33,7 @@ modules
 
 continue home manager settings at programs.c
 
-- shell module (zsh, fzf, ripgrep, etc.)
-- coding module
+- configure bash and make sure you get all the necessary integrations
 - desktop/linux:
   - hyprland
   - clipboard

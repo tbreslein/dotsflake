@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, userConf, ... }:
 let
   cfg = config.myHome.linux;
 in
@@ -16,7 +16,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.homeDirectory = "/home/tommy";
+    home.homeDirectory = "/home/${userConf.name}";
     targets.genericLinux.enable = true;
 
     myHome.syke = {

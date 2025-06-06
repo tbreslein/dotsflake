@@ -28,33 +28,46 @@ in
       ];
       arch = {
         pacman-pkgs = [
+          # hyprland
           "hyprland"
           "hyprpolkitagent"
           "xdg-desktop-portal-hyprland"
+          "wmenu"
+          "hyprsunset"
+          "wlogout"
+          "hyprlock"
+          "hyprpaper"
+          "waybar"
+
+          # wayland stuff
           "qt5-wayland"
           "qt6-wayland"
           "greetd"
-          "pipewire"
-          "pipewire-alsa"
-          "pipewire-pulse"
-          "pipewire-jack"
-          "wireplumber"
           "egl-wayland"
           "xorg-xwayland"
           "wayland-protocols"
-          "alacritty"
+          "wl-clipboard"
+
+          # general desktop apps
+          "pavucontrol"
+          "zathura"
+
+          # fonts
           "noto-fonts"
           "noto-fonts-cjk"
           "noto-fonts-emoji"
           "noto-fonts-extra"
           "ttf-liberation"
           "ttf-roboto"
-          "waybar"
-          "wl-clipboard"
-          "pavucontrol"
-          "wmenu"
-          "wlsunset"
-          "hyprpaper"
+
+          # audio
+          "pipewire"
+          "pipewire-alsa"
+          "pipewire-pulse"
+          "pipewire-jack"
+          "wireplumber"
+
+          # codecs, misc., ...
           "xf86-input-synaptics"
           "xf86-input-libinput"
           "xf86-input-evdev"
@@ -69,48 +82,26 @@ in
           "gst-plugins-base-libs"
           "gst-plugins-good"
           "gst-plugins-ugly"
-          "lib32-gst-plugins-base-libs"
-          "lib32-gst-plugins-good"
           "alsa-lib"
           "alsa-plugins"
-          "lib32-alsa-lib"
-          "lib32-alsa-plugins"
           "libpulse"
-          "lib32-libpulse"
           "giflib"
-          "lib32-giflib"
           "libpng"
-          "lib32-libpng"
           "libldap"
-          "lib32-libldap"
           "gnutls"
-          "lib32-gnutls"
           "mpg123"
-          "lib32-mpg123"
           "openal"
-          "lib32-openal"
           "v4l-utils"
-          "lib32-v4l-utils"
           "libgpg-error"
-          "lib32-libgpg-error"
           "libjpeg-turbo"
-          "lib32-libjpeg-turbo"
           "sqlite"
-          "lib32-sqlite"
           "libxcomposite"
-          "lib32-libxcomposite"
           "libxinerama"
-          "lib32-libxinerama"
           "libgcrypt"
-          "lib32-libgcrypt"
           "ncurses"
-          "lib32-ncurses"
           "ocl-icd"
-          "lib32-ocl-icd"
           "libxslt"
-          "lib32-libxslt"
           "gtk3"
-          "lib32-gtk3"
         ];
         aur-pkgs = [
           "zen-browser-bin"
@@ -247,86 +238,177 @@ in
           "$mod, mouse:273, resizewindow"
         ];
       };
-      #   /*
-      #   hyprlang
-      #   */
-      #   ''
-      #     monitor = ${config.myConf.wayland.extraHyprlandConf.monitor}
-      #     monitor = ,preferred,auto,1
-      #   '';
-      #
-      # ".config/waybar/config.jsonc".text =
-      #   /*
-      #   json
-      #   */
-      #   ''
-      #     {
-      #       "layer": "top",
-      #       "position": "top",
-      #       "modules-left": ["hyprland/workspaces", "hyprland/window"],
-      #       "modules-center": ["clock"],
-      #       "modules-right": ["pulseaudio", "battery", "tray"],
-      #       "hyprland/window": {
-      #         "format": "{}",
-      #         "rewrite": {
-      #           "(.*) - Brave": "Brave"
-      #         },
-      #         "separate-outputs": true
-      #       },
-      #       "tray": {
-      #         "icon-size": 18,
-      #         "spacing": 15
-      #       },
-      #       "clock": {
-      #         "format": "{:%R}",
-      #         "interval": 30
-      #       },
-      #       "battery": {
-      #         "bat": "BAT0",
-      #         "states": {
-      #           "full": 90,
-      #           "good": 70,
-      #           "normal": 50,
-      #           "warning": 30,
-      #           "critical": 15,
-      #           "format": "{icon}   {capacity}%",
-      #           "format-good": "{icon}   {capacity}%",
-      #           "format-full": "   {capacity}%",
-      #           "format-icons": ["", "", "", "", ""],
-      #           "interval": 30
-      #         },
-      #       },
-      #       "pulseaudio": {
-      #         "format": "{icon}  {volume}%  ",
-      #         "format-bluetooth": "  {volume}%  ",
-      #         "format-muted": "婢  Mute  ",
-      #         "interval": 60,
-      #         "format-icons": {
-      #           "default": [""],
-      #         }
-      #       }
-      #     }
-
     };
 
-    programs.waybar = {
-      enable = true;
-      package = pkgs-unstable.emptyDirectory;
-      settings.mainBar = {
-        layer = "top";
-        position = "top";
-        height = 30;
-        modules-left = [ "hyprland/workspaces" ];
-        modules-center = [ ];
-        modules-right = [ "pulseaudio" "battery" "cpu" "memory" "tray" "clock" ];
-      };
-    };
-
-    services = {
-      mako = {
+    programs = {
+      hyprlock = {
         enable = true;
-        # package = null;
+        package = null;
+        # TODO
+      };
+      hypridle = {
+        enable = true;
+        package = null;
+        # TODO
+      };
+      hyprpaper = {
+        enable = true;
+        package = null;
+        # TODO
+      };
+      hyprsunset = {
+        enable = true;
+        package = null;
+        # TODO
+      };
+      waybar = {
+        enable = true;
+        package = pkgs-unstable.emptyDirectory;
+        settings.mainBar = {
+          layer = "top";
+          position = "top";
+          height = 40;
+          modules-left = [ "hyprland/workspaces" ];
+          modules-center = [ "hyprland/window" ];
+          modules-right = [ "pulseaudio" "battery" "cpu" "memory" "tray" "clock" ];
+          "hyprland/window" = {
+            format = " {} ";
+            rewrite = {
+              "(.*) - Zen Browser" = "Zen Browser";
+            };
+          };
+          tray = {
+            icon-size = 18;
+            spacing = 15;
+          };
+          battery = {
+            bat = "BAT0";
+            states = {
+              full = 99;
+              good = 98;
+              normal = 98;
+              warning = 20;
+              critical = 20;
+            };
+            format = "{icon}   {capacity}%";
+            format-good = "{icon}   {capacity}%";
+            format-full = "   {capacity}%";
+            format-icons = [ "" "" "" "" "" ];
+            interval = 30;
+          };
+          network = {
+            # interface = "wlp4s0";
+            format-wifi = " ";
+            format-disconnected = "睊";
+            interval = 60;
+          };
+          pulseaudio = {
+            format = "{icon}  {volume}%  ";
+            format-bluetooth = "  {volume}%  ";
+            format-muted = "婢  Mute  ";
+            format-icons.default = [ "" ];
+          };
+          style = /* json */ ''
+            * {
+              font-family: "UbuntuMono Nerd Font";
+              font-size: 16px;
+            }
+
+            window#waybar {
+              background-color: #225877;
+              color: #ffffff;
+            }
+
+            .modules-left {
+            	background-color: #323232;
+            	padding: 0px 0px 0px 0px;
+            }
+
+            .modules-right {
+            	background-color: #323232;
+            	padding: 0px 5px 0px 0px;
+            }
+
+            #custom-scratch {
+            	background-color: #323232;
+            	color: #b8b8b8;
+            	padding: 0px 9px 0px 9px;
+            }
+
+            #workspaces {
+            }
+
+            #workspaces button {
+            	padding: 0px 11px 0px 11px;
+             	min-width: 1px;
+            	color: #888888;
+            }
+
+            #workspaces button.focused {
+            	padding: 0px 11px 0px 11px;
+            	background-color: #285577;
+            	color: #ffffff;
+            }
+
+            #mode {
+            	background-color: #900000;
+            	color: #ffffff;
+              padding: 0px 5px 0px 5px;
+              border: 1px solid #2f343a;
+            }
+
+            #window {
+            	color: #ffffff;
+            	background-color: #285577;
+              padding: 0px 10px 0px 10px;
+            }
+
+            window#waybar.empty #window {
+            	background-color: transparent;
+            	color: transparent;
+            }
+
+            window#waybar.empty {
+            	background-color: #323232;
+            }
+
+            #network, #temperature, #backlight, #pulseudio, #battery {
+              padding: 0px 15px 0px 15px;
+            }
+
+            #clock {
+            	margin: 0px 15px 0px 15px;
+            }
+
+            #tray {
+              padding: 0px 8px 0px 5px;
+              margin: 0px 5px 0px 5px;
+            }
+
+            #battery.critical {
+              color: #ff5555;
+            }
+            #network.disconnected {
+              color: #ff5555;
+            }
+          '';
+        };
+
+        wlogout = {
+          enable = true;
+          package = null;
+          # TODO
+        };
+
+        imv.enable = true;
+      };
+
+      services = {
+        mako = {
+          enable = true;
+          # package = null;
+          # TODO
+        };
       };
     };
-  };
-}
+  }
