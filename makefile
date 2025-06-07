@@ -1,6 +1,6 @@
 .PHONY: all upgrade update sync
 
-all: sync
+all: upgrade
 
 upgrade:
 	nix run .# -- upgrade

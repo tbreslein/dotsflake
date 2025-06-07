@@ -19,9 +19,6 @@ in
           "lib32-nvidia-utils"
           "nvidia-settings"
         ];
-        aur-pkgs = [
-          "linux-cachyos-headers"
-        ];
       };
     };
   };

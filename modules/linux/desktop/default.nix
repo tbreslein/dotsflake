@@ -1,4 +1,4 @@
-{ config, lib, pkgs-unstable, ... }:
+{ config, lib, pkgs-unstable, userConf, ... }:
 let
   cfg = config.myHome.linux.desktop;
 in
@@ -33,10 +33,10 @@ in
           "hyprpolkitagent"
           "xdg-desktop-portal-hyprland"
           "wmenu"
-          "hyprsunset"
           "wlogout"
           "hyprlock"
-          "hyprpaper"
+          "hypridle"
+          "swww"
           "waybar"
           "mako"
 
@@ -52,6 +52,7 @@ in
           # general desktop apps
           "pavucontrol"
           "zathura"
+          "imv"
 
           # fonts
           "noto-fonts"
@@ -117,7 +118,6 @@ in
       portalPackage = null;
       settings = {
         exec = [
-          # "wlsunset"
         ];
         monitor = ", highres@highrr, auto, 1";
         exec-once = [
@@ -125,9 +125,10 @@ in
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
           "waybar &"
+          "swww-daemon"
+          "swww img ${config.home.homeDirectory}/wallpapers/gruvbox/coffee-cup.jpg"
           # "blueman-applet"
-          # "nm-applet"
-          # "hyprpaper"
+          # "hyprsunset"
         ];
         env = [
           "XCURSOR_SIZE,24"
@@ -149,8 +150,8 @@ in
           border_size = 2;
           gaps_in = 5;
           gaps_out = 20;
-          "col.active_border" = "rgba(33ccffee)";
-          "col.inactive_border" = "rgba(595959aa)";
+          "col.active_border" = "rgba(${userConf.colors.primary.border}ee)";
+          "col.inactive_border" = "rgba(${userConf.colors.primary.background}aa)";
           layout = "master";
         };
         animations.enabled = "no";
@@ -185,9 +186,18 @@ in
         ];
         "$mod" = "SUPER";
         bind = [
-          "$mod, Space, exec, wmenu-run -i -f \"Hack Nerd Font Normal 24\""
+          ''
+            $mod, Space, exec, wmenu-run -i -f \
+              "${userConf.monofont} Normal \
+              ${builtins.toString config.myHome.desktop.terminalFontSize}" \
+              -N ${userConf.colors.primary.background} \
+              -n ${userConf.colors.primary.foreground} \
+              -S ${userConf.colors.normal.black} \
+              -s ${userConf.colors.primary.accent} \
+          ''
           "$mod, Return, exec, [workspace 2] alacritty"
           "$mod, b, exec, [workspace 1] zen-browser"
+          "$mod ALT, n, exec, makoctl dismiss -a"
           "$mod CTRL, q, killactive"
           "$mod ALT, q, exit"
           "$mod, f, fullscreen, 1"
@@ -208,14 +218,22 @@ in
           "$mod ALT, l, resizeactive, 10,0"
           "$mod, Tab, cyclenext,"
           "$mod, Tab, bringactivetotop,"
-          "$mod, s, workspace, 1"
-          "$mod, t, workspace, 2"
+          "$mod, 1, workspace, 1"
+          "$mod, 2, workspace, 2"
+          "$mod, 3, workspace, 3"
+          "$mod, 4, workspace, 4"
+          "$mod CTRL, 1, movetoworkspace, 1"
+          "$mod CTRL, 2, movetoworkspace, 2"
+          "$mod CTRL, 3, movetoworkspace, 3"
+          "$mod CTRL, 4, movetoworkspace, 4"
+          "$mod, t, workspace, 1"
+          "$mod, s, workspace, 2"
           "$mod, r, workspace, 3"
-          "$mod, n, workspace, 4"
-          "$mod CTRL, s, movetoworkspace, 1"
-          "$mod CTRL, t, movetoworkspace, 2"
+          "$mod, a, workspace, 4"
+          "$mod CTRL, t, movetoworkspace, 1"
+          "$mod CTRL, s, movetoworkspace, 2"
           "$mod CTRL, r, movetoworkspace, 3"
-          "$mod CTRL, n, movetoworkspace, 4"
+          "$mod CTRL, a, movetoworkspace, 4"
           "$mod, b, workspace, -1"
           "$mod, w, workspace, +1"
           "$mod CTRL, b, movetoworkspace, -1"
@@ -245,22 +263,61 @@ in
       hyprlock = {
         enable = true;
         package = null;
-        # TODO
-      };
-      hypridle = {
-        enable = true;
-        package = null;
-        # TODO
-      };
-      hyprpaper = {
-        enable = true;
-        package = null;
-        # TODO
-      };
-      hyprsunset = {
-        enable = true;
-        package = null;
-        # TODO
+        settings = {
+          general = {
+            disable_loading_bar = true;
+            grace = 3;
+            hide_cursor = true;
+            no_fade_in = false;
+          };
+
+          background = [
+            {
+              path = "screenshot";
+              blur_passes = 3;
+              blur_size = 8;
+            }
+          ];
+
+          input-field = [
+            {
+              size = "50%, 5%";
+              position = "0, -80";
+              monitor = "";
+              dots_center = true;
+              fade_on_empty = false;
+              font_color = "rgba(${userConf.colors.primary.foreground}ee)";
+              inner_color = "rgba(${userConf.colors.normal.black}ee)";
+              check_color = "rgba(${userConf.colors.primary.accent}ee)";
+              fail_color = "rgba(${userConf.colors.primary.error}ee)";
+              outline_thickness = 0;
+              rounding = 0;
+              font_family = "${userConf.monofont}";
+              placeholder_text = "Password ... ";
+              shadow_passes = 2;
+            }
+          ];
+          label = [
+            {
+              font_size = 120;
+              font_family = "Noto Font Bold";
+              font_color = "rgba(${userConf.colors.primary.foreground}ee)";
+              text = "$TIME";
+              position = "-30, 0";
+              halign = "center";
+              valign = "top";
+            }
+            {
+              font_size = 60;
+              font_family = "Noto Font";
+              font_color = "rgba(${userConf.colors.primary.foreground}ee)";
+              text = "cmd[update:60000] date +\"%A, %d %B %Y\""; # update every 60 seconds
+              position = "-30, -150";
+              halign = "center";
+              valign = "top";
+            }
+          ];
+        };
       };
       waybar = {
         enable = true;
@@ -269,9 +326,9 @@ in
           layer = "top";
           position = "top";
           height = 40;
-          modules-left = [ "hyprland/workspaces" ];
-          modules-center = [ "hyprland/window" ];
-          modules-right = [ "pulseaudio" "battery" "cpu" "memory" "tray" "clock" ];
+          modules-left = [ "hyprland/workspaces" "hyprland/window" ];
+          modules-center = [ ];
+          modules-right = [ "pulseaudio" "battery" "tray" "clock" ];
           "hyprland/window" = {
             format = " {} ";
             rewrite = {
@@ -283,7 +340,6 @@ in
             spacing = 15;
           };
           battery = {
-            bat = "BAT0";
             states = {
               full = 99;
               good = 98;
@@ -309,107 +365,120 @@ in
             format-muted = "婢  Mute  ";
             format-icons.default = [ "" ];
           };
-          style = /* json */ ''
-            * {
-              font-family: "UbuntuMono Nerd Font";
-              font-size: 16px;
-            }
-
-            window#waybar {
-              background-color: #225877;
-              color: #ffffff;
-            }
-
-            .modules-left {
-            	background-color: #323232;
-            	padding: 0px 0px 0px 0px;
-            }
-
-            .modules-right {
-            	background-color: #323232;
-            	padding: 0px 5px 0px 0px;
-            }
-
-            #custom-scratch {
-            	background-color: #323232;
-            	color: #b8b8b8;
-            	padding: 0px 9px 0px 9px;
-            }
-
-            #workspaces {
-            }
-
-            #workspaces button {
-            	padding: 0px 11px 0px 11px;
-             	min-width: 1px;
-            	color: #888888;
-            }
-
-            #workspaces button.focused {
-            	padding: 0px 11px 0px 11px;
-            	background-color: #285577;
-            	color: #ffffff;
-            }
-
-            #mode {
-            	background-color: #900000;
-            	color: #ffffff;
-              padding: 0px 5px 0px 5px;
-              border: 1px solid #2f343a;
-            }
-
-            #window {
-            	color: #ffffff;
-            	background-color: #285577;
-              padding: 0px 10px 0px 10px;
-            }
-
-            window#waybar.empty #window {
-            	background-color: transparent;
-            	color: transparent;
-            }
-
-            window#waybar.empty {
-            	background-color: #323232;
-            }
-
-            #network, #temperature, #backlight, #pulseudio, #battery {
-              padding: 0px 15px 0px 15px;
-            }
-
-            #clock {
-            	margin: 0px 15px 0px 15px;
-            }
-
-            #tray {
-              padding: 0px 8px 0px 5px;
-              margin: 0px 5px 0px 5px;
-            }
-
-            #battery.critical {
-              color: #ff5555;
-            }
-            #network.disconnected {
-              color: #ff5555;
-            }
-          '';
         };
+        style = /* css */ ''
+          * {
+            font-family: "${userConf.monofont}";
+            font-size: ${builtins.toString config.myHome.desktop.terminalFontSize}px;
+          }
 
-        wlogout = {
-          enable = true;
-          package = null;
-          # TODO
-        };
+          window#waybar {
+            background-color: #${userConf.colors.primary.background};
+            color: #${userConf.colors.primary.foreground};
+          }
 
-        imv.enable = true;
+          .modules-left {
+          	padding: 0px 0px 0px 0px;
+          }
+
+          .modules-right {
+          	padding: 0px 5px 0px 0px;
+          }
+
+          #workspaces {
+          }
+
+          #workspaces button {
+          	padding: 0px 11px 0px 11px;
+           	min-width: 1px;
+          	color: #${userConf.colors.primary.foreground};
+          }
+
+          #workspaces button.active {
+          	padding: 0px 11px 0px 11px;
+          	color: #${userConf.colors.primary.accent};
+          }
+
+          #window {
+            padding: 0px 10px 0px 20px;
+          }
+
+          window#waybar.empty #window {
+          	background-color: transparent;
+          	color: transparent;
+          }
+
+          window#waybar.empty {
+          	background-color: #${userConf.colors.normal.black};
+          }
+
+          #network, #temperature, #backlight, #pulseudio, #battery {
+            padding: 0px 15px 0px 15px;
+          }
+
+          #clock {
+          	margin: 0px 15px 0px 15px;
+          }
+
+          #tray {
+            padding: 0px 8px 0px 5px;
+            margin: 0px 5px 0px 5px;
+          }
+
+          #battery.critical {
+            color: #${userConf.colors.primary.error};
+          }
+          #network.disconnected {
+            color: #${userConf.colors.primary.error};
+          }
+        '';
       };
+    };
 
-      services = {
-        mako = {
-          enable = true;
-          package = pkgs-unstable.emptyDirectory;
-          # TODO
+    services = {
+      hypridle = {
+        enable = true;
+        package = null;
+        settings = {
+          general = {
+            after_sleep_cmd = "hyprctl dispatch dpms on";
+            ignore_dbus_inhibit = false;
+            lock_cmd = "hyprlock";
+          };
+
+          listener = [
+            {
+              timeout = 900;
+              on-timeout = "hyprlock";
+            }
+            {
+              timeout = 1200;
+              on-timeout = "hyprctl dispatch dpms off";
+              on-resume = "hyprctl dispatch dpms on";
+            }
+          ];
+        };
+      };
+      mako = {
+        enable = true;
+        package = pkgs-unstable.emptyDirectory;
+        settings = {
+          actions = true;
+          anchor = "top-right";
+          background-color = "#${userConf.colors.primary.background}";
+          border-color = "#${userConf.colors.primary.border}";
+          border-radius = 0;
+          default-timeout = 0;
+          font = "Noto Font ${builtins.toString (config.myHome.desktop.terminalFontSize - 5)}";
+          height = 1000;
+          width = 500;
+          icons = true;
+          ignore-timeout = false;
+          layer = "top";
+          margin = 10;
+          markup = true;
         };
       };
     };
-  }
+  };
+}

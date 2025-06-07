@@ -5,9 +5,12 @@ _:
     code.enable = true;
     linux = {
       enable = true;
-      desktop.enable = true;
-      desktop.terminalFontSize = 22;
       amd-cpu.enable = true;
+      desktop.enable = true;
+    };
+    desktop = {
+      enable = true;
+      terminalFontSize = 25;
     };
     syke = {
       enable = true;

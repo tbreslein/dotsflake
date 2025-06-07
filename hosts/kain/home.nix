@@ -16,6 +16,10 @@ _:
       enable = true;
       arch.enable = true;
       systemd.enable = true;
+      arch.aur-pkgs = [
+        "linux-cachyos"
+        "linux-cachyos-headers"
+      ];
     };
   };
 }

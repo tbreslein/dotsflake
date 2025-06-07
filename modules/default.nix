@@ -235,10 +235,10 @@
 
     nh = {
       enable = true;
-      clean.enable = true;
+      # clean.enable = true;
       flake = "${config.home.homeDirectory}/dotsflake/";
     };
 
-    ripgrip.enable = true;
+    ripgrep.enable = true;
   };
 }

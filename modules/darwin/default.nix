@@ -14,7 +14,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.jankyboarders = {
+    services.jankyborders = {
       enable = false;
       # TODO
     };

@@ -58,9 +58,6 @@ in
           "syncthing"
           "gnutls"
         ];
-        aur-pkgs = [
-          "linux-cachyos"
-        ];
       };
     };
   };

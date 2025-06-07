@@ -234,7 +234,7 @@ in
           '';
       };
       zed-editor = {
-        enable = true;
+        enable = false;
         package = pkgs-unstable.emptyDirectory;
         extensions = [
           # syntax ++ languages
