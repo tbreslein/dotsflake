@@ -116,7 +116,7 @@ locale-gen
 echo "EDITOR=nvim" > /etc/environment && echo "VISUAL=nvim" >> /etc/environment
 
 passwd # root password
-useradd -m -G wheel -s /bin/zsh tommy
+useradd -m -G wheel games gamemode -s /bin/zsh tommy
 passwd tommy
 
 sed -i "s/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/" /etc/sudoers
