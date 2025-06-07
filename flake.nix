@@ -73,8 +73,40 @@
             pkgs = args.pkgs-unstable;
             extraSpecialArgs = args;
             modules = [
-              ./modules
+              ./modules/home
               ./hosts/${hostname}/home.nix
+            ];
+          };
+        };
+
+      mkNixos = system: hostname:
+        let
+          args = mkArgs system;
+          home = "/home/tommy";
+        in
+        {
+          "${hostname}" = nixpkgs-unstable.lib.nixosSystem {
+            inherit system;
+            specialArgs = args;
+            modules = [
+              ./hosts/${hostname}/configuration.nix
+              ./modules/nixos
+
+              home-manager.nixosModules.home-manager
+              {
+                users.users.${userConf.name}.home = "${home}";
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  extraSpecialArgs = args;
+                  users.${userConf.name} = {
+                    imports = [
+                      ./modules/home
+                      ./hosts/${hostname}/home.nix
+                    ];
+                  };
+                };
+              }
             ];
           };
         };
@@ -83,6 +115,10 @@
       homeConfigurations =
         (mkHome "x86_64-linux" "kain")
         // (mkHome "x86_64-linux" "raziel");
+
+      nixosConfigurations =
+        (mkNixos "x86_64-linux" "sol")
+        // (mkNixos "x86_64-linux" "ky");
 
       darwinConfigurations =
         let
@@ -98,6 +134,8 @@
               specialArgs = args;
               modules = [
                 ./hosts/${hostname}/configuration.nix
+                ./modules/darwin
+
                 home-manager.darwinModules.home-manager
                 {
                   users.users.${userConf.name}.home = "${home}";
@@ -107,7 +145,7 @@
                     extraSpecialArgs = args;
                     users.${userConf.name} = {
                       imports = [
-                        ./modules
+                        ./modules/home
                         ./hosts/${hostname}/home.nix
                       ];
                     };
@@ -116,73 +154,5 @@
               ];
             };
         };
-
-      packages = forAllSystems (system:
-        let
-          pkgs = nixpkgs-unstable.legacyPackages.${system};
-          isLinux = pkgs.lib.hasSuffix "linux" system;
-          homeRoot = if isLinux then "/home" else "/Users";
-          flakeDir = "${homeRoot}/${userConf.name}/dotsflake";
-          upgradeCmd =
-            let
-              cmdPrefix =
-                if isLinux
-                then "home-manager"
-                else "sudo darwin-rebuild";
-              flake =
-                "--flake ${flakeDir}" +
-                (if isLinux
-                then "#$(cat /etc/hostname)"
-                else "");
-            in
-            "${cmdPrefix} switch ${flake}";
-          updateCmd = "nix flake update --flake ${flakeDir}";
-        in
-        rec {
-          syke = pkgs.writeShellScriptBin "syke" /* bash */ ''
-            update() {
-              ${updateCmd}
-            }
-            upgrade() {
-              ${upgradeCmd}
-            }
-            sync() {
-              update
-              upgrade
-            }
-
-            if [[ $# -eq 0 ]]; then
-              sync
-              exit 0
-            fi
-
-            while [[ $# -gt 0 ]] do
-              case $1 in
-                update)
-                  update
-                  shift
-                  ;;
-                upgrade)
-                  upgrade
-                  shift
-                  ;;
-                sync)
-                  sync
-                  shift
-                  ;;
-              esac
-            done
-          '';
-
-          default = syke;
-        });
-
-      apps = forAllSystems (system: rec {
-        syke = {
-          type = "app";
-          program = "${self.packages.${system}.default}/bin/syke";
-        };
-        default = syke;
-      });
     };
 }

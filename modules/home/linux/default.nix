@@ -17,7 +17,6 @@ in
 
   config = lib.mkIf cfg.enable {
     home.homeDirectory = "/home/${userConf.name}";
-    targets.genericLinux.enable = true;
 
     myHome.syke = {
       systemd = {
