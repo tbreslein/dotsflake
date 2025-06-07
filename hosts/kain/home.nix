@@ -5,13 +5,13 @@ _:
     code.enable = true;
     linux = {
       enable = true;
+      amd-cpu.enable = true;
       desktop.enable = true;
       nvidia.enable = true;
       gaming.enable = true;
-      amd-cpu.enable = true;
     };
     desktop.enable = true;
-    desktop.terminalFontSize = 24;
+    desktop.terminalFontSize = 25;
     syke = {
       enable = true;
       arch.enable = true;

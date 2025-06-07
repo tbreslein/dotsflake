@@ -8,10 +8,8 @@ _:
       amd-cpu.enable = true;
       desktop.enable = true;
     };
-    desktop = {
-      enable = true;
-      terminalFontSize = 25;
-    };
+    desktop.enable = true;
+    desktop.terminalFontSize = 25;
     syke = {
       enable = true;
       arch.enable = true;

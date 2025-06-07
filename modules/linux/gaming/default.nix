@@ -24,6 +24,7 @@ in
           "wine-nine"
           "winetricks"
           "lact"
+          "gst-plugin-pipewire"
         ] ++ lib.lists.concatMap (x: [ x ] ++ [ "lib32-${x}" ]) [
           "libva"
           "libva-mesa-driver"
@@ -34,7 +35,6 @@ in
 
           "gst-libav"
           "gst-plugin-va"
-          "gst-plugin-pipewire"
           "gst-plugins-bad"
           "gst-plugins-bad-libs"
           "gst-plugins-base"
@@ -43,6 +43,7 @@ in
           "gst-plugins-ugly"
           "alsa-lib"
           "alsa-plugins"
+          "pipewire-jack"
           "libpulse"
           "giflib"
           "libpng"

@@ -62,10 +62,8 @@ in
             aur-pkgs = mk-pkgs cfg.arch.aur-pkgs;
 
             state-dir = config.home.homeDirectory + "/.local/state/syke";
-            awk = "awk";
-            yay = "yay";
           in
-          lib.hm.dag.entryAfter [ "writeBoundary" "installPackages" "awk" ]
+          lib.hm.dag.entryAfter [ "writeBoundary" ]
             (lib.strings.concatLines [
               /*bash*/
               ''
@@ -116,19 +114,19 @@ in
                 aur_remove=$remove
 
                 if [ -s "$pacman_remove" ]; then
-                  ${yay} -R $(${awk} '{print $1}' $pacman_remove)
+                  yay -R $(awk '{print $1}' $pacman_remove)
                 fi
                 if [ -s "$aur_remove" ]; then
-                  ${yay} -R $(${awk} '{print $1}' $aur_remove)
+                  yay -R $(awk '{print $1}' $aur_remove)
                 fi
 
-                echo ${yay}
+                yay
 
                 if [ -s "$pacman_install" ]; then
-                  ${yay} --needed -S $(${awk} '{print $1}' $pacman_install)
+                  yay --needed -S $(awk '{print $1}' $pacman_install)
                 fi
                 if [ -s "$aur_install" ]; then
-                  ${yay} --needed -S $(${awk} '{print $1}' $aur_install)
+                  yay --needed -S $(awk '{print $1}' $aur_install)
                 fi
 
                 mv $pacman_want $pacman_current
@@ -181,7 +179,7 @@ in
                 fi
               '';
           in
-          lib.hm.dag.entryAfter [ "writeBoundary" "installPackages" "git" "ssh" ]
+          lib.hm.dag.entryAfter [ "writeBoundary" "installPackages" "ssh" ]
             (lib.strings.concatLines [
               /*bash*/
               ''
