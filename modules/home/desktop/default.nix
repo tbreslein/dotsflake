@@ -1,4 +1,4 @@
-{ config, lib, userConf, ... }:
+{ config, lib, userConf, pkgs-unstable, ... }:
 let
   cfg = config.myHome.desktop;
 in
@@ -11,14 +11,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    myHome.syke.arch.pacman-pkgs = [
-      userConf.terminal
-    ];
-
     programs = {
       alacritty = {
         enable = userConf.terminal == "alacritty";
-        package = null;
+        package =
+          if config.home.myHome.linux.enable
+          then pkgs-unstable.alacritty
+          else null;
         settings = {
           window = {
             dynamic_padding = true;

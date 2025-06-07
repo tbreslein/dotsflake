@@ -102,8 +102,6 @@ in
     fonts.fontconfig.enable = true;
     wayland.windowManager.hyprland = {
       enable = true;
-      package = null;
-      portalPackage = null;
       settings = {
         exec = [
         ];
@@ -250,7 +248,6 @@ in
     programs = {
       hyprlock = {
         enable = true;
-        package = null;
         settings = {
           general = {
             disable_loading_bar = true;
@@ -309,7 +306,6 @@ in
       };
       waybar = {
         enable = true;
-        package = pkgs-unstable.emptyDirectory;
         settings.mainBar = {
           layer = "top";
           position = "top";
@@ -426,7 +422,6 @@ in
     services = {
       hypridle = {
         enable = true;
-        package = null;
         settings = {
           general = {
             after_sleep_cmd = "hyprctl dispatch dpms on";
@@ -449,7 +444,6 @@ in
       };
       mako = {
         enable = true;
-        package = pkgs-unstable.emptyDirectory;
         settings = {
           actions = true;
           anchor = "top-right";
