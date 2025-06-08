@@ -15,7 +15,7 @@ in
       alacritty = {
         enable = userConf.terminal == "alacritty";
         package =
-          if config.home.myHome.linux.enable
+          if config.myHome.linux.enable
           then pkgs-unstable.alacritty
           else null;
         settings = {

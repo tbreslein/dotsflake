@@ -1,8 +1,12 @@
-{ config, lib, pkgs-unstable, userConf, ... }:
+{ config, lib, pkgs-unstable, userConf, inputs, ... }:
 let
   cfg = config.myHome.linux.desktop;
 in
 {
+  imports = [
+    inputs.zen-browser.homeModules.twilight
+  ];
+
   options.myHome.linux.desktop = {
     enable = lib.mkEnableOption "Enable home linux.desktop role";
     extraWMEnv = lib.mkOption {
@@ -246,6 +250,15 @@ in
     };
 
     programs = {
+      zen-browser = {
+        enable = true;
+        # policies = {
+        #   DisableAppUpdate = true;
+        #   DisableTelemetry = true;
+        #   # TODO: more options: https://mozilla.gitub.io/policy-templates
+        # };
+      };
+
       hyprlock = {
         enable = true;
         settings = {

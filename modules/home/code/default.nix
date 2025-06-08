@@ -236,7 +236,7 @@ in
       zed-editor = {
         enable = true;
         package =
-          if config.home.myHome.linux.enable
+          if config.myHome.linux.enable
           then pkgs-unstable.zed-editor
           else pkgs-unstable.emptyDirectory;
         extensions = [

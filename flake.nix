@@ -1,15 +1,23 @@
 {
   description = "my dotfiles as a flake";
   inputs = {
+    # nixos inputs
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # system management
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    # apps
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
@@ -20,7 +28,7 @@
     , nixpkgs-unstable
     , home-manager
     , nix-darwin
-    ,
+    , ...
     } @ inputs:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
