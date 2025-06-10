@@ -234,11 +234,7 @@ in
           '';
       };
       zed-editor = {
-        enable = true;
-        package =
-          if config.myHome.linux.enable
-          then pkgs-unstable.zed-editor
-          else pkgs-unstable.emptyDirectory;
+        enable = config.myHome.linux.enable;
         extensions = [
           # syntax ++ languages
           "angular"

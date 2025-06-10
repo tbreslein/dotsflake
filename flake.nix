@@ -40,8 +40,8 @@
         work_gitlab_name = "Tommy Breslein";
         email = "tommy.breslein@protonmail.com";
         work_email = "tommy.breslein@pailot.com";
-        # monofont = "Terminess Nerd Font";
-        monofont = "Hack Nerd Font";
+        monofont = "Terminess Nerd Font";
+        # monofont = "Hack Nerd Font";
         terminal = "alacritty";
         colors = rec {
           primary = {
