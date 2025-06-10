@@ -1,33 +1,72 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, inputs, system, userConf, ... }:
+{ config, lib, pkgs, inputs, system, userConf, modulesPath, ... }:
 
 {
   imports =
     [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+      # ./hardware-configuration.nix
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+    initrd = {
+      availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+      kernelModules = [ "nvidia" "nvidia_uvm" "nvidia_drm" ];
+      luks.devices = {
+        "luks-d8adffba-0292-444c-b024-8d82576daa90".device = "/dev/disk/by-uuid/d8adffba-0292-444c-b024-8d82576daa90";
+        "luks-acb1a670-3394-4665-a5f1-0ffeb161d3a2".device = "/dev/disk/by-uuid/acb1a670-3394-4665-a5f1-0ffeb161d3a2";
+      };
+    };
+    kernelModules = [ "kvm-amd" ];
+    # TODO: cachy kernel
+    kernelPackages = pkgs.linuxPackages_latest;
+    extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+    loader = {
+      timeout = 1;
+      efi.canTouchEfiVariables = true;
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 10;
+      };
+    };
+  };
 
-  boot.initrd.luks.devices."luks-acb1a670-3394-4665-a5f1-0ffeb161d3a2".device = "/dev/disk/by-uuid/acb1a670-3394-4665-a5f1-0ffeb161d3a2";
-  networking.hostName = "sol"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-uuid/dc64c0cb-7435-406f-9e04-b7566653beb1";
+      fsType = "ext4";
+    };
+    "/boot" = {
+      device = "/dev/disk/by-uuid/EE07-EF7E";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
+  };
+  swapDevices =
+    [{ device = "/dev/disk/by-uuid/6a149b86-6f4a-4016-bdec-eb0a4de5aeb3"; }];
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  networking = {
+    useDHCP = lib.mkDefault true;
+    hostName = "sol";
+    networkmanager.enable = true;
+    firewall.enable = true;
+  };
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+
+  nixpkgs.hostPlatform = system;
+
+  hardware = {
+    cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    graphics.enable = true;
+    graphics.enable32Bit = true;
+    nvidia = {
+      open = true;
+      modesetting.enable = true;
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
+    };
+  };
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -157,7 +196,6 @@
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
-  networking.firewall.enable = true;
 
   system.stateVersion = "25.05";
 

@@ -21,7 +21,7 @@
     username = userConf.name;
     packages = with pkgs-unstable; [
       nerd-fonts.hack
-      nerd-fonts.departure-mono
+      nerd-fonts.terminess-ttf
 
       ripgrep
       bat
