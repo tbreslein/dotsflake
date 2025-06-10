@@ -3,10 +3,9 @@
 all: upgrade
 
 upgrade:
-	nix run .# -- upgrade
+	sudo nixos-rebuild switch --flake ~/dotsflake
 
 update:
-	nix run .# -- update
+	cd ~/dotsflake && nix flake update
 
-sync:
-	nix run .# -- sync
+sync: update upgrade

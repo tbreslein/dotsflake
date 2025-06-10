@@ -10,9 +10,9 @@
     ];
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [ "nvidia" "nvidia_uvm" "nvidia_drm" ];
   boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [ ];
+  boot.extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
 
   fileSystems."/" =
     {
@@ -45,7 +45,13 @@
   hardware = {
     cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     graphics.enable = true;
-    nvidia.open = true;
+    graphics.enable32Bit = true;
+    nvidia = {
+      open = true;
+      modesetting.enable = true;
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.latest;
+    };
   };
   services.xserver.videoDrivers = [ "nvidia" ];
 }

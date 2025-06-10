@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, system, userConf, ... }:
 
 {
   imports =
@@ -52,6 +52,9 @@
     layout = "us";
     variant = "";
   };
+  services.syncthing = {
+    openDefaultPorts = true;
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.tommy = {
@@ -70,21 +73,68 @@
     vim
     wget
     git
-    kitty
     gnumake
+
+    mangohud
+    protonup
+
+    (inputs.zen-browser.packages.${system}.twilight-official.override
+      {
+        extraPolicies = {
+          DisableAppUpdate = true;
+          DisableTelemetry = true;
+        };
+      })
+
+    (lutris.override {
+      extraLibraries = pkgs: [
+        # List library dependencies here
+      ];
+      extraPkgs = pkgs: [
+        wine-staging
+        winetricks
+        protontricks
+      ];
+    })
   ];
+
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    extraCompatPackages = with pkgs; [
+      proton-ge-bin
+    ];
+  };
+  programs.gamemode.enable = true;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
 
   programs.hyprland.enable = true;
   programs.hyprland.xwayland.enable = true;
   services.greetd = {
-    enable = false;
-    # settings = rec {
-    #   initial_session = {
-    #     command = "${pkgs.hyprland}/bin/Hyprland";
-    #     user = "tommy";
-    #   };
-    #   default_session.command = initial_session;
-    # };
+    enable = true;
+    settings =
+      let
+        session = "${pkgs.hyprland}/bin/Hyprland";
+        tuigreet = "${pkgs.greetd.tuigreet}/bin/tuigreet";
+      in
+      {
+        initial_session = {
+          command = session;
+          user = userConf.name;
+        };
+        default_session = {
+          # run tuigreet, when quitting the initial_session
+          command = "${tuigreet} --asterisks --remember --remember-user-session --time --cmd ${session}";
+          user = "greeter";
+        };
+      };
   };
   environment.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
@@ -107,18 +157,8 @@
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall.enable = true;
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "25.05";
 
 }

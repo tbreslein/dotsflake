@@ -11,7 +11,7 @@ _:
       #gaming.enable = true;
     };
     desktop.enable = true;
-    desktop.terminalFontSize = 25;
+    desktop.terminalFontSize = 17;
     #syke = {
     #  enable = true;
     #  arch.enable = true;

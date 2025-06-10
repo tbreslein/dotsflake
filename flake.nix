@@ -18,7 +18,7 @@
     # apps
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      # inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 
@@ -70,7 +70,7 @@
           pkgs-stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
           pkgs-unstable = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
         in
-        { inherit inputs pkgs-stable pkgs-unstable userConf; };
+        { inherit inputs pkgs-stable pkgs-unstable userConf system; };
 
       mkHome = system: hostname:
         let

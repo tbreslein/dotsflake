@@ -1,12 +1,8 @@
-{ config, lib, pkgs-unstable, userConf, inputs, ... }:
+{ config, lib, pkgs-unstable, userConf, ... }:
 let
   cfg = config.myHome.linux.desktop;
 in
 {
-  imports = [
-    inputs.zen-browser.homeModules.twilight
-  ];
-
   options.myHome.linux.desktop = {
     enable = lib.mkEnableOption "Enable home linux.desktop role";
     extraWMEnv = lib.mkOption {
@@ -22,6 +18,7 @@ in
         brightnessctl
         grim
         slurp
+        wmenu
       ];
     };
 
@@ -109,7 +106,7 @@ in
       settings = {
         exec = [
         ];
-        monitor = ", highres@highrr, auto, 1";
+        monitor = ", highres@highrr, auto, 1.5";
         exec-once = [
           "systemctl --user hyprpolkitagent"
           "wl-paste --type text --watch cliphist store"
@@ -186,7 +183,7 @@ in
               -s ${userConf.colors.primary.accent} \
           ''
           "$mod, Return, exec, [workspace 2] alacritty"
-          "$mod, b, exec, [workspace 1] zen-browser"
+          "$mod, b, exec, [workspace 1] zen-twilight"
           "$mod ALT, n, exec, makoctl dismiss -a"
           "$mod CTRL, q, killactive"
           "$mod ALT, q, exit"
@@ -250,15 +247,6 @@ in
     };
 
     programs = {
-      zen-browser = {
-        enable = true;
-        # policies = {
-        #   DisableAppUpdate = true;
-        #   DisableTelemetry = true;
-        #   # TODO: more options: https://mozilla.gitub.io/policy-templates
-        # };
-      };
-
       hyprlock = {
         enable = true;
         settings = {
@@ -326,12 +314,7 @@ in
           modules-left = [ "hyprland/workspaces" "hyprland/window" ];
           modules-center = [ ];
           modules-right = [ "pulseaudio" "battery" "tray" "clock" ];
-          "hyprland/window" = {
-            format = " {} ";
-            rewrite = {
-              "(.*) - Zen Browser" = "Zen Browser";
-            };
-          };
+          "hyprland/window".format = " {} ";
           tray = {
             icon-size = 18;
             spacing = 15;
@@ -351,7 +334,6 @@ in
             interval = 30;
           };
           network = {
-            # interface = "wlp4s0";
             format-wifi = " ";
             format-disconnected = "睊";
             interval = 60;

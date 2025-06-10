@@ -9,7 +9,13 @@
     ./desktop
   ];
 
-  nix.gc.automatic = true;
+
+  nix = {
+    gc.automatic = true;
+    extraOptions = ''
+      experimental-features = nix-command flakes pipe-operators
+    '';
+  };
 
   home = {
     username = userConf.name;
@@ -20,11 +26,12 @@
       ripgrep
       bat
       gitu
+      kanata
     ];
     stateVersion = "24.11";
 
-    file.".config/nix/nix.conf".text = ''
-      experimental-features = nix-command flakes pipe-operators
+    file.".config/kanata/kanata.kbd".text = /* kbd */ ''
+      ;; TODO
     '';
 
     shell.enableBashIntegration = true;
@@ -232,12 +239,6 @@
 
     htop.enable = true;
     lazygit.enable = true;
-
-    nh = {
-      enable = true;
-      # clean.enable = true;
-      flake = "${config.home.homeDirectory}/dotsflake/";
-    };
 
     ripgrep.enable = true;
   };
