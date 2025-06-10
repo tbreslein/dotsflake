@@ -6,14 +6,14 @@
 let
   cfg = config.myHome.code;
   tmux-sessionizer = pkgs-unstable.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
-    local folders=("''\$HOME")
+    folders=("''\$HOME")
     add_dir() {
       [ -d "''\$HOME/''\$1" ] && folders+=("''\$HOME/''\$1")
     }
     add_dir "code"
     add_dir "work/repos"
 
-    local selected=""
+    selected=""
     if [[ ''\$# -eq 1 ]]; then
       selected=''\$1
     else
@@ -24,8 +24,8 @@ let
       exit 0
     fi
 
-    local selected_name=''\$(basename "''\$selected" | tr . _)
-    local tmux_running=''\$(pgrep tmux)
+    selected_name=''\$(basename "''\$selected" | tr . _)
+    tmux_running=''\$(pgrep tmux)
 
     if [[ -z ''\$TMUX ]] && [[ -z ''\$tmux_running ]]; then
       tmux new-session -s "''\$selected_name" -c "''\$selected"
@@ -41,11 +41,11 @@ let
 
   git-status = pkgs-unstable.writeShellScriptBin "git-status" /* bash */ ''
     if git rev-parse >/dev/null 2>&1; then
-      local result=" ''\$(git rev-parse --abbrev-ref HEAD) "
+      result=" ''\$(git rev-parse --abbrev-ref HEAD) "
       if [ ''\$(git status --porcelain=v1 | wc -l) -gt 0 ]; then
         result="''\${result}!"
       fi
-      local status_uno=''\$(git status -uno)
+      status_uno=''\$(git status -uno)
       if echo "''\$status_uno" | grep -q "Your branch is behind"; then
         result="''\${result}"
       fi
