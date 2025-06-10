@@ -1,22 +1,37 @@
 local function init()
-  require("mini.pick").setup({
-    window = {
-      config = function()
-        return { width = vim.o.columns - 2 }
-      end,
+  -- require("mini.pick").setup({
+  --   window = {
+  --     config = function()
+  --       return { width = vim.o.columns - 2 }
+  --     end,
+  --   },
+  -- })
+  -- vim.keymap.set("n", "<leader>ff", function()
+  --   local in_git = vim.system({ "git", "rev-parse", "--is-inside-worktree" }):wait()
+  --   if in_git.code == 0 then
+  --     MiniPick.builtin.files({ tool = "git" })
+  --   else
+  --     MiniPick.builtin.files()
+  --   end
+  -- end, { noremap = true, silent = true })
+  -- vim.keymap.set("n", "<leader>fs", MiniPick.builtin.grep_live, { noremap = true, silent = true })
+  -- vim.keymap.set("n", "<leader>fh", MiniPick.builtin.help, { noremap = true, silent = true })
+  -- vim.keymap.set("n", "<leader>fb", MiniPick.builtin.buffers, { noremap = true, silent = true })
+
+  local fzflua = require("fzf-lua")
+  fzflua.setup({
+    winopts = {
+      border = vim.g.borderstyle,
+      preview = { layout = "vertical" },
     },
+    fzf_opts = { ["--layout"] = false },
   })
-  vim.keymap.set("n", "<leader>ff", function()
-    local in_git = vim.system({ "git", "rev-parse", "--is-inside-worktree" }):wait()
-    if in_git.code == 0 then
-      MiniPick.builtin.files({ tool = "git" })
-    else
-      MiniPick.builtin.files()
-    end
-  end, { noremap = true, silent = true })
-  vim.keymap.set("n", "<leader>fs", MiniPick.builtin.grep_live, { noremap = true, silent = true })
-  vim.keymap.set("n", "<leader>fh", MiniPick.builtin.help, { noremap = true, silent = true })
-  vim.keymap.set("n", "<leader>fb", MiniPick.builtin.buffers, { noremap = true, silent = true })
+  vim.keymap.set("n", "<leader>ff", fzflua.files, { noremap = true, silent = true })
+  vim.keymap.set("n", "<leader>fs", fzflua.live_grep, { noremap = true, silent = true })
+  vim.keymap.set("n", "<leader>fh", fzflua.helptags, { noremap = true, silent = true })
+  vim.keymap.set("n", "<leader>fb", fzflua.buffers, { noremap = true, silent = true })
+
+  require("mini.pick").setup()
   vim.ui.select = MiniPick.ui_select
 
   local mini_files = require("mini.files")

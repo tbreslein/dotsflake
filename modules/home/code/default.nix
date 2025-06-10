@@ -151,8 +151,8 @@ in
               nvim-treesitter-context
               mini-nvim
               gruvbox-material
-              neogit
               conform-nvim
+              fzf-lua
               nvim-lint
               tmux-nvim
               harpoon2
