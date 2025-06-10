@@ -87,8 +87,6 @@ local function init()
   })
   require("mini.trailspace").setup()
 
-  vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<cr>")
-
   local notify = require("mini.notify")
   notify.setup()
   vim.notify = notify.make_notify({
