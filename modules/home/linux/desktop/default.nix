@@ -310,7 +310,7 @@ in
         settings.mainBar = {
           layer = "top";
           position = "top";
-          height = 40;
+          height = 30;
           modules-left = [ "hyprland/workspaces" "hyprland/window" ];
           modules-center = [ ];
           modules-right = [ "pulseaudio" "battery" "tray" "clock" ];
