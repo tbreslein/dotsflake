@@ -16,10 +16,7 @@
     };
 
     # apps
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      # inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
+    zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };
 
   outputs =
@@ -90,7 +87,7 @@
       mkNixos = system: hostname:
         let
           args = mkArgs system;
-          home = "/home/tommy";
+          home = "/home/${userConf.name}";
         in
         {
           "${hostname}" = nixpkgs-unstable.lib.nixosSystem {

@@ -456,6 +456,8 @@ in
           markup = true;
         };
       };
+
+      swww.enable = true;
     };
   };
 }
