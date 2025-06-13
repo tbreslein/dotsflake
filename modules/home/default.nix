@@ -201,6 +201,9 @@
         aa = "add .";
         p = "pull";
         P = "push";
+        PU = "push -u origin";
+        PF = "push --force-with-lease";
+        PUF = "push --force-with-lease -u origin";
         f = "fetch";
       };
       delta.enable = true;
