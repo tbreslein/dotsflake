@@ -6,12 +6,14 @@ in
   options.mySystem.nvidia.enable = lib.mkEnableOption "enable nixos.nvidia";
 
   config = lib.mkIf cfg.enable {
-    hardware.nvidia = {
+    hardware = {
       graphics.enable = true;
-      open = true;
-      modesetting.enable = true;
-      nvidiaSettings = true;
-      package = config.boot.kernelPackages.nvidiaPackages.latest;
+      nvidia = {
+        open = true;
+        modesetting.enable = true;
+        nvidiaSettings = true;
+        package = config.boot.kernelPackages.nvidiaPackages.latest;
+      };
     };
     services.xserver.videoDrivers = [ "nvidia" ];
   };
