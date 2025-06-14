@@ -240,6 +240,11 @@
       };
     };
 
+    nh = {
+      enable = true;
+      flake = "${config.home.homeDirectory}/dotsflake";
+    };
+
     htop.enable = true;
     lazygit.enable = true;
 
