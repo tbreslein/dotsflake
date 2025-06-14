@@ -1,4 +1,4 @@
-{ config, lib, pkgs, userConf, ... }:
+{ config, lib, pkgs, userConf, inputs, ... }:
 let
   cfg = config.mySystem.desktop;
 in
