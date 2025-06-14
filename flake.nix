@@ -1,9 +1,10 @@
 {
   description = "my dotfiles as a flake";
   inputs = {
-    # nixos inputs
+    # repositories
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     # system management
     home-manager = {
@@ -20,24 +21,21 @@
   };
 
   outputs =
-    { self
-    , nixpkgs-stable
+    { nixpkgs-stable
     , nixpkgs-unstable
     , home-manager
     , nix-darwin
     , ...
     } @ inputs:
     let
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
-      forAllSystems = nixpkgs-stable.lib.genAttrs supportedSystems;
-
       userConf = {
         name = "tommy";
         github_name = "tbreslein";
         work_gitlab_name = "Tommy Breslein";
         email = "tommy.breslein@protonmail.com";
         work_email = "tommy.breslein@pailot.com";
-        monofont = "Terminess Nerd Font";
+        monofont = "DepartureMono Nerd Font";
+        # monofont = "Terminess Nerd Font";
         # monofont = "Hack Nerd Font";
         terminal = "alacritty";
         colors = rec {

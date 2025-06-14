@@ -22,13 +22,14 @@
     packages = with pkgs-unstable; [
       nerd-fonts.hack
       nerd-fonts.terminess-ttf
+      nerd-fonts.departure-mono
 
       ripgrep
       bat
       gitu
       kanata
     ];
-    stateVersion = "24.11";
+    stateVersion = "25.5";
 
     file.".config/kanata/kanata.kbd".text = /* kbd */ ''
       ;; TODO
