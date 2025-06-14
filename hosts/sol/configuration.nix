@@ -10,7 +10,6 @@
     hostName = "sol";
   };
   boot = {
-    fsck = false;
     initrd = {
       availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
       kernelModules = [ "nvidia" "nvidia_uvm" "nvidia_drm" ];
@@ -26,6 +25,7 @@
     "/" = {
       device = "/dev/disk/by-uuid/dc64c0cb-7435-406f-9e04-b7566653beb1";
       fsType = "ext4";
+      noCheck = true;
     };
     "/boot" = {
       device = "/dev/disk/by-uuid/EE07-EF7E";
