@@ -23,6 +23,7 @@
   outputs =
     { nixpkgs-stable
     , nixpkgs-unstable
+    , chaotic
     , home-manager
     , nix-darwin
     , ...
@@ -94,6 +95,7 @@
             modules = [
               ./hosts/${hostname}/configuration.nix
               ./modules/nixos
+              chaotic.nixosModules.default
 
               home-manager.nixosModules.home-manager
               {

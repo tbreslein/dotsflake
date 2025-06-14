@@ -1,4 +1,4 @@
-{ config, modulesPath, ... }:
+{ config, modulesPath, pkgs, ... }:
 
 {
   imports = [
@@ -20,6 +20,7 @@
     };
     kernelModules = [ "kvm-amd" ];
     extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+    kernelPackages = pkgs.linuxPackages_cachyos;
   };
   fileSystems = {
     "/" = {

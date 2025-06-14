@@ -29,7 +29,7 @@
       gitu
       kanata
     ];
-    stateVersion = "25.5";
+    stateVersion = "25.05";
 
     file.".config/kanata/kanata.kbd".text = /* kbd */ ''
       ;; TODO
