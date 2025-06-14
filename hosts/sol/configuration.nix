@@ -10,7 +10,6 @@
     hostName = "sol";
   };
   boot = {
-    fsck = false;
     initrd = {
       availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
       kernelModules = [ "nvidia" "nvidia_uvm" "nvidia_drm" ];

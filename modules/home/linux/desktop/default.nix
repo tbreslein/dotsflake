@@ -19,85 +19,8 @@ in
         grim
         slurp
         wmenu
+        wl-clipboard
       ];
-    };
-
-    myHome.syke = {
-      systemd.services-enabled = [
-        "greetd"
-        "bluetooth"
-      ];
-      arch = {
-        pacman-pkgs = [
-          # hyprland
-          "hyprland"
-          "hyprpolkitagent"
-          "xdg-desktop-portal-hyprland"
-          "wmenu"
-          "wlogout"
-          "hyprlock"
-          "hypridle"
-          "swww"
-          "waybar"
-          "mako"
-
-          # wayland stuff
-          "qt5-wayland"
-          "qt6-wayland"
-          "greetd"
-          "egl-wayland"
-          "xorg-xwayland"
-          "wayland-protocols"
-          "wl-clipboard"
-
-          # general desktop apps
-          "pavucontrol"
-          "zathura"
-          "imv"
-
-          # fonts
-          "noto-fonts"
-          "noto-fonts-cjk"
-          "noto-fonts-emoji"
-          "noto-fonts-extra"
-          "ttf-liberation"
-          "ttf-roboto"
-
-          # audio
-          "pipewire"
-          "pipewire-alsa"
-          "pipewire-pulse"
-          "pipewire-jack"
-          "wireplumber"
-
-          # codecs, misc., ...
-          "bluez"
-          "bluez-utils"
-          "alsa-lib"
-          "alsa-plugins"
-          "libpulse"
-          "giflib"
-          "libpng"
-          "libldap"
-          "gnutls"
-          "mpg123"
-          "openal"
-          "v4l-utils"
-          "libgpg-error"
-          "libjpeg-turbo"
-          "sqlite"
-          "libxcomposite"
-          "libxinerama"
-          "libgcrypt"
-          "ncurses"
-          "ocl-icd"
-          "libxslt"
-          "gtk3"
-        ];
-        aur-pkgs = [
-          "zen-browser-bin"
-        ];
-      };
     };
 
     fonts.fontconfig.enable = true;
@@ -108,14 +31,11 @@ in
         ];
         monitor = ", highres@highrr, auto, 1.5";
         exec-once = [
-          "systemctl --user hyprpolkitagent"
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
           "waybar &"
-          "swww-daemon"
-          "swww img ${config.home.homeDirectory}/wallpapers/gruvbox/coffee-cup.jpg"
+          # "swww restore"
           # "blueman-applet"
-          # "hyprsunset"
         ];
         env = [
           "XCURSOR_SIZE,24"
@@ -456,7 +376,13 @@ in
           markup = true;
         };
       };
+      wlsunset = {
+        enable = true;
+        sunrise = "07:00";
+        sunset = "18:00";
+      };
 
+      hyprpolkitagent.enable = true;
       swww.enable = true;
     };
   };
