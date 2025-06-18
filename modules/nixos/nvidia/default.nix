@@ -6,6 +6,11 @@ in
   options.mySystem.nvidia.enable = lib.mkEnableOption "enable nixos.nvidia";
 
   config = lib.mkIf cfg.enable {
+    boot = {
+      initrd.kernelModules = [ "nvidia" "nvidia_uvm" "nvidia_drm" ];
+      extraModulePackages = [ config.boot.kernelPackages.nvidia_x11 ];
+    };
+
     hardware = {
       graphics.enable = true;
       nvidia = {
