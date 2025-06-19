@@ -17,12 +17,13 @@ in
 
     environment = {
       systemPackages = with pkgs; [
-        (inputs.zen-browser.packages.${system}.twilight-official.override {
-          extraPolicies = {
-            DisableAppUpdate = true;
-            DisableTelemetry = true;
-          };
-        })
+	brave
+        #(inputs.zen-browser.packages.${system}.twilight-official.override {
+        #  extraPolicies = {
+        #    DisableAppUpdate = true;
+        #    DisableTelemetry = true;
+        #  };
+        #})
       ];
       sessionVariables = {
         MOZ_ENABLE_WAYLAND = "1";
