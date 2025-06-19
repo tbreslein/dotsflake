@@ -7,7 +7,7 @@
 
   networking.hostName = "ky";
 
-  #boot.kernelPackages = pkgs.linuxPackages_cachyos;
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
   mySystem = {
     desktop.enable = true;
     amd.enable = true;
