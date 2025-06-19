@@ -17,7 +17,8 @@
     };
 
     # apps
-    zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    #zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    zen-browser.url = "github:clementpoiret/zen-browser-flake";
   };
 
   outputs =
