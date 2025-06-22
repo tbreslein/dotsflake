@@ -146,41 +146,33 @@ in
         # '';
         extraPackages = extraEditorPackages;
         plugins = with pkgs-unstable.vimPlugins; [
+          # ui
           nvim-treesitter.withAllGrammars
           nvim-treesitter-context
           gruvbox-material
+
+          # tooling
+          conform-nvim
+          nvim-lint
+
+          # navigation
+          tmux-nvim
+          harpoon2
+          plenary-nvim
+          telescope-nvim
+          telescope-zf-native-nvim
+
+          # lsp
+          blink-cmp
+          friendly-snippets
+          # nvim-lspconfig
+
+          # dap
+          nvim-dap
+          nvim-dap-view
+          nvim-dap-go
+          nvim-dap-python
         ];
-        # plugins = [
-        #   (pkgs-unstable.vimUtils.buildVimPlugin {
-        #     name = "tvim";
-        #     src = ./nvim;
-        #     dependencies = with pkgs-unstable.vimPlugins; [
-        #       # editing/ui
-        #       nvim-treesitter.withAllGrammars
-        #       nvim-treesitter-textobjects
-        #       nvim-treesitter-context
-        #       mini-nvim
-        #       gruvbox-material
-        #       conform-nvim
-        #       fzf-lua
-        #       nvim-lint
-        #       tmux-nvim
-        #       harpoon2
-        #       plenary-nvim
-        #
-        #       # lsp
-        #       blink-cmp
-        #       nvim-lspconfig
-        #       rustaceanvim
-        #       friendly-snippets
-        #       tiny-inline-diagnostic-nvim
-        #
-        #       # dap
-        #       nvim-dap
-        #       nvim-dap-view
-        #       nvim-dap-go
-        #       nvim-dap-python
-        #     ]})];
         withNodeJs = false;
         withPython3 = false;
         withRuby = false;
