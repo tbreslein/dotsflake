@@ -20,6 +20,7 @@ in
         slurp
         wmenu
         wl-clipboard
+        nwg-look
       ];
     };
 
@@ -38,8 +39,10 @@ in
           # "blueman-applet"
         ];
         env = [
-          "XCURSOR_SIZE,30"
-          "HYPRCURSOR_SIZE,30"
+          "XCURSOR_THEME,Capitaine Cursors"
+          "XCURSOR_SIZE,34"
+          "HYPRCURSOR_THEME,Capitaine Cursors"
+          "HYPRCURSOR_SIZE,34"
           "XDG_SESSION_TYPE,wayland"
           "XDG_SESSION_DESKTOP,Hyprland"
           "XDG_CURRENT_DESKTOP,Hyprland"

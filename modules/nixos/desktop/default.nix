@@ -17,13 +17,16 @@ in
 
     environment = {
       systemPackages = with pkgs; [
-	brave
-        #(inputs.zen-browser.packages.${system}.twilight-official.override {
-        #  extraPolicies = {
-        #    DisableAppUpdate = true;
-        #    DisableTelemetry = true;
-        #  };
-        #})
+        # brave
+        (inputs.zen-browser.packages.${system}.twilight-official.override {
+          extraPolicies = {
+            DisableAppUpdate = true;
+            DisableTelemetry = true;
+          };
+        })
+        kdePackages.breeze-gtk
+        kdePackages.breeze-icons
+        capitaine-cursors
       ];
       sessionVariables = {
         MOZ_ENABLE_WAYLAND = "1";
