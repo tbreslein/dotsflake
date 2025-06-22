@@ -79,9 +79,14 @@ in
   options.myHome.code.enable = lib.mkEnableOption "Enable coding role";
 
   config = lib.mkIf cfg.enable {
-    home.file.".luacheckrc".text = ''
-      globals = { "vim" }
-    '';
+    home.file = {
+      ".luacheckrc".text = ''
+        globals = { "vim" }
+      '';
+
+      ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink ./nvim;
+    };
+
     home.packages = [ pkgs-unstable.gitu ];
     myHome.syke = {
       code-repos =
@@ -136,43 +141,46 @@ in
         enable = true;
         package = pkgs-unstable.neovim-unwrapped;
         defaultEditor = true;
-        extraLuaConfig = ''
-          require("tvim").init()
-        '';
+        # extraLuaConfig = ''
+        #   require("tvim").init()
+        # '';
         extraPackages = extraEditorPackages;
-        plugins = [
-          (pkgs-unstable.vimUtils.buildVimPlugin {
-            name = "tvim";
-            src = ./nvim;
-            dependencies = with pkgs-unstable.vimPlugins; [
-              # editing/ui
-              nvim-treesitter.withAllGrammars
-              nvim-treesitter-textobjects
-              nvim-treesitter-context
-              mini-nvim
-              gruvbox-material
-              conform-nvim
-              fzf-lua
-              nvim-lint
-              tmux-nvim
-              harpoon2
-              plenary-nvim
-
-              # lsp
-              blink-cmp
-              nvim-lspconfig
-              rustaceanvim
-              friendly-snippets
-              tiny-inline-diagnostic-nvim
-
-              # dap
-              nvim-dap
-              nvim-dap-view
-              nvim-dap-go
-              nvim-dap-python
-            ];
-          })
+        plugins = with pkgs-unstable.vimPlugins; [
+          nvim-treesitter.withAllGrammars
+          nvim-treesitter-context
+          gruvbox-material
         ];
+        # plugins = [
+        #   (pkgs-unstable.vimUtils.buildVimPlugin {
+        #     name = "tvim";
+        #     src = ./nvim;
+        #     dependencies = with pkgs-unstable.vimPlugins; [
+        #       # editing/ui
+        #       nvim-treesitter.withAllGrammars
+        #       nvim-treesitter-textobjects
+        #       nvim-treesitter-context
+        #       mini-nvim
+        #       gruvbox-material
+        #       conform-nvim
+        #       fzf-lua
+        #       nvim-lint
+        #       tmux-nvim
+        #       harpoon2
+        #       plenary-nvim
+        #
+        #       # lsp
+        #       blink-cmp
+        #       nvim-lspconfig
+        #       rustaceanvim
+        #       friendly-snippets
+        #       tiny-inline-diagnostic-nvim
+        #
+        #       # dap
+        #       nvim-dap
+        #       nvim-dap-view
+        #       nvim-dap-go
+        #       nvim-dap-python
+        #     ]})];
         withNodeJs = false;
         withPython3 = false;
         withRuby = false;
