@@ -154,6 +154,16 @@
             awk '{ print substr($0,1,length($0)-1) }')
           task "$selected_task"
         }
+
+        # __ps1_exitstatus() {
+        #   local err_code=$?
+        #   if [[ $err_code == 0 ]]; then
+        #     echo ""
+        #   else
+        #     echo -e '\[\033[31;1m\]['$err_code']\[\033[0m\]'
+        #   fi
+        # }
+        export PS1='[$?] \[\033[1m\]\W\[\033[0m\] \[\033[1m\]$\[\033[0m\] '
       '';
       logoutExtra = /* bash */ ''
       '';
