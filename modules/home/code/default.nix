@@ -84,7 +84,7 @@ in
         globals = { "vim" }
       '';
 
-      ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink ./nvim;
+      ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/modules/home/code/nvim";
     };
 
     home.packages = [ pkgs-unstable.gitu ];
