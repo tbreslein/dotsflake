@@ -165,7 +165,7 @@ in
           # lsp
           blink-cmp
           friendly-snippets
-          # nvim-lspconfig
+          nvim-lspconfig
 
           # dap
           nvim-dap

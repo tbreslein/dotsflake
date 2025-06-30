@@ -10,23 +10,23 @@ kain is the only machine with gaming, so I skip having a dedicated gaming role.
 
 ```
 hosts
-  \ raziel/default.nix
+  | sol/
     \ hardware-configuration.nix
-  | kain/default.nix
+    \ configuration.nix
+    \ home.nix
+  | ky/
     \ hardware-configuration.nix
+    \ configuration.nix
+    \ home.nix
   | vorador/default.nix
     \ hardware-configuration.nix
   | mbp/default.nix
 
 modules
-  \ common/default.nix
-  | shell/default.nix
-  | code/default.nix
-  | linux/default.nix
-  | darwin/default.nxi
-  | desktop/default.nix
-    \ linux.nix
-    \ darwin.nix
+  | nixos/
+  | home/
+  | darwin/
+  | default.nix
 ```
 
 ## TODO
@@ -35,12 +35,7 @@ continue home manager settings at programs.c
 
 - configure bash and make sure you get all the necessary integrations
 - desktop/linux:
-  - hyprland
-  - clipboard
   - screenshots
-  - waybar
-  - wallpaper
-  - mako
-  - wlsunset
+  - try out niri
 - desktop/darwin:
   - brew

@@ -45,7 +45,7 @@
             foreground = "d4be98";
             accent = "e78a4e";
             error = normal.red;
-            border = normal.white;
+            border = primary.accent;
           };
           normal = {
             black = "32302f";
