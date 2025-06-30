@@ -157,7 +157,6 @@ in
 
           # navigation
           tmux-nvim
-          harpoon2
           plenary-nvim
           telescope-nvim
           telescope-zf-native-nvim
