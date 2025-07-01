@@ -211,11 +211,11 @@
         ac = "commit -a";
         aca = "commit -a --amend";
         C = "commit -a --amend --no-edit";
-        p = "pull";
-        P = "push";
-        PU = "push -u origin";
-        PF = "push --force-with-lease";
-        PUF = "push --force-with-lease -u origin";
+        pl = "pull";
+        p = "push";
+        pu = "push -u origin";
+        pf = "push --force-with-lease";
+        puf = "push --force-with-lease -u origin";
         f = "fetch";
       };
       delta.enable = true;
