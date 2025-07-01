@@ -3,7 +3,7 @@ _:
 {
   myHome = {
     code.enable = true;
-    syke.enable = false;
+    syke.enable = true;
     desktop.enable = true;
     desktop.terminalFontSize = 24;
     darwin.enable = true;

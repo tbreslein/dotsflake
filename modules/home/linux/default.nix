@@ -5,8 +5,6 @@ in
 {
   imports = [
     ./desktop
-    ./gaming
-    ./laptop
     ./nvidia
   ];
 
