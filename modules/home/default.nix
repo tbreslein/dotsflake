@@ -191,9 +191,15 @@
       enableBashIntegration = true;
     };
 
+    zoxide = {
+      enable = true;
+      enableBashIntegration = true;
+    };
+
     git = {
       enable = true;
       aliases = {
+        d = "diff";
         c = "commit";
         ca = "commit --amend";
         caa = "commit --amend --no-edit";
@@ -202,6 +208,9 @@
         sw = "switch";
         a = "add";
         aa = "add .";
+        ac = "commit -a";
+        aca = "commit -a --amend";
+        C = "commit -a --amend --no-edit";
         p = "pull";
         P = "push";
         PU = "push -u origin";
