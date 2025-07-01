@@ -96,15 +96,6 @@ in
         lib.lists.map buildUrl [
           "capturedlambdav2"
         ];
-
-      arch.pacman-pkgs = [
-        "clang"
-        "go"
-        "cmake"
-        "make"
-        "ninja"
-        "meson"
-      ];
     };
 
     editorconfig = {

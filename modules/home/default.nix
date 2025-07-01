@@ -39,7 +39,7 @@
     shellAliases = {
       g = "git";
       gs = "git status";
-      gg = "gitu";
+      gg = "git status -s";
       lg = "lazygit";
       m = "make";
       v = "nvim";
