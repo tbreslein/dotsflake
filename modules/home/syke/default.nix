@@ -36,13 +36,11 @@ in
               in
                 /* bash */
               ''
-                set +o pipefail
-                set +e
                 if [ ! -d ${dir} ]; then
-                  ${git} clone ${remote} ${dir} ${gitConf}
+                  ${git} clone ${remote} ${dir} ${gitConf} &
                 else
                   pushd ${dir}
-                  ${git} pull || true
+                  ${git} pull &
                   popd
                 fi
               '';
@@ -51,6 +49,9 @@ in
             (lib.strings.concatLines [
               /*bash*/
               ''
+                set +o pipefail
+                set +e
+
                 ${setPath}
                 if [ ! -d ${codeDir} ]; then
                   mkdir -p ${codeDir}
@@ -58,6 +59,10 @@ in
               ''
 
               (lib.strings.concatMapStringsSep "\n" clone cfg.code-repos)
+
+              ''
+                wait
+              ''
             ]);
       }
     ];

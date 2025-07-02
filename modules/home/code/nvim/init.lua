@@ -194,7 +194,8 @@ vim.g.diag_symbol_info = "ℹ"
 vim.g.diag_symbol_warn = "⚠"
 
 vim.diagnostic.config({
-  virtual_text = false,
+  float = { border = vim.g.borderstyle },
+  virtual_text = true,
   signs = {
     text = {
       [vim.diagnostic.severity.ERROR] = vim.g.diag_symbol_error,
@@ -203,9 +204,6 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.HINT] = vim.g.diag_symbol_hint,
     },
   },
-  underline = { severity = { min = vim.diagnostic.severity.WARN } },
-  update_in_insert = false,
-  severity_sort = true,
 })
 
 vim.api.nvim_create_user_command("LspInfo", function()
