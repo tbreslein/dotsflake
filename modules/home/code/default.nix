@@ -95,6 +95,7 @@ in
         in
         lib.lists.map buildUrl [
           "capturedlambdav2"
+          "shyr"
         ];
     };
 
