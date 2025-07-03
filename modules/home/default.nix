@@ -9,14 +9,6 @@
     ./desktop
   ];
 
-
-  nix = {
-    gc.automatic = true;
-    extraOptions = ''
-      experimental-features = nix-command flakes pipe-operators
-    '';
-  };
-
   home = {
     username = userConf.name;
     packages = with pkgs-unstable; [
@@ -28,6 +20,18 @@
       bat
       gitu
       kanata
+
+      (writeShellScriptBin "dm" /*bash*/ ''
+        os=""
+        case $(uname -s) in
+          Linux) os="os";;
+          Darwin) os="darwin";;
+        esac
+        case $1 in
+          u) nh $os switch -u;;
+          *) nh $os switch;;
+        esac
+      '')
     ];
     stateVersion = "25.05";
 
@@ -254,6 +258,7 @@
 
     nh = {
       enable = true;
+      clean.enable = true;
       flake = "${config.home.homeDirectory}/dotsflake";
     };
 
