@@ -36,7 +36,6 @@
         email = "tommy.breslein@protonmail.com";
         work_email = "tommy.breslein@pailot.com";
         monofont = "DepartureMono Nerd Font";
-        # monofont = "Terminess Nerd Font";
         # monofont = "Hack Nerd Font";
         terminal = "alacritty";
         colors = rec {
@@ -67,21 +66,6 @@
           pkgs-unstable = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
         in
         { inherit inputs pkgs-stable pkgs-unstable userConf system; };
-
-      mkHome = system: hostname:
-        let
-          args = mkArgs system;
-        in
-        {
-          "${hostname}" = home-manager.lib.homeManagerConfiguration {
-            pkgs = args.pkgs-unstable;
-            extraSpecialArgs = args;
-            modules = [
-              ./modules/home
-              ./hosts/${hostname}/home.nix
-            ];
-          };
-        };
 
       mkNixos = system: hostname:
         let
@@ -117,10 +101,6 @@
         };
     in
     {
-      homeConfigurations =
-        (mkHome "x86_64-linux" "kain")
-        // (mkHome "x86_64-linux" "raziel");
-
       nixosConfigurations =
         (mkNixos "x86_64-linux" "sol")
         // (mkNixos "x86_64-linux" "ky");

@@ -228,6 +228,8 @@
       extraConfig = {
         rerere.enabled = true;
         pull.rebase = true;
+        push.default = "current";
+        push.autoSetupRemote = true;
       };
       includes = [
         {
