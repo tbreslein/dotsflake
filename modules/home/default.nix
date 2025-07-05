@@ -46,7 +46,8 @@
       gg = "git status -s";
       lg = "lazygit";
       m = "make";
-      v = "nvim";
+      vv = "nvim";
+      v = "nvim -u ~/dotsflake/modules/home/code/nvim/minimal.lua";
       ls = "eza --icons=always";
       la = "ls -aa";
       ll = "ls -l";
@@ -95,15 +96,15 @@
       initExtra = /* bash */  ''
       '';
       bashrcExtra = /* bash */ ''
-        tm() {
-          local homedir="${config.home.homeDirectory}"
+        td() {
+          local dotsflake="${config.home.homeDirectory}/dotsflake"
           if [ "$TMUX" != "" ]; then
-            if ! tmux has-session -t home; then
-              tmux new-session -ds "home" -c "$homedir"
+            if ! tmux has-session -t dotsflake; then
+              tmux new-session -ds "dotsflake" -c "$dotsflake"
             fi
           else
-            tmux new-session -ds "home" -c "$homedir"
-            tmux a -t "home"
+            tmux new-session -ds "dotsflake" -c "$dotsflake"
+            tmux a -t "dotsflake"
           fi
         }
 
@@ -191,11 +192,6 @@
     fd.enable = true;
 
     fzf = {
-      enable = true;
-      enableBashIntegration = true;
-    };
-
-    zoxide = {
       enable = true;
       enableBashIntegration = true;
     };

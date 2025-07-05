@@ -73,6 +73,7 @@ let
     statix
     nixpkgs-fmt
     tree-sitter
+    universal-ctags
   ];
 in
 {

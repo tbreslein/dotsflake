@@ -26,6 +26,7 @@ in
         noto-fonts-cjk-serif
         noto-fonts-color-emoji
         noto-fonts-monochrome-emoji
+        pavucontrol
       ];
     };
 
@@ -266,11 +267,13 @@ in
             format-disconnected = "睊";
             interval = 60;
           };
-          pulseaudio = {
+          wireplumber = {
             format = "{icon}  {volume}%  ";
             format-bluetooth = "  {volume}%  ";
             format-muted = "婢  Mute  ";
             format-icons.default = [ "" ];
+            on-click = "wpctl set-volume @DEFAULT_AUDIO_SINK@ toggle";
+            on-click-right = "pavucontrol";
           };
         };
         style = /* css */ ''
