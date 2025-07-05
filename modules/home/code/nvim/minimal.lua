@@ -1,0 +1,6 @@
+-- - minimal set of keybinds and settings
+-- - use ctags instead of lsp
+-- - try using either calling fzf in a floating window for file find, or try
+--   using wildmenu for it
+--   - for fzf: fd --type f | fzf | sed 's/\ /\\ /g'
+--   - vim.opt.wildoptions = { "fuzzy", "pum", "tagfile" }
