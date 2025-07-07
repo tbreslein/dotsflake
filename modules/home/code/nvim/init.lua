@@ -16,6 +16,7 @@ vim.g.maplocalleader = ","
 vim.opt.guicursor = ""
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = "80"
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
@@ -55,8 +56,6 @@ vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
-vim.opt.signcolumn = "yes"
-vim.opt.colorcolumn = "80"
 vim.opt.showmatch = true
 vim.opt.matchtime = 2
 vim.opt.showmode = false
@@ -244,8 +243,6 @@ vim.keymap.set("n", "<leader>fs", telescope_builtin.live_grep, { noremap = true,
 vim.keymap.set("n", "<leader>fh", telescope_builtin.help_tags, { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>fb", telescope_builtin.buffers, { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>fp", ":Ex<cr>", { noremap = true, silent = true })
-
-require("tmux").setup()
 
 -- >>> TOOLS
 require("conform").setup({
