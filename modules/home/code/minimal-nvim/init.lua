@@ -25,11 +25,21 @@
 --     - zed: https://zed.dev/docs/development/debuggers
 --     - i MIGHT use a plugin for debugging, if i cannot setup zed for that
 --     - nvim dap: https://youtu.be/cxpWjlNXeQA?si=vbocJxlP2odku6Yp
+--
 --   - videos on pluginless neovim:
+--     - https://youtu.be/XA2WjJbmmoM?si=nrSvG-iiLWvyPZn6
 --     - https://youtu.be/I5kT2c2XX38?si=9AJUw-moMT5hUvFk
 --     - https://youtu.be/HiAs7oNDyh0?si=ma-xzh6JFv52z2eI
 --     - https://youtu.be/skW3clVG5Fo?si=rR_Uijd9CWAGRNWG
 --     - https://youtu.be/mQ9gmHHe-nI?si=IcPMAwCk_9DPJpDi
+--   - netrw:
+--     - https://youtu.be/g2LTTq9hkbU?si=fbZ2aGq63l6MpV-2
+--     - https://youtu.be/nbKkKbENgd8?si=nTf4lPt8YilgpBt9
+--     - https://youtu.be/nDGhjk4Eqbc?si=3_SowkNGXDNIY8cp
+--     - https://youtu.be/3lqzc77carU?si=K9cYv7lbbLIwO7O-
+--     - https://youtu.be/VNDoMhKVdQM?si=ik-IpCYDMdXgSOuD
+--     - https://youtu.be/9UxMvz6u1K4?si=jIZzdHTt48vOad5I
+--     - https://youtu.be/GyPXYF6jgwk?si=8qhkJshwZF2h5p81
 --
 -- TODO:
 --   - split config into files
