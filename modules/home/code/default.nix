@@ -77,7 +77,17 @@ let
   ];
 in
 {
-  options.myHome.code.enable = lib.mkEnableOption "Enable coding role";
+  options.myHome.code = {
+    enable = lib.mkEnableOption "Enable coding role";
+    extraWMEnv = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+    };
+    nvim-config = lib.mkOption {
+      type = lib.types.str;
+      default = "minimal-nvim";
+    };
+  };
 
   config = lib.mkIf cfg.enable {
     home.file = {
@@ -85,7 +95,7 @@ in
         globals = { "vim" }
       '';
 
-      ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/modules/home/code/nvim";
+      ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/modules/home/code/${cfg.nvim-config}";
     };
 
     home.packages = [ pkgs-unstable.gitu ];
@@ -151,7 +161,6 @@ in
           nvim-lint
 
           # navigation
-          tmux-nvim
           plenary-nvim
           telescope-nvim
           telescope-zf-native-nvim
