@@ -1,9 +1,39 @@
--- - minimal set of keybinds and settings
--- - use ctags instead of lsp
--- - try using either calling fzf in a floating window for file find, or try
---   using wildmenu for it
---   - for fzf: fd --type f | fzf | sed 's/\ /\\ /g'
---   - vim.opt.wildoptions = { "fuzzy", "pum", "tagfile" }
+-- references:
+--   - capture term output:
+--     - run the term command, then use nvim_buf_lines to yank all but the last two lines
+--     - https://www.reddit.com/r/neovim/comments/tazw3r/how_to_do_read_interactive_command_output/
+--     - use this to run `:term fd | fzf` to open files
+--     - `:term rg INPUT | fzf` to grep, if vimgrep does not suffice -> dump into qflist
+--   - consider using:
+--     - fzy + livegrep:
+--       - https://github.com/jhawthorn/fzy?tab=readme-ov-file
+--       - https://github.com/livegrep/livegrep
+--     - skim (which can also livegrep):
+--       - https://github.com/skim-rs/skim?tab=readme-ov-file#usage
+--     - just use fzy and do some magic with rerunning rg on keypress and piping in into fzy
+--   - define usercommands in ftplugins for formatting, linting, compiling, and running tests
+--     - :TForm to run the formatter, maybe invoke this in a BufWritePre auto command?
+--     - :TLint to run linters and dump output into qflist
+--     - :Make to run compiler
+--     - :TTest to run tests in a split terminal?
+--   - also use the ftplugins for configs like indent and expandtab (for makefiles)
+--   - use builtin snippets and autocomplete for text and files
+--   - snippets:
+--     - https://www.reddit.com/r/neovim/comments/1cxfhom/builtin_snippets_so_good_i_removed_luasnip/
+--     - https://gist.github.com/MariaSolOs/2e44a86f569323c478e5a078d0cf98cc
+--   - debugging:
+--     - zed: https://zed.dev/docs/development/debuggers
+--     - i MIGHT use a plugin for debugging, if i cannot setup zed for that
+--     - nvim dap: https://youtu.be/cxpWjlNXeQA?si=vbocJxlP2odku6Yp
+--   - videos on pluginless neovim:
+--     - https://youtu.be/I5kT2c2XX38?si=9AJUw-moMT5hUvFk
+--     - https://youtu.be/HiAs7oNDyh0?si=ma-xzh6JFv52z2eI
+--     - https://youtu.be/skW3clVG5Fo?si=rR_Uijd9CWAGRNWG
+--     - https://youtu.be/mQ9gmHHe-nI?si=IcPMAwCk_9DPJpDi
+--
+-- TODO:
+--   - split config into files
+--   - get the fuzzy finder running
 
 -- >>> SETTINGS
 vim.loader.enable()
@@ -47,7 +77,7 @@ vim.opt.incsearch = true
 vim.opt.showmatch = true
 vim.opt.matchtime = 2
 
-vim.opt.completeopt = { "fuzzy", "menuone", "noinsert", "noselect", }
+vim.opt.completeopt = { "fuzzy", "menuone", "noinsert", "noselect" }
 vim.opt.pumheight = 10
 vim.opt.pumblend = 10
 vim.opt.path:append("**")
@@ -83,7 +113,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   group = augroup,
   callback = function()
     vim.highlight.on_yank()
-  end
+  end,
 })
 
 vim.api.nvim_create_autocmd("BufReadPost", {
@@ -94,7 +124,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     if mark[1] > 0 and mark[1] <= lcount then
       pcall(vim.api.nvim_win_set_cursor, 0, mark)
     end
-  end
+  end,
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -104,7 +134,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     if vim.fn.isdirectory(dir) == 0 then
       vim.fn.mkdir(dir, "p")
     end
-  end
+  end,
 })
 
 vim.api.nvim_create_autocmd("FileType", {
@@ -112,37 +142,37 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = { "makefile" },
   callback = function()
     vim.opt_local.expandtab = false
-  end
+  end,
 })
 
 -- >>> KEYMAPS
-vim.keymap.set("n", ";;", ":w<cr>", {noremap = true, silent = true})
-vim.keymap.set("n", "<esc>w", ":noh<cr>", {noremap = true, silent = true})
-vim.keymap.set("n", "n", "nzzzv", {noremap = true, silent = true})
-vim.keymap.set("n", "N", "Nzzzv", {noremap = true, silent = true})
-vim.keymap.set("n", "*", "*zz", {noremap = true, silent = true})
-vim.keymap.set("n", "#", "#zz", {noremap = true, silent = true})
-vim.keymap.set("n", "g*", "g*zz", {noremap = true, silent = true})
-vim.keymap.set("n", "g#", "g#zz", {noremap = true, silent = true})
-vim.keymap.set("n", "<c-d>", "<c-d>zz", {noremap = true, silent = true})
-vim.keymap.set("n", "<c-u>", "<c-u>zz", {noremap = true, silent = true})
-vim.keymap.set("v", "P", [["_dP]], {noremap = true, silent = true})
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], {noremap = true, silent = true})
-vim.keymap.set({ "n", "x", "v" }, "<leader>x", [["_x]], {noremap = true, silent = true})
-vim.keymap.set("n", "Y", "yg$", {noremap = true, silent = true})
-vim.keymap.set("n", "J", "mzJ`z", {noremap = true, silent = true})
-vim.keymap.set("n", "<m-j>", ":m .+1<cr>==", {noremap = true, silent = true})
-vim.keymap.set("n", "<m-k>", ":m .-2<cr>==", {noremap = true, silent = true})
-vim.keymap.set("v", "<m-h>", ":m '>+1<cr>gv=gv", {noremap = true, silent = true})
-vim.keymap.set("v", "<m-l>", ":m '<-2<cr>gv=gv", {noremap = true, silent = true})
-vim.keymap.set("v", "<", "<gv", {noremap = true, silent = true})
-vim.keymap.set("v", ">", ">gv", {noremap = true, silent = true})
-vim.keymap.set("n", "]c", ":cnext<cr>", {noremap = true, silent = true})
-vim.keymap.set("n", "[c", ":cprev<cr>", {noremap = true, silent = true})
-vim.keymap.set("n", "<F1>", ":cnext<cr>", {noremap = true, silent = true})
-vim.keymap.set("n", "<F3>", ":cprev<cr>", {noremap = true, silent = true})
+vim.keymap.set("n", ";;", ":w<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<esc>w", ":noh<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "n", "nzzzv", { noremap = true, silent = true })
+vim.keymap.set("n", "N", "Nzzzv", { noremap = true, silent = true })
+vim.keymap.set("n", "*", "*zz", { noremap = true, silent = true })
+vim.keymap.set("n", "#", "#zz", { noremap = true, silent = true })
+vim.keymap.set("n", "g*", "g*zz", { noremap = true, silent = true })
+vim.keymap.set("n", "g#", "g#zz", { noremap = true, silent = true })
+vim.keymap.set("n", "<c-d>", "<c-d>zz", { noremap = true, silent = true })
+vim.keymap.set("n", "<c-u>", "<c-u>zz", { noremap = true, silent = true })
+vim.keymap.set("v", "P", [["_dP]], { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { noremap = true, silent = true })
+vim.keymap.set({ "n", "x", "v" }, "<leader>x", [["_x]], { noremap = true, silent = true })
+vim.keymap.set("n", "Y", "yg$", { noremap = true, silent = true })
+vim.keymap.set("n", "J", "mzJ`z", { noremap = true, silent = true })
+vim.keymap.set("n", "<m-j>", ":m .+1<cr>==", { noremap = true, silent = true })
+vim.keymap.set("n", "<m-k>", ":m .-2<cr>==", { noremap = true, silent = true })
+vim.keymap.set("v", "<m-h>", ":m '>+1<cr>gv=gv", { noremap = true, silent = true })
+vim.keymap.set("v", "<m-l>", ":m '<-2<cr>gv=gv", { noremap = true, silent = true })
+vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true })
+vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true })
+vim.keymap.set("n", "]c", ":cnext<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "[c", ":cprev<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<F1>", ":cnext<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<F3>", ":cprev<cr>", { noremap = true, silent = true })
 
-vim.keymap.set("n", "<leader>fo", ":Explore<cr>", {noremap = true, silent = true})
+vim.keymap.set("n", "<leader>fo", ":Explore<cr>", { noremap = true, silent = true })
 
 -- >>> UI
-vim.cmd.colorscheme "retrobox"
+vim.cmd.colorscheme("retrobox")
