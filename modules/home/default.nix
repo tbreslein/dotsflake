@@ -46,8 +46,7 @@
       gg = "git status -s";
       lg = "lazygit";
       m = "make";
-      vv = "nvim";
-      v = "nvim -u ~/dotsflake/modules/home/code/nvim/minimal.lua";
+      v = "nvim";
       ls = "eza --icons=always";
       la = "ls -aa";
       ll = "ls -l";
