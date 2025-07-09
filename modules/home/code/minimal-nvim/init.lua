@@ -4,6 +4,8 @@
 --     - https://www.reddit.com/r/neovim/comments/tazw3r/how_to_do_read_interactive_command_output/
 --     - use this to run `:term fd | fzf` to open files
 --     - `:term rg INPUT | fzf` to grep, if vimgrep does not suffice -> dump into qflist
+--   - when using :vimgrep/:grep, set grepprg to something reasonable like:
+--       rg --ignore-file=.gitignore --iglob=.git/ --iglob=**/*.ipynb
 --   - consider using:
 --     - fzy + livegrep:
 --       - https://github.com/jhawthorn/fzy?tab=readme-ov-file
