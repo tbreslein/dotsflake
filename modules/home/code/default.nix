@@ -60,21 +60,6 @@ let
       echo ""
     fi
   '';
-
-  extraEditorPackages = with pkgs-unstable; [
-    stylua
-    luajitPackages.luacheck
-    lua-language-server
-    bash-language-server
-    shellharden
-    nodePackages.prettier
-    eslint
-    nixd
-    statix
-    nixpkgs-fmt
-    tree-sitter
-    universal-ctags
-  ];
 in
 {
   options.myHome.code = {
@@ -90,12 +75,30 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.file = {
-      ".luacheckrc".text = ''
-        globals = { "vim" }
-      '';
+    home = {
+      packages = with pkgs-unstable; [
+        fzy
+        universal-ctags
 
-      ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/modules/home/code/${cfg.nvim-config}-nvim";
+        stylua
+        luajitPackages.luacheck
+        lua-language-server
+        bash-language-server
+        shellharden
+        nodePackages.prettier
+        eslint
+        nixd
+        statix
+        nixpkgs-fmt
+        tree-sitter
+      ];
+      file = {
+        ".luacheckrc".text = ''
+          globals = { "vim" }
+        '';
+
+        ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/modules/home/code/${cfg.nvim-config}-nvim";
+      };
     };
 
     myHome.syke = {
@@ -107,7 +110,8 @@ in
           "capturedlambdav2"
           "shyr"
           "computer_enhance"
-          "presentations"
+          "public_presentations"
+          "private_presentations"
         ];
     };
 
@@ -145,7 +149,6 @@ in
         enable = true;
         package = pkgs-unstable.neovim-unwrapped;
         defaultEditor = true;
-        extraPackages = extraEditorPackages;
         plugins =
           if cfg.nvim-config == "big" then
             (with pkgs-unstable.vimPlugins; [
@@ -219,7 +222,7 @@ in
           '';
       };
       zed-editor = {
-        enable = config.myHome.linux.enable;
+        inherit (config.myHome.linux) enable;
         extensions = [
           # syntax ++ languages
           "angular"
@@ -260,7 +263,6 @@ in
           "gruber-darker"
           "gruvbox-material"
         ];
-        extraPackages = extraEditorPackages;
         userKeymaps = [
           {
             context = "Workspace && vim_mode == normal";
