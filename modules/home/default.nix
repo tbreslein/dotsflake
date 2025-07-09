@@ -64,7 +64,7 @@
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
-      TERMINAL = "alacritty";
+      TERMINAL = "${userConf.terminal}";
     };
   };
 

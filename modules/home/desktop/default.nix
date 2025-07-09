@@ -12,8 +12,35 @@ in
 
   config = lib.mkIf cfg.enable {
     programs = {
+      ghostty = {
+        enable = userConf.terminal == "ghostty";
+        enableBashIntegration = true;
+        clearDefaultKeybinds = true;
+        installVimSyntax = true;
+        settings = {
+          font-size = cfg.terminalFontSize;
+          font-family = userConf.monofont;
+          font-feature = "-calt"; # disable ligatures
+          theme = "GruvboxDark";
+          cursor-style = "block";
+          cursor-style-blink = false;
+          mouse-hide-while-typing = true;
+          background-opacity = 0.95;
+          background-blur = true;
+          window-padding-balance = true;
+          window-decoration = "none";
+          clipboard-read = "allow";
+          clipboard-write = "allow";
+          confirm-close-surface = false;
+          quit-after-last-window-closed = true;
+          macos-non-native-fullscreen = true;
+          macos-titlebar-style = "hidden";
+          macos-option-as-alt = true;
+        };
+      };
       alacritty = {
-        enable = userConf.terminal == "alacritty";
+        # enable = userConf.terminal == "alacritty";
+        enable = true;
         package =
           if config.myHome.linux.enable
           then pkgs-unstable.alacritty

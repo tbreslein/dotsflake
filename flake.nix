@@ -37,7 +37,7 @@
         work_email = "tommy.breslein@pailot.com";
         # monofont = "DepartureMono Nerd Font";
         monofont = "Hack Nerd Font";
-        terminal = "alacritty";
+        terminal = "ghostty";
         colors = rec {
           primary = {
             background = "1d2021";

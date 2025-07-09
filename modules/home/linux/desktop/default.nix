@@ -111,7 +111,7 @@ in
               -S ${userConf.colors.normal.black} \
               -s ${userConf.colors.primary.accent} \
           ''
-          "$mod, Return, exec, [workspace 2] alacritty"
+          "$mod, Return, exec, [workspace 2] ${userConf.terminal}"
           "$mod, b, exec, [workspace 1] zen-twilight"
           "$mod ALT, n, exec, makoctl dismiss -a"
           "$mod CTRL, q, killactive"
