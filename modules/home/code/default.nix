@@ -84,8 +84,8 @@ in
       default = [ ];
     };
     nvim-config = lib.mkOption {
-      type = lib.types.str;
-      default = "minimal-nvim";
+      type = lib.types.enum [ "minimal" "big" ];
+      default = "minimal";
     };
   };
 
@@ -95,10 +95,9 @@ in
         globals = { "vim" }
       '';
 
-      ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/modules/home/code/${cfg.nvim-config}";
+      ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/modules/home/code/${cfg.nvim-config}-nvim";
     };
 
-    home.packages = [ pkgs-unstable.gitu ];
     myHome.syke = {
       code-repos =
         let
@@ -146,36 +145,35 @@ in
         enable = true;
         package = pkgs-unstable.neovim-unwrapped;
         defaultEditor = true;
-        # extraLuaConfig = ''
-        #   require("tvim").init()
-        # '';
         extraPackages = extraEditorPackages;
-        plugins = with pkgs-unstable.vimPlugins; [
-          # ui
-          nvim-treesitter.withAllGrammars
-          nvim-treesitter-context
-          gruvbox-material
+        plugins =
+          if cfg.nvim-config == "big" then
+            (with pkgs-unstable.vimPlugins; [
+              # ui
+              nvim-treesitter.withAllGrammars
+              nvim-treesitter-context
+              gruvbox-material
 
-          # tooling
-          conform-nvim
-          nvim-lint
+              # tooling
+              conform-nvim
+              nvim-lint
 
-          # navigation
-          plenary-nvim
-          telescope-nvim
-          telescope-zf-native-nvim
+              # navigation
+              plenary-nvim
+              telescope-nvim
+              telescope-zf-native-nvim
 
-          # lsp
-          blink-cmp
-          friendly-snippets
-          nvim-lspconfig
+              # lsp
+              blink-cmp
+              friendly-snippets
+              nvim-lspconfig
 
-          # dap
-          nvim-dap
-          nvim-dap-view
-          nvim-dap-go
-          nvim-dap-python
-        ];
+              # dap
+              nvim-dap
+              nvim-dap-view
+              nvim-dap-go
+              nvim-dap-python
+            ]) else [ ];
         withNodeJs = false;
         withPython3 = false;
         withRuby = false;
