@@ -43,7 +43,6 @@
       g = "git";
       gs = "git status";
       gg = "git status -s";
-      lg = "lazygit";
       m = "make";
       v = "nvim";
       ls = "eza --icons=always";
