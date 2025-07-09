@@ -18,7 +18,7 @@
 
       ripgrep
       bat
-      gitu
+      rm-improved
       kanata
 
       (writeShellScriptBin "dm" /*bash*/ ''
