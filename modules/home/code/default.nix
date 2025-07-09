@@ -176,7 +176,9 @@ in
               nvim-dap-view
               nvim-dap-go
               nvim-dap-python
-            ]) else [ ];
+            ]) else (with pkgs-unstable.vimPlugins; [
+              nvim-treesitter.withAllGrammars
+            ]);
         withNodeJs = false;
         withPython3 = false;
         withRuby = false;
