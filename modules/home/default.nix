@@ -13,7 +13,6 @@
     username = userConf.name;
     packages = with pkgs-unstable; [
       nerd-fonts.hack
-      nerd-fonts.terminess-ttf
       nerd-fonts.departure-mono
 
       ripgrep
