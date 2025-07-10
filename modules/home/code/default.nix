@@ -176,8 +176,10 @@ in
               nvim-dap-view
               nvim-dap-go
               nvim-dap-python
-            ]) else (with pkgs-unstable.vimPlugins; [
+            ]) else
+            (with pkgs-unstable.vimPlugins; [
               nvim-treesitter.withAllGrammars
+              gruvbox-material
             ]);
         withNodeJs = false;
         withPython3 = false;

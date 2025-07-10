@@ -157,6 +157,14 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.cmd([[
+if &runtimepath =~? "gruvbox-material"
+    colorscheme gruvbox-material
+else
+    colorscheme retrobox
+endif
+]])
+
 -- >>> KEYMAPS
 vim.keymap.set("n", ";;", ":w<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<esc>w", ":noh<cr>", { noremap = true, silent = true })
@@ -187,4 +195,3 @@ vim.keymap.set("n", "<F3>", ":cprev<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>fo", ":Explore<cr>", { noremap = true, silent = true })
 
 -- >>> UI
-vim.cmd.colorscheme("retrobox")
