@@ -22,11 +22,11 @@ in
         clearDefaultKeybinds = true;
         settings = {
           font-size = cfg.terminalFontSize;
-          font-family = userConf.monofont;
-          font-feature = "-calt"; # disable ligatures
-          theme = "GruvboxDark";
+          # font-family = userConf.monofont;
+          theme = "_gruvbox-material";
           cursor-style = "block";
           cursor-style-blink = false;
+          shell-integration-features = "no-cursor";
           mouse-hide-while-typing = true;
           background-opacity = 0.95;
           background-blur = true;
@@ -39,6 +39,33 @@ in
           macos-non-native-fullscreen = true;
           macos-titlebar-style = "hidden";
           macos-option-as-alt = true;
+        };
+        themes = {
+          _gruvbox-material = {
+            background = "#${userConf.colors.primary.background}";
+            foreground = "#${userConf.colors.primary.foreground}";
+            cursor-color = "#${userConf.colors.primary.foreground}";
+            selection-background = "#${userConf.colors.bright.black}";
+            selection-foreground = "#${userConf.colors.primary.foreground}";
+            palette = [
+              "0=#${userConf.colors.normal.black}"
+              "1=#${userConf.colors.normal.red}"
+              "2=#${userConf.colors.normal.green}"
+              "3=#${userConf.colors.normal.yellow}"
+              "4=#${userConf.colors.normal.blue}"
+              "5=#${userConf.colors.normal.magenta}"
+              "6=#${userConf.colors.normal.cyan}"
+              "7=#${userConf.colors.normal.white}"
+              "8=#${userConf.colors.bright.black}"
+              "9=#${userConf.colors.bright.red}"
+              "10=#${userConf.colors.bright.green}"
+              "11=#${userConf.colors.bright.yellow}"
+              "12=#${userConf.colors.bright.blue}"
+              "13=#${userConf.colors.bright.magenta}"
+              "14=#${userConf.colors.bright.cyan}"
+              "15=#${userConf.colors.bright.white}"
+            ];
+          };
         };
       };
       alacritty = {
