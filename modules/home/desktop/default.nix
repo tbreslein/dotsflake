@@ -14,9 +14,12 @@ in
     programs = {
       ghostty = {
         enable = userConf.terminal == "ghostty";
+        package =
+          if config.myHome.linux.enable
+          then pkgs-unstable.ghostty
+          else null;
         enableBashIntegration = true;
         clearDefaultKeybinds = true;
-        installVimSyntax = true;
         settings = {
           font-size = cfg.terminalFontSize;
           font-family = userConf.monofont;
