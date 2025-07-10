@@ -22,7 +22,7 @@ in
         clearDefaultKeybinds = true;
         settings = {
           font-size = cfg.terminalFontSize;
-          # font-family = userConf.monofont;
+          font-family = userConf.monofont;
           theme = "_gruvbox-material";
           cursor-style = "block";
           cursor-style-blink = false;

@@ -12,7 +12,7 @@
   home = {
     username = userConf.name;
     packages = with pkgs-unstable; [
-      nerd-fonts.hack
+      nerd-fonts.commit-mono
       nerd-fonts.departure-mono
 
       ripgrep

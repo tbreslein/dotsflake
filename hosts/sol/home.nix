@@ -9,7 +9,7 @@ _:
       nvidia.enable = true;
     };
     desktop.enable = true;
-    desktop.terminalFontSize = 17;
+    desktop.terminalFontSize = 22;
     syke.enable = true;
   };
 }
