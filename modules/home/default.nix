@@ -7,6 +7,7 @@
     ./darwin
     ./syke
     ./desktop
+    ./laptop
   ];
 
   home = {
@@ -18,7 +19,6 @@
       ripgrep
       bat
       rm-improved
-      kanata
 
       (writeShellScriptBin "dm" /*bash*/ ''
         os=""
@@ -33,10 +33,6 @@
       '')
     ];
     stateVersion = "25.05";
-
-    file.".config/kanata/kanata.kbd".text = /* kbd */ ''
-      ;; TODO
-    '';
 
     shell.enableBashIntegration = true;
     shellAliases = {
@@ -105,6 +101,16 @@
           fi
         }
 
+        toggle_kanata() {
+          local kanatadir="${config.home.homeDirectory}/.config/kanata/"
+          if ! tmux has-session -t "kanata" 2>/dev/null; then
+            tmux new-session -ds "kanata" -c "$kanatadir"
+            tmux send-keys -t "kanata" "kanata -c ./kanata.kbd" C-m
+          else
+            tmux kill-session -t "kanata"
+          fi
+        }
+
         toggle_moco() {
           local mocodir="${config.home.homeDirectory}/work/repos/mocotrackingclient"
           if ! tmux has-session -t "moco" 2>/dev/null; then
@@ -152,8 +158,7 @@
           local selected_task=$(task --list | \
             grep '^\\*' | \
             fzf | \
-            cut -d" " -f2 | \
-            awk '{ print substr($0,1,length($0)-1) }')
+            awk '{ print substr($2,1,length($2)-1) }')
           task "$selected_task"
         }
 

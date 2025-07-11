@@ -3,6 +3,7 @@
     ./amd
     ./nvidia
     ./desktop
+    ./laptop
   ];
 
   environment.systemPackages = with pkgs; [

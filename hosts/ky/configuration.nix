@@ -11,5 +11,6 @@
   mySystem = {
     desktop.enable = true;
     amd.enable = true;
+    laptop.enable = true;
   };
 }
