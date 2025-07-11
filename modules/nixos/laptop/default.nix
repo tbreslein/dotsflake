@@ -4,7 +4,7 @@ let
   cfg = config.mySystem.laptop;
 in
 {
-  options.mySystem.linux = {
+  options.mySystem.laptop = {
     enable = lib.mkEnableOption "Enable system laptop role";
   };
 

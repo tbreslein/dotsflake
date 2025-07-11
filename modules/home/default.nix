@@ -105,7 +105,10 @@
           local kanatadir="${config.home.homeDirectory}/.config/kanata/"
           if ! tmux has-session -t "kanata" 2>/dev/null; then
             tmux new-session -ds "kanata" -c "$kanatadir"
-            tmux send-keys -t "kanata" "kanata -c ./kanata.kbd" C-m
+            ${if config.myHome.linux.enable
+              then "tmux send-keys -t kanata 'kanata -c ./kanata.kbd' C-m"
+              else ("tmux send-keys -t kanata 'sudo kanata -c ./kanata.kbd'" +
+                " && tmux switch-client -t kanata")}
           else
             tmux kill-session -t "kanata"
           fi
