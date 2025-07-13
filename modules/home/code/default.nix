@@ -78,6 +78,7 @@ in
     home = {
       packages = with pkgs-unstable; [
         fzy
+        skim
         universal-ctags
 
         stylua

@@ -91,8 +91,8 @@ in
           force_zero_scaling = true;
         };
         windowrulev2 = [
-          "float,title:^(Picture(.)in(.)picture)$"
-          "pin,title:^(Picture(.)in(.)picture)$"
+          "float,title:^([pP]icture(.)in(.)[pP]icture)$"
+          "pin,title:^([pP]icture(.)in(.)[pP]icture)$"
           "float,class:^(steam)$,title:^(Friends list)$"
           "float,class:^(steam)$,title:^(Steam Settings)$"
           "workspace 3,class:^(steam)$"

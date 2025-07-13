@@ -4,7 +4,7 @@ _:
   myHome = {
     code.enable = true;
     desktop.enable = true;
-    desktop.terminalFontSize = 22;
+    desktop.terminalFontSize = 18;
     linux = {
       enable = true;
       desktop.enable = true;
