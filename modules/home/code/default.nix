@@ -77,8 +77,6 @@ in
   config = lib.mkIf cfg.enable {
     home = {
       packages = with pkgs-unstable; [
-        fzy
-        skim
         universal-ctags
 
         stylua

@@ -17,6 +17,7 @@
       nerd-fonts.departure-mono
 
       ripgrep
+      fzy
       bat
       rm-improved
 

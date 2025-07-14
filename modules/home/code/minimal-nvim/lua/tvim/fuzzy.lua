@@ -8,9 +8,9 @@ function M.fuzzy_search(cmd, exit_fn)
   if o.columns >= 85 then
     width = 80
   end
-  local height = o.lines - 10
+  local height = 11
 
-  buf = api.nvim_create_buf(false, true)
+  local buf = api.nvim_create_buf(false, true)
   api.nvim_buf_set_option(buf, "bufhidden", "wipe")
   api.nvim_buf_set_option(buf, "modifiable", true)
 
@@ -26,10 +26,14 @@ function M.fuzzy_search(cmd, exit_fn)
   local file = vim.fn.tempname()
   api.nvim_command("startinsert!")
 
-  vim.fn.termopen(cmd .. " > " .. file, {
+  fn.jobstart(cmd .. " > " .. file, {
+    term = true,
     on_exit = function()
       local f = io.open(file, "r")
-      stdout = f:read("*all")
+      if f == nil then
+        return
+      end
+      local stdout = f:read("*all")
       exit_fn(stdout)
       f:close()
       os.remove(file)
