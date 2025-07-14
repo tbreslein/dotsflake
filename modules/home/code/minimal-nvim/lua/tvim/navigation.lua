@@ -1,7 +1,9 @@
+vim.opt.grepprg = "rg --vimgrep --ignore-file=.gitignore --iglob='!.git/' --iglob='!**/*.ipynb'"
+
 local fuzzy = require("tvim.fuzzy")
 
 local function file_search(fd_flags)
-  fuzzy.fuzzy_search("fd " .. fd_flags .. " | sk", function(stdout)
+  fuzzy.fuzzy_search("fd " .. fd_flags .. " | sk --reverse", function(stdout)
     local selected, _ = stdout:gsub("\n", "")
     vim.cmd("bd!")
     vim.cmd("e " .. selected)
@@ -16,7 +18,7 @@ vim.keymap.set("n", "<leader>fg", function()
 end)
 
 vim.keymap.set("n", "<leader>fs", function()
-  fuzzy.fuzzy_search([[sk -m --ansi -i -c 'rg --color=always --line-number "{}"']], function(stdout)
+  fuzzy.fuzzy_search([[sk --reverse -m --ansi -i -c 'rg --color=always --line-number "{}"']], function(stdout)
     local lines = vim.split(stdout, "\n", { plain = true, trimempty = true })
     vim.cmd("bd!")
     if #lines > 1 then
