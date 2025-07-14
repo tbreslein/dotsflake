@@ -1,13 +1,4 @@
 -- references:
---   - when using :vimgrep/:grep, set grepprg to something reasonable like:
---       rg --ignore-file=.gitignore --iglob=.git/ --iglob=**/*.ipynb
---   - consider using:
---     - fzy + livegrep:
---       - https://github.com/jhawthorn/fzy?tab=readme-ov-file
---       - https://github.com/livegrep/livegrep
---     - skim (which can also livegrep):
---       - https://github.com/skim-rs/skim?tab=readme-ov-file#usage
---     - just use fzy and do some magic with rerunning rg on keypress and piping in into fzy
 --   - define usercommands in ftplugins for formatting, linting, compiling, and running tests
 --     - :TForm to run the formatter, maybe invoke this in a BufWritePre auto command?
 --     - :TLint to run linters and dump output into qflist
@@ -37,10 +28,6 @@
 --     - https://youtu.be/VNDoMhKVdQM?si=ik-IpCYDMdXgSOuD
 --     - https://youtu.be/9UxMvz6u1K4?si=jIZzdHTt48vOad5I
 --     - https://youtu.be/GyPXYF6jgwk?si=8qhkJshwZF2h5p81
---
--- TODO:
---   - split config into files
---   - get the fuzzy finder running
 
 require("tvim.vimsettings")
 require("tvim.ui")
