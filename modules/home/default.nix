@@ -20,6 +20,7 @@
       fzy
       bat
       rm-improved
+      git
 
       (writeShellScriptBin "dm" /*bash*/ ''
         os=""

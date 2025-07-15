@@ -33,9 +33,8 @@ modules
 
 continue home manager settings at programs.c
 
-- configure bash and make sure you get all the necessary integrations
-- desktop/linux:
-  - screenshots
-  - try out niri
-- desktop/darwin:
-  - brew
+- finish up syncthing
+- try out [quickshell](https://quickshell.org/)
+- use foot on linux
+- configure nix-darwin
+- aerospace

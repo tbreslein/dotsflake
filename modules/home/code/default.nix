@@ -1,16 +1,18 @@
 { config
 , lib
 , pkgs-unstable
+, userConf
 , ...
 }:
 let
   cfg = config.myHome.code;
+  codeDir = "${config.home.homeDirectory}/${userConf.codeDir}";
   tmux-sessionizer = pkgs-unstable.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
     folders=("''\$HOME")
     add_dir() {
       [ -d "''\$HOME/''\$1" ] && folders+=("''\$HOME/''\$1")
     }
-    add_dir "code"
+    add_dir "${codeDir}"
     add_dir "work/repos"
 
     selected=""
@@ -96,7 +98,7 @@ in
           globals = { "vim" }
         '';
 
-        ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/dotsflake/modules/home/code/${cfg.nvim-config}-nvim";
+        ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/${userConf.dotsDir}/modules/home/code/${cfg.nvim-config}-nvim";
       };
     };
 
@@ -191,13 +193,13 @@ in
         keyMode = "vi";
         mouse = true;
         prefix = "C-Space";
-        terminal = "alacritty";
+        terminal = "${userConf.terminal}";
         extraConfig =
           /*
         tmux
           */
           ''
-            set -sa terminal-overrides ",alacritty:RGB"
+            set -sa terminal-overrides ",${userConf.terminal}:RGB"
 
             bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"

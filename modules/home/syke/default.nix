@@ -1,12 +1,13 @@
 { config
 , lib
 , pkgs-unstable
+, userConf
 , ...
 }:
 let
   cfg = config.myHome.syke;
 
-  codeDir = config.home.homeDirectory + "/code/";
+  codeDir = "${config.home.homeDirectory}/${userConf.codeDir}";
 
   path = "/home/tommy/.nix-profile/bin:/home/tommy/.nix-profile/bin:/home/tommy/.nix-profile/bin:/home/tommy/.cargo/bin:/home/tommy/.local/bin:/home/tommy/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl";
   setPath = "PATH=${path}:$PATH";

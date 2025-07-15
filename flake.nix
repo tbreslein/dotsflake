@@ -15,6 +15,7 @@
       url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     # apps
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
@@ -26,11 +27,14 @@
     , chaotic
     , home-manager
     , nix-darwin
+    , nix-homebrew
     , ...
     } @ inputs:
     let
-      userConf = {
+      userConf = rec {
         name = "tommy";
+        codeDir = "Documents/code"; # relative to ~
+        dotsDir = "${codeDir}/dotsflake"; # relative to ~
         github_name = "tbreslein";
         work_gitlab_name = "Tommy Breslein";
         email = "tommy.breslein@protonmail.com";
@@ -108,7 +112,7 @@
       darwinConfigurations =
         let
           system = "aarch64-darwin";
-          hostname = "tommysmbp";
+          hostname = "answer";
           home = "/Users/${userConf.name}";
           args = mkArgs system;
         in
@@ -120,6 +124,15 @@
               modules = [
                 ./hosts/${hostname}/configuration.nix
                 ./modules/darwin
+
+                nix-homebrew.darwinModules.nix-homebrew
+                {
+                  nix-homebrew = {
+                    enable = true;
+                    enableRosetta = true;
+                    user = "${userConf.name}";
+                  };
+                }
 
                 home-manager.darwinModules.home-manager
                 {
