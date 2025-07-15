@@ -6,13 +6,12 @@
 }:
 let
   cfg = config.myHome.code;
-  codeDir = "${config.home.homeDirectory}/${userConf.codeDir}";
   tmux-sessionizer = pkgs-unstable.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
     folders=("''\$HOME")
     add_dir() {
       [ -d "''\$HOME/''\$1" ] && folders+=("''\$HOME/''\$1")
     }
-    add_dir "${codeDir}"
+    add_dir "${userConf.codeDir}"
     add_dir "work/repos"
 
     selected=""
