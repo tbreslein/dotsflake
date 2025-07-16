@@ -1,9 +1,41 @@
-{ pkgs-stable, pkgs-unstable, userConf, ... }:
+{ config, lib, pkgs-stable, pkgs-unstable, userConf, ... }:
+
+let
+  appsSrc =
+    config.system.build.applications + /Applications;
+
+  baseDir =
+    "/Applications/Nix Apps";
+
+  copyScript =
+    lib.optionalString (config ? system) ''
+      echo 'Setting up /Applications/Nix Apps...' >&2
+    ''
+    + ''
+      appsSrc="${appsSrc}"
+      if [ -d "$appsSrc" ]; then
+        baseDir="${baseDir}"
+        rsyncFlags=(
+          --archive
+          --checksum
+          --chmod=-w
+          --copy-unsafe-links
+          --delete
+          --no-group
+          --no-owner
+        )
+        $DRY_RUN_CMD mkdir -p "$baseDir"
+        $DRY_RUN_CMD ${lib.getBin pkgs-stable.rsync}/bin/rsync \
+          ''${VERBOSE_ARG:+-v} "''${rsyncFlags[@]}" "$appsSrc/" "$baseDir"
+      fi
+    '';
+in
 
 {
+  system.activationScripts.applications.text = lib.mkForce copyScript;
   environment = {
-    shells = [ pkgs-unstable.bashInteractive ];
-    systemPackages = [ pkgs-unstable.localsend ];
+    shells = with pkgs-unstable; [ bashInteractive ];
+    systemPackages = with pkgs-unstable; [ bashInteractive localsend ];
     launchDaemons = {
       # TODO
     };
@@ -15,19 +47,28 @@
   nixpkgs.config.allowUnfree = true;
 
   homebrew = {
-    enable = false;
-    taps = [
+    enable = true;
+    brews = [
       "gcc"
-      "coreutils"
-      "gnutls"
-      "syncthing"
+      { name = "syncthing"; restart_service = "changed"; }
+    ];
+    taps = [
+      "homebrew/homebrew-core"
+      "homebrew/homebrew-cask"
+      "homebrew/homebrew-bundle"
     ];
     casks = [
+      "amethyst"
       "anki"
       "balenaetcher"
       "brave-browser"
       "ghostty"
     ];
+    onActivation = {
+      autoUpdate = true;
+      upgrade = true;
+      cleanup = "uninstall";
+    };
   };
 
   launchd.agents = {
@@ -66,7 +107,6 @@
       # enable = true;
     };
     karabiner-elements = {
-      # TODO
       # enable = true;
     };
     sketchybar = {
