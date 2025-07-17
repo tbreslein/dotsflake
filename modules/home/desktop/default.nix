@@ -8,12 +8,42 @@ in
     terminalFontSize = lib.mkOption {
       type = lib.types.int;
     };
+    terminal = lib.mkOption {
+      type = lib.types.enum [ "ghostty" "alacritty" "foot" ];
+    };
   };
 
   config = lib.mkIf cfg.enable {
     programs = {
+      foot = {
+        enable = cfg.terminal == "foot";
+        font = "${userConf.monofont}:size=${cfg.terminalFontSize}";
+        mouse.hide-when-typing = "yes";
+        colors = {
+          alpha = 0.95;
+          inherit (userConf.colors.primary) background;
+          inherit (userConf.colors.primary) foreground;
+          regular0 = userConf.colors.normal.black;
+          regular1 = userConf.colors.normal.red;
+          regular2 = userConf.colors.normal.green;
+          regular3 = userConf.colors.normal.yellow;
+          regular4 = userConf.colors.normal.blue;
+          regular5 = userConf.colors.normal.magenta;
+          regular6 = userConf.colors.normal.cyan;
+          regular7 = userConf.colors.normal.white;
+          bright0 = userConf.colors.bright.black;
+          bright1 = userConf.colors.bright.red;
+          bright2 = userConf.colors.bright.green;
+          bright3 = userConf.colors.bright.yellow;
+          bright4 = userConf.colors.bright.blue;
+          bright5 = userConf.colors.bright.magenta;
+          bright6 = userConf.colors.bright.cyan;
+          bright7 = userConf.colors.bright.white;
+        };
+      };
       ghostty = {
-        enable = userConf.terminal == "ghostty";
+        enable = true;
+        # enable = cfg.terminal == "ghostty";
         package =
           if config.myHome.linux.enable
           then pkgs-unstable.ghostty
@@ -69,8 +99,7 @@ in
         };
       };
       alacritty = {
-        # enable = userConf.terminal == "alacritty";
-        enable = true;
+        enable = cfg.terminal == "alacritty";
         package =
           if config.myHome.linux.enable
           then pkgs-unstable.alacritty

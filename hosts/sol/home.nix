@@ -3,8 +3,11 @@ _:
 {
   myHome = {
     code.enable = true;
-    desktop.enable = true;
-    desktop.terminalFontSize = 18;
+    desktop = {
+      enable = true;
+      terminalFontSize = 18;
+      terminal = "foot";
+    };
     linux = {
       enable = true;
       desktop.enable = true;

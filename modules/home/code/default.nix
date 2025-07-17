@@ -192,13 +192,13 @@ in
         keyMode = "vi";
         mouse = true;
         prefix = "C-Space";
-        terminal = "${userConf.terminal}";
+        inherit (config.myHome.desktop) terminal;
         extraConfig =
           /*
         tmux
           */
           ''
-            set -sa terminal-overrides ",${userConf.terminal}:RGB"
+            set -sa terminal-overrides ",${config.myHome.desktop.terminal}:RGB"
 
             bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
