@@ -9,6 +9,7 @@ in
   options.my-home.darwin.enable = lib.mkEnableOption "Enable my-home.darwin";
 
   config = lib.mkIf cfg.enable {
+    home.shellAliases.mocostate = "tail -10 /tmp/mococlient.err.log";
     programs.bash = {
       profileExtra = /* bash */ ''
         [[ -f "/opt/homebrew/bin/brew" ]] && \
