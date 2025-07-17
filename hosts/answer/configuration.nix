@@ -164,7 +164,6 @@ in
         on-window-detected = [
           {
             "if".app-id = "com.brave.Browser";
-            # if.app-id = 'com.brave.Browser'
             run = "move-node-to-workspace 1";
           }
           {
@@ -172,7 +171,10 @@ in
             run = "move-node-to-workspace 1";
           }
           {
-            # "if".app-id = "org.alacritty";
+            "if".app-id = "org.alacritty";
+            run = "move-node-to-workspace 2";
+          }
+          {
             "if".app-id = "com.mitchellh.ghostty";
             run = "move-node-to-workspace 2";
           }
