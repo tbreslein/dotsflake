@@ -18,9 +18,14 @@ hosts
     \ hardware-configuration.nix
     \ configuration.nix
     \ home.nix
-  | vorador/default.nix
+  | answer/
     \ hardware-configuration.nix
-  | mbp/default.nix
+    \ configuration.nix
+    \ home.nix
+  | elphelt/default.nix
+    \ hardware-configuration.nix
+    \ configuration.nix
+    \ home.nix
 
 modules
   | nixos/
@@ -36,3 +41,4 @@ continue home manager settings at programs.c
 - finish up syncthing
 - try out [quickshell](https://quickshell.org/)
 - use foot on linux
+- setup elphelt
