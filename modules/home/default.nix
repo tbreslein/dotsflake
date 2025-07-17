@@ -116,28 +116,28 @@
           fi
         }
 
-        toggle_moco() {
-          local mocodir="${config.home.homeDirectory}/work/repos/mocotrackingclient"
-          if ! tmux has-session -t "moco" 2>/dev/null; then
-            tmux new-session -ds "moco" -c "$mocodir"
-            tmux send-keys -t "moco" "poetry install; AUTO_STOP_AND_NAG=False poetry run python moco_client.py" C-m
-          else
-            tmux kill-session -t "moco"
-          fi
-        }
+        # toggle_moco() {
+        #   local mocodir="${config.home.homeDirectory}/work/repos/mocotrackingclient"
+        #   if ! tmux has-session -t "moco" 2>/dev/null; then
+        #     tmux new-session -ds "moco" -c "$mocodir"
+        #     tmux send-keys -t "moco" "poetry install; AUTO_STOP_AND_NAG=False poetry run python moco_client.py" C-m
+        #   else
+        #     tmux kill-session -t "moco"
+        #   fi
+        # }
 
         twork() {
           local workdir="${config.home.homeDirectory}/work"
           if [ "$TMUX" != "" ]; then
-            pushd "$workdir" || exit
-            toggle_moco
-            popd || exit
+            # pushd "$workdir" || exit
+            # toggle_moco
+            # popd || exit
             if ! tmux has-session -t work; then
               tmux new-session -ds "work" -c "$workdir"
             fi
           else
             tmux new-session -ds "work" -c "$workdir"
-            tmux send-keys -t "work" "toggle_moco" C-m
+            # tmux send-keys -t "work" "toggle_moco" C-m
             tmux a -t "work"
           fi
         }

@@ -28,12 +28,6 @@ in
   environment = {
     shells = with pkgs-unstable; [ bashInteractive ];
     systemPackages = with pkgs-unstable; [ bashInteractive localsend ];
-    launchDaemons = {
-      # TODO
-    };
-    userLaunchAgents = {
-      # TODO
-    };
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -65,11 +59,18 @@ in
     };
   };
 
-  launchd.agents = {
-    # TODO
-  };
   launchd.user.agents = {
-    # TODO
+    mococlient = {
+      command = "${pkgs-stable.poetry}/bin/poetry run python moco_client.py";
+      environment.AUTO_STOP_AND_NAG = "False";
+      serviceConfig = {
+        KeepAlive = true;
+        RunAtLoad = true;
+        StandardOutPath = "/tmp/mococlient.out.log";
+        StandardErrorPath = "/tmp/mococlient.err.log";
+        WorkingDirectory = "/Users/${userConf.name}/work/repos/mocotrackingclient";
+      };
+    };
   };
 
   networking = rec {
@@ -92,9 +93,9 @@ in
 
   services = {
     aerospace = {
-      enable = false;
+      enable = true;
       settings = {
-        start-at-login = true;
+        # start-at-login = true;
         enable-normalization-flatten-containers = true;
         enable-normalization-opposite-orientation-for-nested-containers = true;
         default-root-container-layout = "tiles";
@@ -108,10 +109,10 @@ in
             vertical = 4;
           };
           outer = {
-            left = 2;
-            bottom = 2;
-            top = 2;
-            right = 2;
+            left = 8;
+            bottom = 8;
+            top = 8;
+            right = 8;
           };
         };
         mode = {
@@ -129,16 +130,16 @@ in
             cmd-ctrl-l = "move right";
             cmd-alt-i = "resize smart -50";
             cmd-alt-o = "resize smart +50";
-            cmd-t = "workspace t";
-            cmd-s = "workspace s";
-            cmd-r = "workspace r";
-            cmd-a = "workspace a";
-            cmd-g = "workspace g";
-            cmd-ctrl-t = "move-node-to-workspace t";
-            cmd-ctrl-s = "move-node-to-workspace s";
-            cmd-ctrl-r = "move-node-to-workspace r";
-            cmd-ctrl-a = "move-node-to-workspace a";
-            cmd-ctrl-g = "move-node-to-workspace g";
+            cmd-t = "workspace 1";
+            cmd-s = "workspace 2";
+            cmd-r = "workspace 3";
+            cmd-a = "workspace 4";
+            cmd-g = "workspace 5";
+            cmd-ctrl-t = "move-node-to-workspace 1";
+            cmd-ctrl-s = "move-node-to-workspace 2";
+            cmd-ctrl-r = "move-node-to-workspace 3";
+            cmd-ctrl-a = "move-node-to-workspace 4";
+            cmd-ctrl-g = "move-node-to-workspace 5";
             cmd-tab = "workspace-back-and-forth";
             cmd-shift-tab = "move-workspace-to-monitor --wrap-around next";
 
@@ -171,11 +172,6 @@ in
             run = "move-node-to-workspace 1";
           }
           {
-            "if".app-id = "app.zen-browser.zen";
-            "if".window-title-regex-substring = "Picture-in-Picture";
-            run = "layout floating";
-          }
-          {
             # "if".app-id = "org.alacritty";
             "if".app-id = "com.mitchellh.ghostty";
             run = "move-node-to-workspace 2";
@@ -192,14 +188,12 @@ in
       };
     };
     jankyborders = {
-      # TODO
-      # enable = true;
+      enable = true;
+      active_color = "0x${userConf.colors.primary.border}";
+      inactive_color = "0x${userConf.colors.normal.black}";
+      width = 5.0;
     };
     karabiner-elements = {
-      # enable = true;
-    };
-    sketchybar = {
-      # TODO
       # enable = true;
     };
   };
