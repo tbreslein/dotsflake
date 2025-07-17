@@ -191,8 +191,8 @@ in
     };
     jankyborders = {
       enable = true;
-      active_color = "0x${userConf.colors.primary.border}";
-      inactive_color = "0x${userConf.colors.normal.black}";
+      active_color = "0xff${userConf.colors.primary.border}";
+      inactive_color = "0xff${userConf.colors.normal.black}";
       width = 5.0;
     };
     karabiner-elements = {
