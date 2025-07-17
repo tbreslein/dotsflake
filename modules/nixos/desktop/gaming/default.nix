@@ -1,9 +1,9 @@
-{ config, lib, pkgs, userConf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
-  cfg = config.mySystem.desktop.gaming;
+  cfg = config.my-system.nixos.desktop.gaming;
 in
 {
-  options.mySystem.desktop.gaming.enable = lib.mkEnableOption "enable nixos.desktop.gaming";
+  options.my-system.nixos.desktop.gaming.enable = lib.mkEnableOption "enable my-system.nixos.desktop.gaming";
 
   config = lib.mkIf cfg.enable {
     hardware.graphics = {
@@ -11,7 +11,7 @@ in
       enable32Bit = true;
     };
 
-    users.users.${userConf.name}.extraGroups = [ "games" "gamemode" ];
+    users.users.${user-conf.name}.extraGroups = [ "games" "gamemode" ];
 
     environment.systemPackages = with pkgs; [
       mangohud

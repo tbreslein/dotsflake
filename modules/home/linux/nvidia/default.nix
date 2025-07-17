@@ -1,12 +1,12 @@
 { config, lib, ... }:
 let
-  cfg = config.myHome.linux.nvidia;
+  cfg = config.my-home.linux.nvidia;
 in
 {
-  options.myHome.linux.nvidia.enable = lib.mkEnableOption "Enable home linux.nvidia role";
+  options.my-home.linux.nvidia.enable = lib.mkEnableOption "Enable home linux.nvidia role";
 
   config = lib.mkIf cfg.enable {
-    myHome.linux.desktop.extraWMEnv = [
+    my-home.linux.desktop.extra-wm-env = [
       "LIBVA_DRIVER_NAME,nvidia"
       "__GLX_VENDOR_LIBRARY_NAME,nvidia"
     ];

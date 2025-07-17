@@ -1,12 +1,10 @@
 { config, lib, pkgs-unstable, ... }:
 
 let
-  cfg = config.myHome.laptop;
+  cfg = config.my-home.laptop;
 in
 {
-  options.myHome.laptop = {
-    enable = lib.mkEnableOption "Enable home laptop role";
-  };
+  options.my-home.laptop.enable = lib.mkEnableOption "Enable my-home.laptop role";
 
   config = lib.mkIf cfg.enable {
     home = {
@@ -44,5 +42,19 @@ in
         )
       '';
     };
+    programs.bash.bashrcExtra = /* bash */ ''
+      toggle_kanata() {
+        local kanatadir="${config.home.homeDirectory}/.config/kanata/"
+        if ! tmux has-session -t "kanata" 2>/dev/null; then
+          tmux new-session -ds "kanata" -c "$kanatadir"
+          ${if pkgs-unstable.stdenv.isLinux
+            then "tmux send-keys -t kanata 'kanata -c ./kanata.kbd' C-m"
+            else ("tmux send-keys -t kanata 'sudo kanata -c ./kanata.kbd'" +
+              " && tmux switch-client -t kanata")}
+        else
+          tmux kill-session -t "kanata"
+        fi
+      }
+    '';
   };
 }

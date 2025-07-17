@@ -5,13 +5,9 @@
     ./hardware-configuration.nix
   ];
 
-  networking = {
-    wireless.enable = false;
-    hostName = "sol";
-  };
-
+  networking.wireless.enable = false;
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
-  mySystem = {
+  my-system = {
     desktop.enable = true;
     desktop.gaming.enable = true;
     amd.enable = true;

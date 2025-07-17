@@ -1,20 +1,18 @@
 { config
 , lib
 , pkgs-unstable
-, userConf
 , ...
 }:
 let
-  cfg = config.myHome.syke;
-
-  codeDir = "${config.home.homeDirectory}/${userConf.codeDir}";
+  cfg = config.my-home.syke;
+  inherit (config.my-home) code-dir;
 
   path = "/home/tommy/.nix-profile/bin:/home/tommy/.nix-profile/bin:/home/tommy/.nix-profile/bin:/home/tommy/.cargo/bin:/home/tommy/.local/bin:/home/tommy/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl";
   setPath = "PATH=${path}:$PATH";
 in
 {
   options = {
-    myHome.syke = {
+    my-home.syke = {
       enable = lib.mkEnableOption "Enable syke";
 
       code-repos = lib.mkOption {
@@ -31,7 +29,7 @@ in
           let
             clone = remote:
               let
-                dir = codeDir + (lib.strings.removeSuffix ".git" (lib.lists.last (builtins.split "/" remote)));
+                dir = code-dir + (lib.strings.removeSuffix ".git" (lib.lists.last (builtins.split "/" remote)));
                 git = "${pkgs-unstable.git}/bin/git";
                 gitConf = "--config core.sshCommand=\"${pkgs-unstable.openssh}/bin/ssh -i ${config.home.homeDirectory}/.ssh/id_rsa\"";
               in
@@ -54,8 +52,8 @@ in
                 set +e
 
                 ${setPath}
-                if [ ! -d ${codeDir} ]; then
-                  mkdir -p ${codeDir}
+                if [ ! -d ${code-dir} ]; then
+                  mkdir -p ${code-dir}
                 fi
               ''
 

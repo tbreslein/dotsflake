@@ -1,11 +1,11 @@
-{ config, lib, userConf, pkgs-unstable, ... }:
+{ config, lib, user-conf, pkgs-unstable, ... }:
 let
-  cfg = config.myHome.desktop;
+  cfg = config.my-home.desktop;
 in
 {
-  options.myHome.desktop = {
+  options.my-home.desktop = {
     enable = lib.mkEnableOption "Enable home desktop role";
-    terminalFontSize = lib.mkOption {
+    terminal-font-size = lib.mkOption {
       type = lib.types.int;
     };
     terminal = lib.mkOption {
@@ -14,45 +14,48 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.sessionVariables.TERMINAL = "${cfg.terminal}";
     programs = {
       foot = {
         enable = cfg.terminal == "foot";
-        font = "${userConf.monofont}:size=${cfg.terminalFontSize}";
-        mouse.hide-when-typing = "yes";
-        colors = {
-          alpha = 0.95;
-          inherit (userConf.colors.primary) background;
-          inherit (userConf.colors.primary) foreground;
-          regular0 = userConf.colors.normal.black;
-          regular1 = userConf.colors.normal.red;
-          regular2 = userConf.colors.normal.green;
-          regular3 = userConf.colors.normal.yellow;
-          regular4 = userConf.colors.normal.blue;
-          regular5 = userConf.colors.normal.magenta;
-          regular6 = userConf.colors.normal.cyan;
-          regular7 = userConf.colors.normal.white;
-          bright0 = userConf.colors.bright.black;
-          bright1 = userConf.colors.bright.red;
-          bright2 = userConf.colors.bright.green;
-          bright3 = userConf.colors.bright.yellow;
-          bright4 = userConf.colors.bright.blue;
-          bright5 = userConf.colors.bright.magenta;
-          bright6 = userConf.colors.bright.cyan;
-          bright7 = userConf.colors.bright.white;
+        settings = {
+          font = "${user-conf.monofont}:size=${cfg.terminal-font-size}";
+          mouse.hide-when-typing = "yes";
+          colors = {
+            alpha = 0.95;
+            inherit (user-conf.colors.primary) background;
+            inherit (user-conf.colors.primary) foreground;
+            regular0 = user-conf.colors.normal.black;
+            regular1 = user-conf.colors.normal.red;
+            regular2 = user-conf.colors.normal.green;
+            regular3 = user-conf.colors.normal.yellow;
+            regular4 = user-conf.colors.normal.blue;
+            regular5 = user-conf.colors.normal.magenta;
+            regular6 = user-conf.colors.normal.cyan;
+            regular7 = user-conf.colors.normal.white;
+            bright0 = user-conf.colors.bright.black;
+            bright1 = user-conf.colors.bright.red;
+            bright2 = user-conf.colors.bright.green;
+            bright3 = user-conf.colors.bright.yellow;
+            bright4 = user-conf.colors.bright.blue;
+            bright5 = user-conf.colors.bright.magenta;
+            bright6 = user-conf.colors.bright.cyan;
+            bright7 = user-conf.colors.bright.white;
+          };
         };
       };
       ghostty = {
         enable = true;
         # enable = cfg.terminal == "ghostty";
         package =
-          if config.myHome.linux.enable
+          if pkgs-unstable.stdenv.isLinux
           then pkgs-unstable.ghostty
           else null;
         enableBashIntegration = true;
-        clearDefaultKeybinds = true;
         settings = {
-          font-size = cfg.terminalFontSize;
-          font-family = userConf.monofont;
+          font-size = cfg.terminal-font-size;
+          font-family = user-conf.monofont;
+          font-feature = "-calt, -liga, -dlig";
           theme = "_gruvbox-material";
           cursor-style = "block";
           cursor-style-blink = false;
@@ -72,28 +75,28 @@ in
         };
         themes = {
           _gruvbox-material = {
-            background = "#${userConf.colors.primary.background}";
-            foreground = "#${userConf.colors.primary.foreground}";
-            cursor-color = "#${userConf.colors.primary.foreground}";
-            selection-background = "#${userConf.colors.bright.black}";
-            selection-foreground = "#${userConf.colors.primary.foreground}";
+            background = "#${user-conf.colors.primary.background}";
+            foreground = "#${user-conf.colors.primary.foreground}";
+            cursor-color = "#${user-conf.colors.primary.foreground}";
+            selection-background = "#${user-conf.colors.bright.black}";
+            selection-foreground = "#${user-conf.colors.primary.foreground}";
             palette = [
-              "0=#${userConf.colors.normal.black}"
-              "1=#${userConf.colors.normal.red}"
-              "2=#${userConf.colors.normal.green}"
-              "3=#${userConf.colors.normal.yellow}"
-              "4=#${userConf.colors.normal.blue}"
-              "5=#${userConf.colors.normal.magenta}"
-              "6=#${userConf.colors.normal.cyan}"
-              "7=#${userConf.colors.normal.white}"
-              "8=#${userConf.colors.bright.black}"
-              "9=#${userConf.colors.bright.red}"
-              "10=#${userConf.colors.bright.green}"
-              "11=#${userConf.colors.bright.yellow}"
-              "12=#${userConf.colors.bright.blue}"
-              "13=#${userConf.colors.bright.magenta}"
-              "14=#${userConf.colors.bright.cyan}"
-              "15=#${userConf.colors.bright.white}"
+              "0=#${user-conf.colors.normal.black}"
+              "1=#${user-conf.colors.normal.red}"
+              "2=#${user-conf.colors.normal.green}"
+              "3=#${user-conf.colors.normal.yellow}"
+              "4=#${user-conf.colors.normal.blue}"
+              "5=#${user-conf.colors.normal.magenta}"
+              "6=#${user-conf.colors.normal.cyan}"
+              "7=#${user-conf.colors.normal.white}"
+              "8=#${user-conf.colors.bright.black}"
+              "9=#${user-conf.colors.bright.red}"
+              "10=#${user-conf.colors.bright.green}"
+              "11=#${user-conf.colors.bright.yellow}"
+              "12=#${user-conf.colors.bright.blue}"
+              "13=#${user-conf.colors.bright.magenta}"
+              "14=#${user-conf.colors.bright.cyan}"
+              "15=#${user-conf.colors.bright.white}"
             ];
           };
         };
@@ -101,7 +104,7 @@ in
       alacritty = {
         enable = cfg.terminal == "alacritty";
         package =
-          if config.myHome.linux.enable
+          if pkgs-unstable.stdenv.isLinux
           then pkgs-unstable.alacritty
           else null;
         settings = {
@@ -113,24 +116,24 @@ in
             option_as_alt = "Both";
           };
           font = {
-            normal.family = userConf.monofont;
-            size = cfg.terminalFontSize;
+            normal.family = user-conf.monofont;
+            size = cfg.terminal-font-size;
           };
           cursor.style.blinking = "Never";
           colors = rec {
             primary = {
-              background = "0x${userConf.colors.primary.background}";
-              foreground = "0x${userConf.colors.primary.foreground}";
+              background = "0x${user-conf.colors.primary.background}";
+              foreground = "0x${user-conf.colors.primary.foreground}";
             };
             normal = {
-              black = "0x${userConf.colors.normal.black}";
-              red = "0x${userConf.colors.normal.red}";
-              green = "0x${userConf.colors.normal.green}";
-              yellow = "0x${userConf.colors.normal.yellow}";
-              blue = "0x${userConf.colors.normal.blue}";
-              magenta = "0x${userConf.colors.normal.magenta}";
-              cyan = "0x${userConf.colors.normal.cyan}";
-              white = "0x${userConf.colors.normal.white}";
+              black = "0x${user-conf.colors.normal.black}";
+              red = "0x${user-conf.colors.normal.red}";
+              green = "0x${user-conf.colors.normal.green}";
+              yellow = "0x${user-conf.colors.normal.yellow}";
+              blue = "0x${user-conf.colors.normal.blue}";
+              magenta = "0x${user-conf.colors.normal.magenta}";
+              cyan = "0x${user-conf.colors.normal.cyan}";
+              white = "0x${user-conf.colors.normal.white}";
             };
             bright = normal;
           };

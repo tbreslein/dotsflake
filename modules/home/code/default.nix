@@ -1,18 +1,17 @@
 { config
 , lib
 , pkgs-unstable
-, userConf
 , ...
 }:
 let
-  cfg = config.myHome.code;
+  cfg = config.my-home.code;
   tmux-sessionizer = pkgs-unstable.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
     folders=("''\$HOME")
     add_dir() {
       [ -d "''\$HOME/''\$1" ] && folders+=("''\$HOME/''\$1")
     }
-    add_dir "${userConf.codeDir}"
-    add_dir "work/repos"
+    add_dir "${config.my-home.code-dir}"
+    add_dir "${config.my-home.work-dir}/repos"
 
     selected=""
     if [[ ''\$# -eq 1 ]]; then
@@ -63,9 +62,9 @@ let
   '';
 in
 {
-  options.myHome.code = {
+  options.my-home.code = {
     enable = lib.mkEnableOption "Enable coding role";
-    extraWMEnv = lib.mkOption {
+    extra-wmenv = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
     };
@@ -97,11 +96,11 @@ in
           globals = { "vim" }
         '';
 
-        ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/${userConf.dotsDir}/modules/home/code/${cfg.nvim-config}-nvim";
+        ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.my-home.dots-dir}/modules/home/code/${cfg.nvim-config}-nvim";
       };
     };
 
-    myHome.syke = {
+    my-home.syke = {
       code-repos =
         let
           buildUrl = x: "git@github.com:tbreslein/" + x + ".git";
@@ -145,6 +144,12 @@ in
 
     programs = {
       jq.enable = true;
+
+      bash.profileExtra = /* bash */ ''
+        [[ -f "${config.home.homeDirectory}/.cargo/env" ]] && \
+          source "${config.home.homeDirectory}/.cargo/env"
+      '';
+
       neovim = {
         enable = true;
         package = pkgs-unstable.neovim-unwrapped;
@@ -192,13 +197,13 @@ in
         keyMode = "vi";
         mouse = true;
         prefix = "C-Space";
-        inherit (config.myHome.desktop) terminal;
+        inherit (config.my-home.desktop) terminal;
         extraConfig =
           /*
         tmux
           */
           ''
-            set -sa terminal-overrides ",${config.myHome.desktop.terminal}:RGB"
+            set -sa terminal-overrides ",${config.my-home.desktop.terminal}:RGB"
 
             bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
@@ -226,7 +231,7 @@ in
           '';
       };
       zed-editor = {
-        inherit (config.myHome.linux) enable;
+        inherit (config.my-home.linux) enable;
         extensions = [
           # syntax ++ languages
           "angular"

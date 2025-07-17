@@ -46,14 +46,12 @@
     , ...
     } @ inputs:
     let
-      userConf = rec {
+      user-conf = {
         name = "tommy";
-        codeDir = "Documents/code"; # relative to ~
-        dotsDir = "${codeDir}/dotsflake"; # relative to ~
-        github_name = "tbreslein";
-        work_gitlab_name = "Tommy Breslein";
+        github-name = "tbreslein";
+        work-gitlab-name = "Tommy Breslein";
         email = "tommy.breslein@protonmail.com";
-        work_email = "tommy.breslein@pailot.com";
+        work-email = "tommy.breslein@pailot.com";
         monofont = "Commit Mono Nerd Font";
         # monofont = "DepartureMono Nerd Font";
         colors = rec {
@@ -78,17 +76,17 @@
         };
       };
 
-      mkArgs = system:
+      mkArgs = system: hostname:
         let
           pkgs-stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
           pkgs-unstable = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
         in
-        { inherit inputs pkgs-stable pkgs-unstable userConf system; };
+        { inherit inputs pkgs-stable pkgs-unstable user-conf system hostname; };
 
       mkNixos = system: hostname:
         let
-          args = mkArgs system;
-          home = "/home/${userConf.name}";
+          args = mkArgs system hostname;
+          home = "/home/${user-conf.name}";
         in
         {
           "${hostname}" = nixpkgs-unstable.lib.nixosSystem {
@@ -101,12 +99,12 @@
 
               home-manager.nixosModules.home-manager
               {
-                users.users.${userConf.name}.home = "${home}";
+                users.users.${user-conf.name}.home = "${home}";
                 home-manager = {
                   useGlobalPkgs = true;
                   useUserPackages = true;
                   extraSpecialArgs = args;
-                  users.${userConf.name} = {
+                  users.${user-conf.name} = {
                     imports = [
                       ./modules/home
                       ./hosts/${hostname}/home.nix
@@ -127,8 +125,8 @@
         let
           system = "aarch64-darwin";
           hostname = "answer";
-          home = "/Users/${userConf.name}";
-          args = mkArgs system;
+          home = "/Users/${user-conf.name}";
+          args = mkArgs system hostname;
         in
         {
           "${hostname}" =
@@ -144,7 +142,7 @@
                   nix-homebrew = {
                     enable = true;
                     enableRosetta = true;
-                    user = "${userConf.name}";
+                    user = "${user-conf.name}";
                     taps = {
                       "homebrew/homebrew-core" = homebrew-core;
                       "homebrew/homebrew-cask" = homebrew-cask;
@@ -155,12 +153,12 @@
 
                 home-manager.darwinModules.home-manager
                 {
-                  users.users.${userConf.name}.home = "${home}";
+                  users.users.${user-conf.name}.home = "${home}";
                   home-manager = {
                     useGlobalPkgs = true;
                     useUserPackages = true;
                     extraSpecialArgs = args;
-                    users.${userConf.name} = {
+                    users.${user-conf.name} = {
                       imports = [
                         ./modules/home
                         ./hosts/${hostname}/home.nix

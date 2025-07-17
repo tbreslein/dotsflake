@@ -1,4 +1,4 @@
-{ lib, pkgs, system, userConf, ... }: {
+{ lib, pkgs, system, user-conf, hostname, ... }: {
   imports = [
     ./amd
     ./nvidia
@@ -23,9 +23,9 @@
     # openssh.enable = true;
   };
 
-  users.users.${userConf.name} = {
+  users.users.${user-conf.name} = {
     isNormalUser = true;
-    description = "${userConf.name}";
+    description = "${user-conf.name}";
     extraGroups = [ "networkmanager" "wheel" ];
   };
 
@@ -51,6 +51,7 @@
     useDHCP = lib.mkDefault true;
     networkmanager.enable = true;
     firewall.enable = true;
+    hostName = hostname;
   };
 
   time.timeZone = "Europe/Berlin";

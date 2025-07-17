@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  cfg = config.myHome.linux;
+  cfg = config.my-home.linux;
 in
 {
   imports = [
@@ -8,9 +8,7 @@ in
     ./nvidia
   ];
 
-  options.myHome.linux = {
-    enable = lib.mkEnableOption "Enable home linux role";
-  };
+  options.my-home.linux.enable = lib.mkEnableOption "Enable home linux role";
 
   config = lib.mkIf cfg.enable {
     services.syncthing.enable = true;

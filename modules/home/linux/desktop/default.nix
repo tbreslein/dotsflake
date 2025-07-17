@@ -1,11 +1,11 @@
-{ config, lib, pkgs-unstable, userConf, ... }:
+{ config, lib, pkgs-unstable, user-conf, ... }:
 let
-  cfg = config.myHome.linux.desktop;
+  cfg = config.my-home.linux.desktop;
 in
 {
-  options.myHome.linux.desktop = {
+  options.my-home.linux.desktop = {
     enable = lib.mkEnableOption "Enable home linux.desktop role";
-    extraWMEnv = lib.mkOption {
+    extra-wm-env = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
     };
@@ -66,8 +66,8 @@ in
           border_size = 2;
           gaps_in = 5;
           gaps_out = 20;
-          "col.active_border" = "rgba(${userConf.colors.primary.border}ee)";
-          "col.inactive_border" = "rgba(${userConf.colors.primary.background}aa)";
+          "col.active_border" = "rgba(${user-conf.colors.primary.border}ee)";
+          "col.inactive_border" = "rgba(${user-conf.colors.primary.background}aa)";
           layout = "master";
         };
         animations.enabled = "no";
@@ -104,14 +104,14 @@ in
         bind = [
           ''
             $mod, Space, exec, wmenu-run -i -f \
-              "${userConf.monofont} Normal \
-              ${builtins.toString config.myHome.desktop.terminalFontSize}" \
-              -N ${userConf.colors.primary.background} \
-              -n ${userConf.colors.primary.foreground} \
-              -S ${userConf.colors.normal.black} \
-              -s ${userConf.colors.primary.accent} \
+              "${user-conf.monofont} Normal \
+              ${builtins.toString config.my-home.desktop.terminal-font-size}" \
+              -N ${user-conf.colors.primary.background} \
+              -n ${user-conf.colors.primary.foreground} \
+              -S ${user-conf.colors.normal.black} \
+              -s ${user-conf.colors.primary.accent} \
           ''
-          "$mod, Return, exec, [workspace 2] ${config.myHome.desktop.terminal}"
+          "$mod, Return, exec, [workspace 2] ${config.my-home.desktop.terminal}"
           "$mod, b, exec, [workspace 1] zen-twilight"
           "$mod ALT, n, exec, makoctl dismiss -a"
           "$mod CTRL, q, killactive"
@@ -201,13 +201,13 @@ in
               monitor = "";
               dots_center = true;
               fade_on_empty = false;
-              font_color = "rgba(${userConf.colors.primary.foreground}ee)";
-              inner_color = "rgba(${userConf.colors.normal.black}ee)";
-              check_color = "rgba(${userConf.colors.primary.accent}ee)";
-              fail_color = "rgba(${userConf.colors.primary.error}ee)";
+              font_color = "rgba(${user-conf.colors.primary.foreground}ee)";
+              inner_color = "rgba(${user-conf.colors.normal.black}ee)";
+              check_color = "rgba(${user-conf.colors.primary.accent}ee)";
+              fail_color = "rgba(${user-conf.colors.primary.error}ee)";
               outline_thickness = 0;
               rounding = 0;
-              font_family = "${userConf.monofont}";
+              font_family = "${user-conf.monofont}";
               placeholder_text = "Password ... ";
               shadow_passes = 2;
             }
@@ -216,7 +216,7 @@ in
             {
               font_size = 120;
               font_family = "Noto Font Bold";
-              font_color = "rgba(${userConf.colors.primary.foreground}ee)";
+              font_color = "rgba(${user-conf.colors.primary.foreground}ee)";
               text = "$TIME";
               position = "-30, 0";
               halign = "center";
@@ -225,7 +225,7 @@ in
             {
               font_size = 60;
               font_family = "Noto Font";
-              font_color = "rgba(${userConf.colors.primary.foreground}ee)";
+              font_color = "rgba(${user-conf.colors.primary.foreground}ee)";
               text = "cmd[update:60000] date +\"%A, %d %B %Y\""; # update every 60 seconds
               position = "-30, -150";
               halign = "center";
@@ -278,13 +278,13 @@ in
         };
         style = /* css */ ''
           * {
-            font-family: "${userConf.monofont}";
-            font-size: ${builtins.toString config.myHome.desktop.terminalFontSize}px;
+            font-family: "${user-conf.monofont}";
+            font-size: ${builtins.toString config.my-home.desktop.terminal-font-size}px;
           }
 
           window#waybar {
-            background-color: #${userConf.colors.primary.background};
-            color: #${userConf.colors.primary.foreground};
+            background-color: #${user-conf.colors.primary.background};
+            color: #${user-conf.colors.primary.foreground};
           }
 
           .modules-left {
@@ -301,12 +301,12 @@ in
           #workspaces button {
           	padding: 0px 11px 0px 11px;
            	min-width: 1px;
-          	color: #${userConf.colors.primary.foreground};
+          	color: #${user-conf.colors.primary.foreground};
           }
 
           #workspaces button.active {
           	padding: 0px 11px 0px 11px;
-          	color: #${userConf.colors.primary.accent};
+          	color: #${user-conf.colors.primary.accent};
           }
 
           #window {
@@ -319,7 +319,7 @@ in
           }
 
           window#waybar.empty {
-          	background-color: #${userConf.colors.normal.black};
+          	background-color: #${user-conf.colors.normal.black};
           }
 
           #network, #temperature, #backlight, #pulseudio, #battery {
@@ -336,10 +336,10 @@ in
           }
 
           #battery.critical {
-            color: #${userConf.colors.primary.error};
+            color: #${user-conf.colors.primary.error};
           }
           #network.disconnected {
-            color: #${userConf.colors.primary.error};
+            color: #${user-conf.colors.primary.error};
           }
         '';
       };
@@ -373,11 +373,11 @@ in
         settings = {
           actions = true;
           anchor = "top-right";
-          background-color = "#${userConf.colors.primary.background}";
-          border-color = "#${userConf.colors.primary.border}";
+          background-color = "#${user-conf.colors.primary.background}";
+          border-color = "#${user-conf.colors.primary.border}";
           border-radius = 0;
           default-timeout = 0;
-          font = "Noto Font ${builtins.toString (config.myHome.desktop.terminalFontSize - 5)}";
+          font = "Noto Font ${builtins.toString (config.my-home.desktop.terminal-font-size - 5)}";
           height = 1000;
           width = 500;
           icons = true;

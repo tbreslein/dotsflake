@@ -1,12 +1,13 @@
 _:
 
 {
-  myHome = {
+  my-home = {
+    enable = true;
     code.enable = true;
     code.nvim-config = "big";
     desktop = {
       enable = true;
-      terminalFontSize = 22;
+      terminal-font-size = 22;
       terminal = "ghostty";
     };
     darwin.enable = true;

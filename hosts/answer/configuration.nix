@@ -1,4 +1,4 @@
-{ config, lib, pkgs-stable, pkgs-unstable, userConf, ... }:
+{ config, lib, pkgs-stable, pkgs-unstable, user-conf, hostname, ... }:
 
 let
   appsSrc = config.system.build.applications + /Applications;
@@ -68,15 +68,15 @@ in
         RunAtLoad = true;
         StandardOutPath = "/tmp/mococlient.out.log";
         StandardErrorPath = "/tmp/mococlient.err.log";
-        WorkingDirectory = "/Users/${userConf.name}/work/repos/mocotrackingclient";
+        WorkingDirectory = "/Users/${user-conf.name}/work/repos/mocotrackingclient";
       };
     };
   };
 
-  networking = rec {
-    hostName = "answer";
-    computerName = hostName;
-    localHostName = hostName;
+  networking = {
+    hostName = hostname;
+    computerName = hostname;
+    localHostName = hostname;
   };
 
   nix = {
@@ -140,10 +140,10 @@ in
             cmd-ctrl-r = "move-node-to-workspace 3";
             cmd-ctrl-a = "move-node-to-workspace 4";
             cmd-ctrl-g = "move-node-to-workspace 5";
-            cmd-v = "workspace-back-and-forth";
+            cmd-ctrl-v = "workspace-back-and-forth";
             cmd-ctrl-n = "move-node-to-monitor --wrap-around next";
 
-            cmd-f = "fullscreen";
+            cmd-ctrl-f = "fullscreen";
             cmd-ctrl-semicolon = "mode service";
           };
           service.binding = {
@@ -191,8 +191,8 @@ in
     };
     jankyborders = {
       enable = true;
-      active_color = "0xff${userConf.colors.primary.border}";
-      inactive_color = "0xff${userConf.colors.normal.black}";
+      active_color = "0xff${user-conf.colors.primary.border}";
+      inactive_color = "0xff${user-conf.colors.normal.black}";
       width = 5.0;
     };
     karabiner-elements = {
@@ -202,7 +202,7 @@ in
 
   system = {
     activationScripts.applications.text = lib.mkForce copyScript;
-    primaryUser = "${userConf.name}";
+    primaryUser = "${user-conf.name}";
     defaults = {
       NSGlobalDomain = {
         NSAutomaticCapitalizationEnabled = false;

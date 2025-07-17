@@ -1,9 +1,9 @@
 { config, lib, ... }:
 let
-  cfg = config.mySystem.nvidia;
+  cfg = config.my-system.nixos.nvidia;
 in
 {
-  options.mySystem.nvidia.enable = lib.mkEnableOption "enable nixos.nvidia";
+  options.my-system.nixos.nvidia.enable = lib.mkEnableOption "enable my-system.nixos.nvidia";
 
   config = lib.mkIf cfg.enable {
     boot = {

@@ -1,13 +1,13 @@
-{ config, lib, pkgs, userConf, inputs, ... }:
+{ config, lib, pkgs, user-conf, inputs, ... }:
 let
-  cfg = config.mySystem.desktop;
+  cfg = config.my-system.nixos.desktop;
 in
 {
   imports = [
     ./gaming
   ];
 
-  options.mySystem.desktop.enable = lib.mkEnableOption "enable nixos.desktop";
+  options.my-system.nixos.desktop.enable = lib.mkEnableOption "enable my-system.nixos.desktop";
 
   config = lib.mkIf cfg.enable {
     programs.hyprland = {
@@ -54,7 +54,7 @@ in
           {
             initial_session = {
               command = session;
-              user = userConf.name;
+              user = user-conf.name;
             };
             default_session = {
               # run tuigreet, when quitting the initial_session

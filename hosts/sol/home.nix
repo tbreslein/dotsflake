@@ -1,11 +1,12 @@
 _:
 
 {
-  myHome = {
+  my-home = {
+    enable = true;
     code.enable = true;
     desktop = {
       enable = true;
-      terminalFontSize = 18;
+      terminal-font-size = 18;
       terminal = "foot";
     };
     linux = {

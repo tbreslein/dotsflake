@@ -1,11 +1,11 @@
 { config, lib, ... }:
 
 let
-  cfg = config.mySystem.laptop;
+  cfg = config.my-system.nixos.laptop;
 in
 {
-  options.mySystem.laptop = {
-    enable = lib.mkEnableOption "Enable system laptop role";
+  options.my-system.nixos.laptop = {
+    enable = lib.mkEnableOption "Enable my-system.nixos.laptop role";
   };
 
   config = lib.mkIf cfg.enable {
