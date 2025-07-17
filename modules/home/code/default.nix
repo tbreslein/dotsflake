@@ -42,19 +42,6 @@ let
   git-status = pkgs-unstable.writeShellScriptBin "git-status" /* bash */ ''
     if git rev-parse >/dev/null 2>&1; then
       result=" ''\$(git rev-parse --abbrev-ref HEAD) "
-      if [ ''\$(git status --porcelain=v1 | wc -l) -gt 0 ]; then
-        result="''\${result}!"
-      fi
-      status_uno=''\$(git status -uno)
-      if echo "''\$status_uno" | grep -q "Your branch is behind"; then
-        result="''\${result}"
-      fi
-      if echo "''\$status_uno" | grep -q "Your branch is ahead"; then
-        result="''\${result}"
-      fi
-      if echo "''\$status_uno" | grep -q "Your branch and '.*' have diverged"; then
-        result="''\${result}"
-      fi
       echo "''\$result"
     else
       echo ""
