@@ -140,8 +140,8 @@ in
             cmd-ctrl-r = "move-node-to-workspace 3";
             cmd-ctrl-a = "move-node-to-workspace 4";
             cmd-ctrl-g = "move-node-to-workspace 5";
-            cmd-tab = "workspace-back-and-forth";
-            cmd-shift-tab = "move-workspace-to-monitor --wrap-around next";
+            cmd-v = "workspace-back-and-forth";
+            cmd-ctrl-n = "move-node-to-monitor --wrap-around next";
 
             cmd-f = "fullscreen";
             cmd-ctrl-semicolon = "mode service";
