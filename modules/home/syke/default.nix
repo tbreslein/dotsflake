@@ -29,7 +29,7 @@ in
           let
             clone = remote:
               let
-                dir = code-dir + (lib.strings.removeSuffix ".git" (lib.lists.last (builtins.split "/" remote)));
+                dir = code-dir + "/" + (lib.strings.removeSuffix ".git" (lib.lists.last (builtins.split "/" remote)));
                 git = "${pkgs-unstable.git}/bin/git";
                 gitConf = "--config core.sshCommand=\"${pkgs-unstable.openssh}/bin/ssh -i ${config.home.homeDirectory}/.ssh/id_rsa\"";
               in

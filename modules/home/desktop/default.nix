@@ -45,8 +45,7 @@ in
         };
       };
       ghostty = {
-        enable = true;
-        # enable = cfg.terminal == "ghostty";
+        enable = cfg.terminal == "ghostty";
         package =
           if pkgs-unstable.stdenv.isLinux
           then pkgs-unstable.ghostty
