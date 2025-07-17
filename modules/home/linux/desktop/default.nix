@@ -61,7 +61,7 @@ in
           "ELECTRON_OZONE_PLATFORM_HINT,wayland"
           "SDL_VIDEODRIVER,wayland"
           "_JAVA_AWT_WM_NONREPARENTING,1"
-        ] ++ cfg.extraWMEnv;
+        ] ++ cfg.extra-wm-env;
         general = {
           border_size = 2;
           gaps_in = 5;

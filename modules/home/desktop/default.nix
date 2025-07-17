@@ -19,7 +19,7 @@ in
       foot = {
         enable = cfg.terminal == "foot";
         settings = {
-          font = "${user-conf.monofont}:size=${cfg.terminal-font-size}";
+          main.font = "${user-conf.monofont}:size=${toString cfg.terminal-font-size}";
           mouse.hide-when-typing = "yes";
           colors = {
             alpha = 0.95;
