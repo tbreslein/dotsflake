@@ -117,10 +117,7 @@ in
 
           gco() {
             local my_branch=$(git branch -a --no-color | \
-              sort | \
-              uniq | \
-              tr -d " " | \
-              fzf --select-1 --ansi --preview 'git log --graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" {} 2>/dev/null')
+              sort -u | tr -d " " | fzy)
 
             if echo "$my_branch" | grep -q "remotes/origin"; then
               my_branch=''${my_branch##remotes/origin/}
