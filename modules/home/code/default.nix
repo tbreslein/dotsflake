@@ -8,7 +8,7 @@ let
   tmux-sessionizer = pkgs-unstable.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
     folders=("''\$HOME")
     add_dir() {
-      [ -d "''\$HOME/''\$1" ] && folders+=("''\$HOME/''\$1")
+      [ -d "$1" ] && folders+=("$1")
     }
     add_dir "${config.my-home.code-dir}"
     add_dir "${config.my-home.work-dir}/repos"
@@ -17,7 +17,7 @@ let
     if [[ ''\$# -eq 1 ]]; then
       selected=''\$1
     else
-      selected=''\$(find ''\$(echo "''\${folders[@]}") -mindepth 1 -maxdepth 1 -type d | fzf)
+      selected=''\$(fd -td --exact-depth 1 . ''\${folders[@]} | fzy)
     fi
 
     if [[ -z ''\$selected ]]; then
@@ -192,7 +192,7 @@ in
           ''
             set -sa terminal-overrides ",${config.my-home.desktop.terminal}:RGB"
 
-            bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
+            bind-key -r C-f run-shell "tmux popup -E -w80 -h11 ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g popup -E -w90% -h90% "lazygit"
             bind-key C-o command-prompt -p "open app: " "popup -E -w90% -h90% '%%'"
 
