@@ -3,7 +3,7 @@ vim.opt.grepprg = "rg --vimgrep --ignore-file=.gitignore --iglob='!.git/' --iglo
 local fuzzy = require("tvim.fuzzy")
 
 local function file_search(fd_flags)
-  fuzzy.fuzzy_search("fd " .. fd_flags .. " | fzy", function(stdout)
+  fuzzy.fuzzy_search("fd -tf " .. fd_flags .. " | fzy", function(stdout)
     local selected, _ = stdout:gsub("\n", "")
     vim.cmd("bd!")
     vim.cmd("e " .. selected)
