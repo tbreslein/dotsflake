@@ -193,8 +193,8 @@ in
             set -sa terminal-overrides ",${config.my-home.desktop.terminal}:RGB"
 
             bind-key -r C-f run-shell "tmux new-window ${tmux-sessionizer}/bin/tmux-sessionizer"
-            bind-key C-g new-window -n lazygit -c "#{pane_current_path}" "lazygit"
-            bind-key C-o command-prompt -p "open app: " "new-window '%%'"
+            bind-key C-g popup -E -w90% -h90% "lazygit"
+            bind-key C-o command-prompt -p "open app: " "popup -E -w90% -h90% '%%'"
 
             bind-key C-s split-pane -l 30%
             bind-key C-v split-pane -h -b -l 40%
