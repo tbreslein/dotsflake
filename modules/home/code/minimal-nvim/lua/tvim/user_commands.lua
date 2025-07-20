@@ -8,4 +8,9 @@ vim.api.nvim_create_user_command("TTest", function()
 end, { nargs = 0, desc = "Test project" })
 vim.keymap.set("n", "<leader>;t", ":TTest<cr>", { noremap = true, silent = true })
 
+vim.api.nvim_create_user_command("TCheck", function()
+  print("TCheck not defined")
+end, { nargs = 0, desc = "Check project" })
+vim.keymap.set("n", "<leader>;c", ":TCheck<cr>", { noremap = true, silent = true })
+
 vim.keymap.set("n", "<leader>;m", ":make<cr>", { noremap = true, silent = true })
