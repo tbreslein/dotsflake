@@ -32,4 +32,5 @@
 require("tvim.vimsettings")
 require("tvim.ui")
 require("tvim.keymaps")
+require("tvim.user_commands")
 require("tvim.navigation")
