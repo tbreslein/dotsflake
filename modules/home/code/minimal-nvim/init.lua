@@ -7,6 +7,13 @@
 --     - zed: https://zed.dev/docs/development/debuggers
 --     - i MIGHT use a plugin for debugging, if i cannot setup zed for that
 --     - nvim dap: https://youtu.be/cxpWjlNXeQA?si=vbocJxlP2odku6Yp
+--   - native lsp:
+--     - https://youtu.be/tdhxpn1XdjQ?si=GFaBKLcVtQ75xYwO
+--   - i might want to write my config in fennel...
+--     - https://fennel-lang.org/
+--     - https://github.com/Olical/nfnl
+--     - https://github.com/rafaeldelboni/cajus-nfnl?tab=readme-ov-file
+--     - https://github.com/Samy-33/dotfiles/tree/3057a7c28001e030808bd06b4f8dd06dc90a7bae/dotcom/.config/nvim
 --
 --   - videos on pluginless neovim:
 --     - https://youtu.be/XA2WjJbmmoM?si=nrSvG-iiLWvyPZn6
