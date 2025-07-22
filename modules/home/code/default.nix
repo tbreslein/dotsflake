@@ -1,11 +1,7 @@
-{ config
-, lib
-, pkgs-unstable
-, ...
-}:
+{ config, lib, pkgs, ... }:
 let
   cfg = config.my-home.code;
-  tmux-sessionizer = pkgs-unstable.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
+  tmux-sessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
     folders=("''\$HOME")
     add_dir() {
       [ -d "$1" ] && folders+=("$1")
@@ -39,7 +35,7 @@ let
     tmux switch-client -t "''\$selected_name"
   '';
 
-  git-status = pkgs-unstable.writeShellScriptBin "git-status" /* bash */ ''
+  git-status = pkgs.writeShellScriptBin "git-status" /* bash */ ''
     if git rev-parse >/dev/null 2>&1; then
       result=" ''\$(git rev-parse --abbrev-ref HEAD) "
       echo "''\$result"
@@ -63,7 +59,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home = {
-      packages = with pkgs-unstable; [
+      packages = with pkgs; [
         universal-ctags
 
         stylua
@@ -139,11 +135,11 @@ in
 
       neovim = {
         enable = true;
-        package = pkgs-unstable.neovim-unwrapped;
+        package = pkgs.neovim-unwrapped;
         defaultEditor = true;
         plugins =
           if cfg.nvim-config == "big" then
-            (with pkgs-unstable.vimPlugins; [
+            (with pkgs.vimPlugins; [
               # ui
               nvim-treesitter.withAllGrammars
               nvim-treesitter-context
@@ -169,7 +165,7 @@ in
               nvim-dap-go
               nvim-dap-python
             ]) else
-            (with pkgs-unstable.vimPlugins; [
+            (with pkgs.vimPlugins; [
               nvim-treesitter.withAllGrammars
               gruvbox-material
             ]);

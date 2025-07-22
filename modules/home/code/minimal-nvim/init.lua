@@ -14,6 +14,8 @@
 --     - https://github.com/Olical/nfnl
 --     - https://github.com/rafaeldelboni/cajus-nfnl?tab=readme-ov-file
 --     - https://github.com/Samy-33/dotfiles/tree/3057a7c28001e030808bd06b4f8dd06dc90a7bae/dotcom/.config/nvim
+--   - folding:
+--     - https://www.reddit.com/r/neovim/comments/1jmqd7t/sorry_ufo_these_7_lines_replaced_you/
 --
 --   - videos on pluginless neovim:
 --     - https://youtu.be/XA2WjJbmmoM?si=nrSvG-iiLWvyPZn6

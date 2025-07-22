@@ -1,8 +1,4 @@
-{ config
-, lib
-, pkgs-unstable
-, ...
-}:
+{ config, lib, pkgs, ... }:
 let
   cfg = config.my-home.syke;
   inherit (config.my-home) code-dir;
@@ -30,8 +26,8 @@ in
             clone = remote:
               let
                 dir = code-dir + "/" + (lib.strings.removeSuffix ".git" (lib.lists.last (builtins.split "/" remote)));
-                git = "${pkgs-unstable.git}/bin/git";
-                gitConf = "--config core.sshCommand=\"${pkgs-unstable.openssh}/bin/ssh -i ${config.home.homeDirectory}/.ssh/id_rsa\"";
+                git = "${pkgs.git}/bin/git";
+                gitConf = "--config core.sshCommand=\"${pkgs.openssh}/bin/ssh -i ${config.home.homeDirectory}/.ssh/id_rsa\"";
               in
                 /* bash */
               ''

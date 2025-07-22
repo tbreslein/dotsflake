@@ -1,4 +1,4 @@
-{ config, lib, pkgs-unstable, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-home.linux.desktop;
 in
@@ -13,7 +13,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home = {
-      packages = with pkgs-unstable; [
+      packages = with pkgs; [
         playerctl
         brightnessctl
         grim

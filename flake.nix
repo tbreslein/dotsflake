@@ -78,24 +78,22 @@
 
       mkArgs = system: hostname:
         let
-          pkgs-stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
-          pkgs-unstable = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
+          pkgs-stable = import nixpkgs-stable { inherit system; };
         in
-        { inherit inputs pkgs-stable pkgs-unstable user-conf system hostname; };
+        { inherit inputs pkgs-stable user-conf system hostname; };
 
-      mkNixos = system: hostname:
+      mkNixos = _nixpkgs: system: hostname: extraModules:
         let
           args = mkArgs system hostname;
           home = "/home/${user-conf.name}";
         in
         {
-          "${hostname}" = nixpkgs-unstable.lib.nixosSystem {
+          "${hostname}" = _nixpkgs.lib.nixosSystem {
             inherit system;
             specialArgs = args;
             modules = [
               ./hosts/${hostname}/configuration.nix
               ./modules/nixos
-              chaotic.nixosModules.default
 
               home-manager.nixosModules.home-manager
               {
@@ -112,14 +110,15 @@
                   };
                 };
               }
-            ];
+            ] ++ extraModules;
           };
         };
     in
     {
       nixosConfigurations =
-        (mkNixos "x86_64-linux" "sol")
-        // (mkNixos "x86_64-linux" "ky");
+        (mkNixos nixpkgs-unstable "x86_64-linux" "sol" [ chaotic.nixosModules.default ])
+        // (mkNixos nixpkgs-unstable "x86_64-linux" "ky" [ chaotic.nixosModules.default ])
+        // (mkNixos nixpkgs-stable "aarch64-linux" "elphelt" [ ]);
 
       darwinConfigurations =
         let

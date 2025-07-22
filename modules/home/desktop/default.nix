@@ -1,4 +1,4 @@
-{ config, lib, user-conf, pkgs-unstable, ... }:
+{ config, lib, user-conf, pkgs, ... }:
 let
   cfg = config.my-home.desktop;
 in
@@ -47,8 +47,8 @@ in
       ghostty = {
         enable = cfg.terminal == "ghostty";
         package =
-          if pkgs-unstable.stdenv.isLinux
-          then pkgs-unstable.ghostty
+          if pkgs.stdenv.isLinux
+          then pkgs.ghostty
           else null;
         enableBashIntegration = true;
         settings = {
@@ -103,8 +103,8 @@ in
       alacritty = {
         enable = cfg.terminal == "alacritty";
         package =
-          if pkgs-unstable.stdenv.isLinux
-          then pkgs-unstable.alacritty
+          if pkgs.stdenv.isLinux
+          then pkgs.alacritty
           else null;
         settings = {
           window = {

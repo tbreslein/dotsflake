@@ -1,4 +1,4 @@
-{ config, lib, pkgs-unstable, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.my-home.laptop;
@@ -8,7 +8,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home = {
-      packages = [ pkgs-unstable.kanata ];
+      packages = [ pkgs.kanata ];
       # setup kanata for macos:
       # install karabiner elements and walk through the full setup
       # add kanata and ghostty to Settings > Privacy & Security > Input Monitoring
@@ -47,7 +47,7 @@ in
         local kanatadir="${config.home.homeDirectory}/.config/kanata/"
         if ! tmux has-session -t "kanata" 2>/dev/null; then
           tmux new-session -ds "kanata" -c "$kanatadir"
-          ${if pkgs-unstable.stdenv.isLinux
+          ${if pkgs.stdenv.isLinux
             then "tmux send-keys -t kanata 'kanata -c ./kanata.kbd' C-m"
             else ("tmux send-keys -t kanata 'sudo kanata -c ./kanata.kbd'" +
               " && tmux switch-client -t kanata")}

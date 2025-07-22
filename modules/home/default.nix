@@ -1,4 +1,4 @@
-{ config, lib, pkgs-unstable, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 
 let
   cfg = config.my-home;
@@ -32,7 +32,7 @@ in
   config = lib.mkIf cfg.enable {
     home = {
       username = user-conf.name;
-      packages = with pkgs-unstable; [
+      packages = with pkgs; [
         nerd-fonts.commit-mono
         nerd-fonts.departure-mono
 

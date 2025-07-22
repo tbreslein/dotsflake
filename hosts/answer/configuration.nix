@@ -1,4 +1,4 @@
-{ config, lib, pkgs-stable, pkgs-unstable, user-conf, hostname, ... }:
+{ config, lib, pkgs-stable, pkgs, user-conf, hostname, ... }:
 
 let
   appsSrc = config.system.build.applications + /Applications;
@@ -26,8 +26,8 @@ in
 
 {
   environment = {
-    shells = with pkgs-unstable; [ bashInteractive ];
-    systemPackages = with pkgs-unstable; [ bashInteractive localsend ];
+    shells = with pkgs; [ bashInteractive ];
+    systemPackages = with pkgs; [ bashInteractive localsend ];
   };
 
   nixpkgs.config.allowUnfree = true;
