@@ -173,6 +173,7 @@ in
           ca = "commit --amend";
           caa = "commit --amend --no-edit";
           co = "checkout";
+          cb = "checkout -b";
           s = "status";
           sw = "switch";
           a = "add";
