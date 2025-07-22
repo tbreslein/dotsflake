@@ -31,6 +31,13 @@
 --     - https://youtu.be/VNDoMhKVdQM?si=ik-IpCYDMdXgSOuD
 --     - https://youtu.be/9UxMvz6u1K4?si=jIZzdHTt48vOad5I
 --     - https://youtu.be/GyPXYF6jgwk?si=8qhkJshwZF2h5p81
+--
+-- KEYBINDS I SHOULD REMEMBER:
+--   mode | bind       | effect
+--   x    | <c-r>%     | paste current file name into command line
+--   x    | <c-r><c-l> | paste current line into command line
+--   x    | @:<cr>     | repeat last command
+--   n    | <c-^>      | switch to alternate (last) buffer
 
 require("tvim.vimsettings")
 require("tvim.ui")
