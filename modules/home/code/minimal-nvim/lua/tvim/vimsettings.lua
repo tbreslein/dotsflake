@@ -57,7 +57,7 @@ vim.opt.timeoutlen = 500
 vim.opt.ttimeoutlen = 0
 vim.opt.confirm = false
 vim.opt.splitbelow = true
-vim.opt.splitright = true
+vim.opt.splitright = false
 
 vim.opt.swapfile = false
 vim.opt.undofile = true

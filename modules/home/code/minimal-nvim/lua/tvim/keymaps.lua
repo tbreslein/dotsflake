@@ -1,5 +1,6 @@
 -- >>> KEYMAPS
 vim.keymap.set("n", "Q", "<nop>", { noremap = true, silent = true })
+vim.keymap.set("t", "<esc><esc>", "<C-\\><C-n>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>w", ":w<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<esc>", ":noh<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "n", "nzzzv", { noremap = true, silent = true })
@@ -25,5 +26,9 @@ vim.keymap.set("n", "]c", ":cnext<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "[c", ":cprev<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<F1>", ":cnext<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<F3>", ":cprev<cr>", { noremap = true, silent = true })
-
 vim.keymap.set("n", "<leader>fo", ":Explore<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>tt", ":vsplit term://" .. os.getenv("SHELL") .. "<cr>a", { noremap = true, silent = true })
+vim.keymap.set("n", "<c-h>", "<c-w><c-h>", { noremap = true, silent = true })
+vim.keymap.set("n", "<c-j>", "<c-w><c-j>", { noremap = true, silent = true })
+vim.keymap.set("n", "<c-k>", "<c-w><c-k>", { noremap = true, silent = true })
+vim.keymap.set("n", "<c-l>", "<c-w><c-l>", { noremap = true, silent = true })

@@ -27,7 +27,7 @@ vim.opt.maxmempattern = 20000
 vim.opt.confirm = false
 vim.opt.equalalways = false
 vim.opt.splitbelow = true
-vim.opt.splitright = true
+vim.opt.splitright = false
 
 vim.opt.swapfile = false
 vim.opt.backup = false
@@ -116,6 +116,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- >>> KEYMAPS
 vim.keymap.set("n", "Q", "<nop>", { noremap = true, silent = true })
+vim.keymap.set("t", "<esc><esc>", "<C-\\><C-n>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>w", ":w<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<esc>", ":noh<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "n", "nzzzv", { noremap = true, silent = true })
@@ -144,6 +145,7 @@ vim.keymap.set("n", "<F1>", ":cnext<cr>", { noremap = true, silent = true })
 vim.keymap.set("n", "<F3>", ":cprev<cr>", { noremap = true, silent = true })
 
 vim.keymap.set("n", "<leader>fo", ":Explore<CR>", { desc = "Open file explorer" })
+vim.keymap.set("n", "<leader>tt", ":vsplit term://" .. os.getenv("SHELL") .. "<cr>a", { noremap = true, silent = true })
 
 vim.keymap.set("n", "gh", vim.diagnostic.open_float)
 vim.keymap.set("n", "<F10>", function()
