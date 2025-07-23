@@ -38,6 +38,10 @@
 --   x    | <c-r><c-l> | paste current line into command line
 --   x    | @:<cr>     | repeat last command
 --   n    | <c-^>      | switch to alternate (last) buffer
+--   n    | <c-w>+     | increase window size vertically
+--   n    | <c-w>-     | decrease window size vertically
+--   n    | <c-w><     | increase window size to the left
+--   n    | <c-w>>     | increase window size to the right
 
 require("tvim.vimsettings")
 require("tvim.ui")

@@ -7,7 +7,7 @@ _:
     code.nvim-config = "big";
     desktop = {
       enable = true;
-      terminal-font-size = 22;
+      terminal-font-size = 21;
       terminal = "ghostty";
     };
     darwin.enable = true;

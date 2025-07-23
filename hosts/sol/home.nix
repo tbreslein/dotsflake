@@ -6,7 +6,7 @@ _:
     code.enable = true;
     desktop = {
       enable = true;
-      terminal-font-size = 18;
+      terminal-font-size = 17;
       terminal = "foot";
     };
     linux = {
