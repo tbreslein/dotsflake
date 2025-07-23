@@ -34,7 +34,6 @@ in
       username = user-conf.name;
       packages = with pkgs; [
         nerd-fonts.commit-mono
-        nerd-fonts.departure-mono
 
         ripgrep
         fzy
@@ -42,17 +41,32 @@ in
         rm-improved
         git
 
-        (writeShellScriptBin "dm" /*bash*/ ''
-          os=""
-          case $(uname -s) in
-            Linux) os="os";;
-            Darwin) os="darwin";;
-          esac
-          case $1 in
-            u) nh $os switch -u;;
-            *) nh $os switch;;
-          esac
-        '')
+        (
+          let
+            nvd = "${pkgs.nvd}/bin/nvd";
+            sys = if pkgs.stdenv.isLinux then "nixos" else "darwin";
+          in
+          writeShellScriptBin "dm" /*bash*/
+            ''
+              set -euo pipefail
+              cd ${cfg.dots-dir}
+              if [ $# -gt 0 ]; then
+                case $1 in
+                  u) nix flake update;;
+                  *);;
+                esac
+              fi
+              sudo ${sys}-rebuild build --flake . && \
+                ${nvd} diff /run/current-system result
+
+              read -p "Continue? [Y/n]: " confirm
+              case $confirm in
+                y|Y|"") sudo ./result/activate switch;;
+                n|N) exit 0;;
+                *) echo "that's neither yes or no"; exit 1;;
+              esac
+            ''
+        )
       ];
       stateVersion = "25.05";
 
@@ -129,7 +143,7 @@ in
             git checkout "$my_branch"
           }
 
-          export PS1='\n[$?] \[\033[1m\]\W\[\033[0m\] \[\033[33;1m\]$\[\033[0m\] '
+          export PS1='\n[$?] \[\033[1m\]\w\[\033[0m\]\n\[\033[33;1m\]$\[\033[0m\] '
         '';
         logoutExtra = /* bash */ ''
       '';
