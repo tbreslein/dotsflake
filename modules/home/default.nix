@@ -129,7 +129,7 @@ in
             git checkout "$my_branch"
           }
 
-          export PS1='[$?] \[\033[1m\]\W\[\033[0m\] \[\033[33;1m\]$\[\033[0m\] '
+          export PS1='\n[$?] \[\033[1m\]\W\[\033[0m\] \[\033[33;1m\]$\[\033[0m\] '
         '';
         logoutExtra = /* bash */ ''
       '';
