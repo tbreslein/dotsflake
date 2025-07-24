@@ -45,6 +45,7 @@ in
           let
             nvd = "${pkgs.nvd}/bin/nvd";
             sys = if pkgs.stdenv.isLinux then "nixos" else "darwin";
+            doas = if pkgs.stdenv.isLinux then "doas" else "sudo";
           in
           writeShellScriptBin "dm" /*bash*/
             ''
@@ -56,15 +57,18 @@ in
                   *);;
                 esac
               fi
-              sudo ${sys}-rebuild build --flake . && \
-                ${nvd} diff /run/current-system result
+              deriv=$(nix build --no-link --print-out-paths path:.#nixosConfigurations."$(hostname)".config.system.build.toplevel)
+              doas nix-env -p /nix/var/nix/profiles/system --set $deriv
+              # ${sys}-rebuild build --flake . && \
+              ${nvd} diff /run/current-system ./result
+              doas $deriv/bin/switch-to-configuration switch
 
-              read -p "Continue? [Y/n]: " confirm
-              case $confirm in
-                y|Y|"") sudo ./result/activate switch;;
-                n|N) exit 0;;
-                *) echo "that's neither yes or no"; exit 1;;
-              esac
+              # read -p "Continue? [Y/n]: " confirm
+              # case $confirm in
+              #   y|Y|"") ${doas} ./result/bin/switch-to-configuration switch;;
+              #   n|N) exit 0;;
+              #   *) echo "that's neither yes or no"; exit 1;;
+              # esac
             ''
         )
       ];

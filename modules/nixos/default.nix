@@ -1,7 +1,7 @@
 { config, lib, pkgs, system, user-conf, hostname, ... }:
 let
   cfg = config.my-system.nixos;
-  priv_group = "wheel";
+  priv-group = "wheel";
 in
 {
   imports = [
@@ -36,7 +36,12 @@ in
       doas = {
         enable = true;
         extraRules = [
-          { groups = [ priv_group ]; noPass = false; keepEnv = true; }
+          {
+            groups = [ priv-group ];
+            noPass = false;
+            keepEnv = true;
+            persist = true;
+          }
         ];
       };
     };
@@ -61,8 +66,8 @@ in
     users.users.${user-conf.name} = {
       isNormalUser = true;
       description = "${user-conf.name}";
-      extraGroups = [ "networkmanager" priv_group ];
-      openssh.authorized_keys.keys =
+      extraGroups = [ "networkmanager" priv-group ];
+      openssh.authorizedKeys.keys =
         if cfg.enable-ssh-server then
           [
             "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDcPzu/AuetrxltYxJYeFuB8JHmw6418B5dBIlXPTVuJ6DX16javeZX3H18xzQd4oGjfo9veRLw9658eo8AZkrRj7ab+RzA41K8gzb3Iz8oAvmQgNrCbUSBrYvVKTSeSTIxT6qYvP9oszlxoLFjZEBoTRaVqHupG8LaOOO3/AckyPw0aVHY0NlglN/02n9SIJptSNGEkqGt5qYQuTK/z1wVIBsD6OhiYEPMaQ7mOWHjkQ3OsVspzeR1YuI4DUCe1RS5ebofnGbzqDeIxIkuysTJsQ/O/KTzaNYHDS08wsDOraQR9pEKnW85rMy5C4lvAuFrBUHPaiJwoMVg7+XIvykR1W45b2BD5sgb+9S05GQdHUXYdEPvJULAZCTfP0A6bC7NX/Gu1AtXi0yklpFE/joG3oJmzdRr1WxjHAbtrniGu78jS3ifNZcoMHhxhemwXOUoCzPM10tyPA4UHZpBZJuTQuTP+Tw0XsUUUxx1xjuR3Gkh3wncZcIzReNb0V/vL8+letPGoeXQ6nbEzCpTFa9FwRpMpcG788iDPoLQzuRZhb/FAmUZE1sUya+8QaynZZcSs3V5o5LSL1I0aibYImwDxJUhJ0bpyiNizkzAiuUQkbukEybmdsf8km7JlbmDrKV3SzcopkFwyy30Q1sMjuwfnzFtdld0YX3xEufokHTe+w== tommy@Tommys-MBP.fritz.box"
