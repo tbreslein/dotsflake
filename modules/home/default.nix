@@ -96,6 +96,7 @@ in
       sessionVariables = {
         EDITOR = "nvim";
         VISUAL = "nvim";
+        MANPAGER = "nvim +Man!";
       };
     };
 
@@ -116,7 +117,8 @@ in
           "histappend"
         ];
         initExtra = /* bash */  ''
-      '';
+          complete -cf doas
+        '';
         bashrcExtra = /* bash */ ''
           td() {
             if [ "$TMUX" != "" ]; then
