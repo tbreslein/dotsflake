@@ -46,10 +46,8 @@ in
     ];
     casks = [
       "1password"
-      "amethyst"
       "anki"
       "balenaetcher"
-      "brave-browser"
       "ghostty"
     ];
     onActivation = {
