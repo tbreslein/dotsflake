@@ -84,6 +84,7 @@ in
     package = pkgs-stable.nix;
     optimise.automatic = true;
     settings.experimental-features = "nix-command flakes pipe-operators";
+    gc.automatic = true;
   };
 
   programs = {

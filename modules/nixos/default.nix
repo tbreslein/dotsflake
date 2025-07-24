@@ -18,7 +18,11 @@ in
       git
       gnumake
     ];
-    nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
+    nix = {
+      settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
+      gc.automatic = true;
+      gc.dates = "weekly";
+    };
 
     services = {
       xserver.xkb = {
