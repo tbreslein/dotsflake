@@ -1,4 +1,4 @@
-{ config, lib, pkgs, user-conf, ... }:
+{ config, lib, pkgs, user-conf, hostname, ... }:
 
 let
   cfg = config.my-home;
@@ -39,13 +39,17 @@ in
         fzy
         bat
         rm-improved
-        git
+        caligula
 
         (
           let
             nvd = "${pkgs.nvd}/bin/nvd";
             sys = if pkgs.stdenv.isLinux then "nixos" else "darwin";
             doas = if pkgs.stdenv.isLinux then "doas" else "sudo";
+            activate =
+              if pkgs.stdenv.isLinux
+              then "bin/switch-to-configuration switch"
+              else "activate switch";
           in
           writeShellScriptBin "dm" /*bash*/
             ''
@@ -57,18 +61,17 @@ in
                   *);;
                 esac
               fi
-              deriv=$(nix build --no-link --print-out-paths path:.#nixosConfigurations."$(hostname)".config.system.build.toplevel)
-              doas nix-env -p /nix/var/nix/profiles/system --set $deriv
-              # ${sys}-rebuild build --flake . && \
-              ${nvd} diff /run/current-system ./result
-              doas $deriv/bin/switch-to-configuration switch
+              deriv=$(nix build --no-link --print-out-paths path:.#${sys}Configurations.${hostname}.config.system.build.toplevel)
+              ${nvd} diff /run/current-system $deriv
 
-              # read -p "Continue? [Y/n]: " confirm
-              # case $confirm in
-              #   y|Y|"") ${doas} ./result/bin/switch-to-configuration switch;;
-              #   n|N) exit 0;;
-              #   *) echo "that's neither yes or no"; exit 1;;
-              # esac
+              read -p "Continue? [Y/n]: " confirm
+              case $confirm in
+                y|Y|"")
+                  ${doas} nix-env -p /nix/var/nix/profiles/system --set $deriv
+                  ${doas} $deriv/${activate};;
+                n|N) exit 0;;
+                *) echo "that's neither yes or no"; exit 1;;
+              esac
             ''
         )
       ];
@@ -229,7 +232,7 @@ in
       };
 
       jujutsu = {
-        enable = true;
+        enable = false;
         settings = {
           user.name = user-conf.github-name;
           user.email = user-conf.email;
