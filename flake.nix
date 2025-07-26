@@ -7,7 +7,11 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     # system management
-    home-manager = {
+    home-manager-stable = {
+      url = "github:nix-community/home-manager/25.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+    home-manager-unstable = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
@@ -37,7 +41,8 @@
     { nixpkgs-stable
     , nixpkgs-unstable
     , chaotic
-    , home-manager
+    , home-manager-stable
+    , home-manager-unstable
     , nix-darwin
     , nix-homebrew
     , homebrew-core
@@ -82,10 +87,19 @@
         in
         { inherit inputs pkgs-stable user-conf system hostname; };
 
-      mkNixos = _nixpkgs: system: hostname: extraModules:
+      mkNixos = version: system: hostname: extraModules:
         let
           args = mkArgs system hostname;
           home = "/home/${user-conf.name}";
+
+          _nixpkgs = if version == "stable"
+            then nixpkgs-stable
+            else nixpkgs-unstable;
+
+          _hm = if version == "stable"
+            then home-manager-stable
+            else home-manager-unstable;
+
         in
         {
           "${hostname}" = _nixpkgs.lib.nixosSystem {
@@ -95,7 +109,7 @@
               ./hosts/${hostname}/configuration.nix
               ./modules/nixos
 
-              home-manager.nixosModules.home-manager
+              _hm.nixosModules.home-manager
               {
                 users.users.${user-conf.name}.home = "${home}";
                 home-manager = {
@@ -150,7 +164,7 @@
                   };
                 }
 
-                home-manager.darwinModules.home-manager
+                home-manager-unstable.darwinModules.home-manager
                 {
                   users.users.${user-conf.name}.home = "${home}";
                   home-manager = {
