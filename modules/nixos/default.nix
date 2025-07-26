@@ -89,6 +89,7 @@ in
       networkmanager.enable = true;
       firewall.enable = true;
       hostName = hostname;
+      hosts = user-conf.hosts;
     };
 
     time.timeZone = "Europe/Berlin";
