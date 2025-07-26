@@ -14,7 +14,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.sessionVariables.TERMINAL = "${cfg.terminal}";
+    home = {
+      sessionVariables.TERMINAL = "${cfg.terminal}";
+      username = user-conf.name;
+      packages = with pkgs; [
+        nerd-fonts.commit-mono
+        caligula
+      ];
+    };
     programs = {
       foot = {
         enable = cfg.terminal == "foot";

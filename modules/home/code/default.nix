@@ -128,6 +128,14 @@ in
     programs = {
       jq.enable = true;
 
+      direnv = {
+        enable = true;
+        enableBashIntegration = true;
+        nix-direnv.enable = true;
+        silent = true;
+      };
+      lazygit.enable = true;
+
       bash.profileExtra = /* bash */ ''
         [[ -f "${config.home.homeDirectory}/.cargo/env" ]] && \
           source "${config.home.homeDirectory}/.cargo/env"
@@ -173,27 +181,20 @@ in
         withPython3 = false;
         withRuby = false;
       };
-      tmux =
-
-        let
-          terminal = if config.my-home.desktop.enable
-            then config.my-home.desktop.terminal
-            else "screen";
-        in
-        {
+      tmux = {
         enable = true;
         escapeTime = 0;
         historyLimit = 25000;
         keyMode = "vi";
         mouse = true;
         prefix = "C-Space";
-        inherit terminal;
+        inherit (config.my-home.desktop) terminal;
         extraConfig =
           /*
         tmux
           */
           ''
-            set -sa terminal-overrides ",${terminal}:RGB"
+            set -sa terminal-overrides ",${config.my-home.desktop.terminal}:RGB"
 
             bind-key -r C-f run-shell "tmux popup -E -w80 -h11 ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g popup -E -w90% -h90% "lazygit"

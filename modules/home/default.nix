@@ -33,13 +33,10 @@ in
     home = {
       username = user-conf.name;
       packages = with pkgs; [
-        nerd-fonts.commit-mono
-
-        ripgrep
         fzy
         bat
         rm-improved
-        caligula
+        tmux
 
         (
           let
@@ -168,13 +165,6 @@ in
         '';
       };
 
-      direnv = {
-        enable = true;
-        enableBashIntegration = true;
-        nix-direnv.enable = true;
-        silent = true;
-      };
-
       eza = {
         enable = true;
         enableBashIntegration = true;
@@ -247,15 +237,7 @@ in
         };
       };
 
-      nh = {
-        enable = true;
-        clean.enable = true;
-        flake = "${cfg.dots-dir}";
-      };
-
       htop.enable = true;
-      lazygit.enable = true;
-
       ripgrep.enable = true;
     };
   };
