@@ -173,20 +173,27 @@ in
         withPython3 = false;
         withRuby = false;
       };
-      tmux = {
+      tmux =
+
+        let
+          terminal = if config.my-home.desktop.enable
+            then config.my-home.desktop.terminal
+            else "screen";
+        in
+        {
         enable = true;
         escapeTime = 0;
         historyLimit = 25000;
         keyMode = "vi";
         mouse = true;
         prefix = "C-Space";
-        inherit (config.my-home.desktop) terminal;
+        inherit terminal;
         extraConfig =
           /*
         tmux
           */
           ''
-            set -sa terminal-overrides ",${config.my-home.desktop.terminal}:RGB"
+            set -sa terminal-overrides ",${terminal}:RGB"
 
             bind-key -r C-f run-shell "tmux popup -E -w80 -h11 ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g popup -E -w90% -h90% "lazygit"
