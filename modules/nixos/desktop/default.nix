@@ -10,6 +10,7 @@ in
   options.my-system.nixos.desktop.enable = lib.mkEnableOption "enable my-system.nixos.desktop";
 
   config = lib.mkIf cfg.enable {
+    # NOTE: these cannot be used on raspberry pis
     boot = {
       kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
       loader = {
