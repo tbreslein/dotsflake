@@ -8,7 +8,7 @@
 
     # system management
     home-manager-stable = {
-      url = "github:nix-community/home-manager/25.05";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     home-manager-unstable = {
