@@ -42,5 +42,6 @@
   #system.copySystemConfiguration = true;
 
   system.stateVersion = "25.05";
-}
 
+  # my-system.nixos.enable = true;
+}

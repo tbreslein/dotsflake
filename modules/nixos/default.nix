@@ -83,18 +83,6 @@ in
     };
     system.stateVersion = "25.05";
 
-    boot = {
-      kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
-      loader = {
-        timeout = 1;
-        efi.canTouchEfiVariables = true;
-        systemd-boot = {
-          enable = true;
-          configurationLimit = 10;
-        };
-      };
-    };
-
     networking = {
       useDHCP = lib.mkDefault true;
       networkmanager.enable = true;

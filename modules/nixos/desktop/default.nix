@@ -10,6 +10,18 @@ in
   options.my-system.nixos.desktop.enable = lib.mkEnableOption "enable my-system.nixos.desktop";
 
   config = lib.mkIf cfg.enable {
+    boot = {
+      kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+      loader = {
+        timeout = 1;
+        efi.canTouchEfiVariables = true;
+        systemd-boot = {
+          enable = true;
+          configurationLimit = 10;
+        };
+      };
+    };
+
     programs.hyprland = {
       enable = true;
       xwayland.enable = true;
