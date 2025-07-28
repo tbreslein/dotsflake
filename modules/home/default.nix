@@ -254,7 +254,7 @@ in
           { elphelt.id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM"; }
           { sol.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ"; }
           # { ky.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ"; }
-          # { answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM"; }
+          { answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM"; }
           # { jacko.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ"; }
         ]);
 
@@ -274,12 +274,12 @@ in
           lib.mkMerge (lib.lists.map mkFolder [
             {
               id = "notes";
-              clients = [ "sol" ];
+              clients = [ "sol" "answer" ];
               # clients = [ "sol" "ky" "answer" "jacko" ];
             }
             {
               id = "house-notes";
-              clients = [ "sol" ];
+              clients = [ "sol" "answer" ];
               # clients = [ "sol" "ky" "answer" "jacko" ];
             }
             {
@@ -294,7 +294,7 @@ in
             }
             {
               id = "wallpapers";
-              clients = [ "sol" ];
+              clients = [ "sol" "answer" ];
               # clients = [ "sol" "ky" "answer" ];
             }
           ]);
