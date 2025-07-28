@@ -255,7 +255,7 @@ in
           if hostname == syncthing-server then
             {
               sol.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
-              # ky.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
+              ky.id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
               answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
               # jacko.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
             } else
@@ -280,27 +280,27 @@ in
           lib.mkMerge (lib.lists.map mkFolder [
             {
               id = "notes";
-              clients = [ "sol" "answer" ];
+              clients = [ "sol" "ky" "answer" ];
               # clients = [ "sol" "ky" "answer" "jacko" ];
             }
             {
               id = "house-notes";
-              clients = [ "sol" "answer" ];
+              clients = [ "sol" "ky" "answer" ];
               # clients = [ "sol" "ky" "answer" "jacko" ];
             }
             {
               id = "personal";
-              clients = [ "sol" ];
+              clients = [ "sol" "ky" ];
               # clients = [ "sol" "ky" ];
             }
             {
               id = "security";
-              clients = [ "sol" ];
+              clients = [ "sol" "ky" ];
               # clients = [ "sol" "ky" ];
             }
             {
               id = "wallpapers";
-              clients = [ "sol" "answer" ];
+              clients = [ "sol" "ky" "answer" ];
               # clients = [ "sol" "ky" "answer" ];
             }
           ]);
