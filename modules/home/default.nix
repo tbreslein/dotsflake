@@ -250,13 +250,13 @@ in
       overrideDevices = true;
       overrideFolders = true;
       settings = {
-        devices = lib.lists.filter (x: !(x ? hostname)) [
+        devices = lib.mkMerge (lib.lists.filter (x: !(x ? hostname)) [
           { elphelt.id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM"; }
           { sol.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ"; }
           # { ky.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ"; }
           # { answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM"; }
           # { jacko.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ"; }
-        ];
+        ]);
 
         folders =
           let
