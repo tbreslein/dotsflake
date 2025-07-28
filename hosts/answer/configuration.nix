@@ -37,7 +37,7 @@ in
     brews = [
       "gcc"
       "node"
-      { name = "syncthing"; restart_service = "changed"; }
+      # { name = "syncthing"; restart_service = "changed"; }
     ];
     taps = [
       "homebrew/homebrew-core"
@@ -47,7 +47,6 @@ in
     casks = [
       "1password"
       "anki"
-      "balenaetcher"
       "ghostty"
     ];
     onActivation = {

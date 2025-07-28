@@ -100,11 +100,13 @@
           args = mkArgs system hostname;
           home = "/home/${user-conf.name}";
 
-          _nixpkgs = if version == "stable"
+          _nixpkgs =
+            if version == "stable"
             then nixpkgs-stable
             else nixpkgs-unstable;
 
-          _hm = if version == "stable"
+          _hm =
+            if version == "stable"
             then home-manager-stable
             else home-manager-unstable;
 
