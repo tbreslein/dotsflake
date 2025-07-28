@@ -7,6 +7,7 @@ let
       [ -d "$1" ] && folders+=("$1")
     }
     add_dir "${config.my-home.code-dir}"
+    add_dir "${config.my-home.sync-dir}"
     add_dir "${config.my-home.work-dir}/repos"
 
     selected=""
