@@ -291,17 +291,14 @@ in
             {
               id = "personal";
               clients = [ "sol" "ky" ];
-              # clients = [ "sol" "ky" ];
             }
             {
               id = "security";
               clients = [ "sol" "ky" ];
-              # clients = [ "sol" "ky" ];
             }
             {
               id = "wallpapers";
               clients = [ "sol" "ky" "answer" ];
-              # clients = [ "sol" "ky" "answer" ];
             }
           ]);
       };
