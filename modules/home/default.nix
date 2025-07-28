@@ -267,6 +267,7 @@ in
           let
             mkFolder = { id, clients }: {
               "${cfg.sync-dir}/${id}" = {
+                enable = hostname == syncthing-server || lib.lists.elem hostname clients;
                 inherit id;
                 label = id;
                 devices =
