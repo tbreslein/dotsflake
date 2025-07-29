@@ -2,6 +2,7 @@
 --   - more ftplugins
 --   - native lsp for work
 --   - use builtin snippets and autocomplete for text and files
+--   - marks to replace harpoon
 --   - colors
 --   - fennel
 --   - debugging
@@ -9,6 +10,12 @@
 --   - folding
 --
 -- references:
+--   - colors:
+--     - https://youtu.be/CXVDfg3W9Jk?si=v_PS6OAxvUjhjUoM
+--   - marks:
+--     - https://www.reddit.com/r/neovim/comments/1m8v8lw/what_wellknown_neovim_features_do_you_struggle_to/?utm_source=share&utm_medium=mweb3x&utm_name=mweb3xcss&utm_term=1
+--     - https://youtu.be/nJR5lHBrviI?si=qOOkSu-5E3DVBl1A
+--     - https://youtu.be/hUyiJzDiHik?si=5X4jGcCBxXjhUZwr
 --   - snippets:
 --     - https://www.reddit.com/r/neovim/comments/1cxfhom/builtin_snippets_so_good_i_removed_luasnip/
 --     - https://gist.github.com/MariaSolOs/2e44a86f569323c478e5a078d0cf98cc
@@ -16,6 +23,7 @@
 --     - zed: https://zed.dev/docs/development/debuggers
 --     - i MIGHT use a plugin for debugging, if i cannot setup zed for that
 --     - nvim dap: https://youtu.be/cxpWjlNXeQA?si=vbocJxlP2odku6Yp
+--     - https://www.reddit.com/r/neovim/comments/1jyfsfh/i_cant_see_vector_items_debugging_rust/?utm_source=share&utm_medium=mweb3x&utm_name=mweb3xcss&utm_term=1
 --   - native lsp:
 --     - https://youtu.be/tdhxpn1XdjQ?si=GFaBKLcVtQ75xYwO
 --   - i might want to write my config in fennel...
@@ -32,6 +40,7 @@
 --     - https://youtu.be/HiAs7oNDyh0?si=ma-xzh6JFv52z2eI
 --     - https://youtu.be/skW3clVG5Fo?si=rR_Uijd9CWAGRNWG
 --     - https://youtu.be/mQ9gmHHe-nI?si=IcPMAwCk_9DPJpDi
+--     - https://youtu.be/xGkL2N8w0H4?si=Zfmop2Pq6x8Ctip3
 --   - netrw:
 --     - https://youtu.be/g2LTTq9hkbU?si=fbZ2aGq63l6MpV-2
 --     - https://youtu.be/nbKkKbENgd8?si=nTf4lPt8YilgpBt9
