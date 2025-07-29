@@ -257,7 +257,7 @@ in
               sol.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
               ky.id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
               answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
-              # jacko.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
+              jacko.id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
             } else
             {
               elphelt.id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM";
@@ -280,13 +280,11 @@ in
           lib.mkMerge (lib.lists.map mkFolder [
             {
               id = "notes";
-              clients = [ "sol" "ky" "answer" ];
-              # clients = [ "sol" "ky" "answer" "jacko" ];
+              clients = [ "sol" "ky" "answer" "jacko" ];
             }
             {
               id = "house-notes";
-              clients = [ "sol" "ky" "answer" ];
-              # clients = [ "sol" "ky" "answer" "jacko" ];
+              clients = [ "sol" "ky" "answer" "jacko" ];
             }
             {
               id = "personal";
