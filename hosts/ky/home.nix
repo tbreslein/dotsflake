@@ -4,11 +4,8 @@ _:
   my-home = {
     enable = true;
     code.enable = true;
-    desktop = {
-      enable = true;
-      terminal-font-size = 17;
-      terminal = "foot";
-    };
+    desktop.enable = true;
+    desktop.terminal-font-size = 17;
     laptop.enable = true;
     linux.enable = true;
     linux.desktop.enable = true;

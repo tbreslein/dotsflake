@@ -110,8 +110,8 @@ in
               -S ${user-conf.colors.normal.black} \
               -s ${user-conf.colors.primary.accent} \
           ''
-          "$mod, Return, exec, [workspace 2] ${config.my-home.desktop.terminal}"
-          "$mod, b, exec, [workspace 1] zen-twilight"
+          "$mod, Return, exec, [workspace 2] ghostty"
+          "$mod, b, exec, [workspace 1] brave"
           "$mod ALT, n, exec, makoctl dismiss -a"
           "$mod CTRL, q, killactive"
           "$mod ALT, q, exit"

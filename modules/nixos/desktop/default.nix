@@ -1,4 +1,4 @@
-{ config, lib, pkgs, user-conf, inputs, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.nixos.desktop;
 in
@@ -30,13 +30,7 @@ in
 
     environment = {
       systemPackages = with pkgs; [
-        # brave
-        (inputs.zen-browser.packages.${system}.twilight-official.override {
-          extraPolicies = {
-            DisableAppUpdate = true;
-            DisableTelemetry = true;
-          };
-        })
+        brave
         kdePackages.breeze-gtk
         kdePackages.breeze-icons
         capitaine-cursors

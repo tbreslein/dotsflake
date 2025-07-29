@@ -1,6 +1,17 @@
 { config, lib, user-conf, pkgs, ... }:
 let
   cfg = config.my-home.desktop;
+
+  # ghostty-start = pkgs.writeShellScriptBin "ghostty-start" /* bash */ ''
+  #   SESSION_NAME="home"
+  #   tmux has-session -t $SESSION_NAME 2>/dev/null
+  #   if [ $? -eq 0 ]; then
+  #     tmux attach-session -t $SESSION_NAME
+  #   else
+  #     tmux new-session -s $SESSION_NAME -d
+  #     tmux attach-session -t $SESSION_NAME
+  #   fi
+  # '';
 in
 {
   options.my-home.desktop = {
@@ -8,14 +19,11 @@ in
     terminal-font-size = lib.mkOption {
       type = lib.types.int;
     };
-    terminal = lib.mkOption {
-      type = lib.types.enum [ "ghostty" "alacritty" "foot" ];
-    };
   };
 
   config = lib.mkIf cfg.enable {
     home = {
-      sessionVariables.TERMINAL = "${cfg.terminal}";
+      sessionVariables.TERMINAL = "ghostty";
       username = user-conf.name;
       packages = with pkgs; [
         nerd-fonts.commit-mono
@@ -23,42 +31,15 @@ in
       ];
     };
     programs = {
-      foot = {
-        enable = cfg.terminal == "foot";
-        settings = {
-          main.font = "${user-conf.monofont}:size=${toString cfg.terminal-font-size}";
-          mouse.hide-when-typing = "yes";
-          colors = {
-            alpha = 0.95;
-            inherit (user-conf.colors.primary) background;
-            inherit (user-conf.colors.primary) foreground;
-            regular0 = user-conf.colors.normal.black;
-            regular1 = user-conf.colors.normal.red;
-            regular2 = user-conf.colors.normal.green;
-            regular3 = user-conf.colors.normal.yellow;
-            regular4 = user-conf.colors.normal.blue;
-            regular5 = user-conf.colors.normal.magenta;
-            regular6 = user-conf.colors.normal.cyan;
-            regular7 = user-conf.colors.normal.white;
-            bright0 = user-conf.colors.bright.black;
-            bright1 = user-conf.colors.bright.red;
-            bright2 = user-conf.colors.bright.green;
-            bright3 = user-conf.colors.bright.yellow;
-            bright4 = user-conf.colors.bright.blue;
-            bright5 = user-conf.colors.bright.magenta;
-            bright6 = user-conf.colors.bright.cyan;
-            bright7 = user-conf.colors.bright.white;
-          };
-        };
-      };
       ghostty = {
-        enable = cfg.terminal == "ghostty";
+        enable = true;
         package =
           if pkgs.stdenv.isLinux
           then pkgs.ghostty
           else null;
         enableBashIntegration = true;
         settings = {
+          # command = "${ghostty-start}/bin/ghostty-start";
           font-size = cfg.terminal-font-size;
           font-family = user-conf.monofont;
           font-feature = "-calt, -liga, -dlig";
@@ -107,45 +88,6 @@ in
           };
         };
       };
-      alacritty = {
-        enable = cfg.terminal == "alacritty";
-        package =
-          if pkgs.stdenv.isLinux
-          then pkgs.alacritty
-          else null;
-        settings = {
-          window = {
-            dynamic_padding = true;
-            decorations = "None";
-            opacity = 0.95;
-            blur = true;
-            option_as_alt = "Both";
-          };
-          font = {
-            normal.family = user-conf.monofont;
-            size = cfg.terminal-font-size;
-          };
-          cursor.style.blinking = "Never";
-          colors = rec {
-            primary = {
-              background = "0x${user-conf.colors.primary.background}";
-              foreground = "0x${user-conf.colors.primary.foreground}";
-            };
-            normal = {
-              black = "0x${user-conf.colors.normal.black}";
-              red = "0x${user-conf.colors.normal.red}";
-              green = "0x${user-conf.colors.normal.green}";
-              yellow = "0x${user-conf.colors.normal.yellow}";
-              blue = "0x${user-conf.colors.normal.blue}";
-              magenta = "0x${user-conf.colors.normal.magenta}";
-              cyan = "0x${user-conf.colors.normal.cyan}";
-              white = "0x${user-conf.colors.normal.white}";
-            };
-            bright = normal;
-          };
-        };
-      };
-
       tealdeer.enable = true;
     };
   };

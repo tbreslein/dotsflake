@@ -37,7 +37,6 @@ in
     brews = [
       "gcc"
       "node"
-      # { name = "syncthing"; restart_service = "changed"; }
     ];
     taps = [
       "homebrew/homebrew-core"
@@ -48,6 +47,7 @@ in
       "1password"
       "anki"
       "ghostty"
+      "brave-browser"
     ];
     onActivation = {
       autoUpdate = true;

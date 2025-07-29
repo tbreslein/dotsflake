@@ -32,9 +32,6 @@
       url = "github:homebrew/homebrew-bundle";
       flake = false;
     };
-
-    # apps
-    zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };
 
   outputs =
@@ -58,7 +55,6 @@
         email = "tommy.breslein@protonmail.com";
         work-email = "tommy.breslein@pailot.com";
         monofont = "Commit Mono Nerd Font";
-        # monofont = "DepartureMono Nerd Font";
         colors = rec {
           primary = {
             background = "1d2021";

@@ -189,13 +189,16 @@ in
         keyMode = "vi";
         mouse = true;
         prefix = "C-Space";
-        inherit (config.my-home.desktop) terminal;
+        terminal = "ghostty";
         extraConfig =
           /*
         tmux
           */
           ''
-            set -sa terminal-overrides ",${config.my-home.desktop.terminal}:RGB"
+            set -sa terminal-overrides ",ghostty:RGB"
+            set -g allow-passthrough on
+            set -ga update-environment TERM
+            set -ga update-environment TERM_PROGRAM
 
             bind-key -r C-f run-shell "tmux popup -E -w80 -h11 ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g popup -E -w90% -h90% "lazygit"

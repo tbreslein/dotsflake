@@ -5,11 +5,8 @@ _:
     enable = true;
     code.enable = true;
     code.nvim-config = "big";
-    desktop = {
-      enable = true;
-      terminal-font-size = 21;
-      terminal = "ghostty";
-    };
+    desktop.enable = true;
+    desktop.terminal-font-size = 21;
     darwin.enable = true;
     laptop.enable = true;
     syke.enable = false;
