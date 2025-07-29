@@ -1,7 +1,14 @@
--- references:
---   - ftplugins:
---     - TForm needs a find_root for, for example, poetry black
+-- TODO:
+--   - more ftplugins
+--   - native lsp for work
 --   - use builtin snippets and autocomplete for text and files
+--   - colors
+--   - fennel
+--   - debugging
+--   - custom treesitter-context
+--   - folding
+--
+-- references:
 --   - snippets:
 --     - https://www.reddit.com/r/neovim/comments/1cxfhom/builtin_snippets_so_good_i_removed_luasnip/
 --     - https://gist.github.com/MariaSolOs/2e44a86f569323c478e5a078d0cf98cc
@@ -44,13 +51,6 @@
 --   n    | <c-w>-     | decrease window size vertically
 --   n    | <c-w><     | increase window size to the left
 --   n    | <c-w>>     | increase window size to the right
-
--- Globals
-function FindRoot(additional_markers)
-  local markers = { ".git/" }
-  vim.list_extend(markers, additional_markers)
-  return vim.fs.dirname(vim.fs.find(markers, { upward = true }))
-end
 
 require("tvim.vimsettings")
 require("tvim.ui")

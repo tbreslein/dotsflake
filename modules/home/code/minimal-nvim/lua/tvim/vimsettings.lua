@@ -67,6 +67,14 @@ if vim.fn.isdirectory(undodir) == 0 then
 end
 vim.opt.undodir = undodir
 
+vim.diagnostic.config({
+  virtual_text = false,
+  signs = true,
+  underline = true,
+  update_in_insert = true,
+  severity_sort = false,
+})
+
 -- >>> AUTOCMDS
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -97,10 +105,9 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
-  group = augroup,
-  pattern = { "makefile" },
+vim.api.nvim_create_autocmd({ "BufEnter", "BufNewFile", "BufRead" }, {
+  pattern = "*.mdx",
   callback = function()
-    vim.opt_local.expandtab = false
+    vim.bo.filetype = "markdown"
   end,
 })
