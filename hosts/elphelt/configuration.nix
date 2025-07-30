@@ -13,6 +13,6 @@
   my-system.nixos = {
     enable = true;
     enable-ssh-server = true;
-    enable-syncthing-server = true;
+    enable-syncthing-server = false;
   };
 }
