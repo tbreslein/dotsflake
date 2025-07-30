@@ -222,7 +222,7 @@ in
         orientation = "bottom";
         persistent-apps = [
           { app = "/Applications/Spotify.app"; }
-          { app = "/Applications/Zen Browser.app"; }
+          { app = "/Applications/Brave Browser.app"; }
           { app = "/Applications/Ghostty.app"; }
           { app = "/Applications/Microsoft Teams.app"; }
           { app = "/Applications/Microsoft Outlook.app/"; }
