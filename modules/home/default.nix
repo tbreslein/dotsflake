@@ -46,6 +46,7 @@ in
         (
           let
             nvd = "${pkgs.nvd}/bin/nvd";
+            nix-bin-dir = "${config.nix.package}/bin";
             sys = if pkgs.stdenv.isLinux then "nixos" else "darwin";
             doas = if pkgs.stdenv.isLinux then "doas" else "sudo";
             activate =
@@ -63,8 +64,9 @@ in
                   *);;
                 esac
               fi
-              deriv=$(nix build --no-link --print-out-paths path:.#${sys}Configurations.${hostname}.config.system.build.toplevel)
-              ${nvd} diff /run/current-system $deriv
+              # sudo ${sys}-rebuild switch --flake ${cfg.dots-dir}#${hostname}
+              deriv=$(${nix-bin-dir}/nix build --no-link --print-out-paths path:.#${sys}Configurations.${hostname}.config.system.build.toplevel)
+              ${nvd} --nix-bin-dir=${nix-bin-dir} diff /run/current-system $deriv
 
               read -p "Continue? [Y/n]: " confirm
               case $confirm in
@@ -130,13 +132,15 @@ in
         '';
         bashrcExtra = /* bash */ ''
           td() {
+            local session="notes"
+            local notes_dir="${cfg.sync-dir}/notes"
             if [ "$TMUX" != "" ]; then
-              if ! tmux has-session -t dotsflake; then
-                tmux new-session -ds "dotsflake" -c "${cfg.dots-dir}"
+              if ! tmux has-session -t "$session"; then
+                tmux new-session -ds "$session" -c "$notes_dir" nvim todos.md
               fi
             else
-              tmux new-session -ds "dotsflake" -c "${cfg.dots-dir}"
-              tmux a -t "dotsflake"
+              tmux new-session -ds "$session" -c "$notes_dir" nvim todos.md
+              tmux a -t "$session"
             fi
           }
 
