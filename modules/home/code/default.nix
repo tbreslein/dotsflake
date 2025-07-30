@@ -197,8 +197,8 @@ in
           ''
             set -sa terminal-overrides ",ghostty:RGB"
             set -g allow-passthrough on
-            set -ga update-environment TERM
-            set -ga update-environment TERM_PROGRAM
+            #set -ga update-environment TERM
+            #set -ga update-environment TERM_PROGRAM
 
             bind-key -r C-f run-shell "tmux popup -E -w80 -h11 ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g popup -E -w90% -h90% "lazygit"

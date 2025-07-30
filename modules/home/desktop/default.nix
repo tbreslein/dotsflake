@@ -1,17 +1,6 @@
 { config, lib, user-conf, pkgs, ... }:
 let
   cfg = config.my-home.desktop;
-
-  # ghostty-start = pkgs.writeShellScriptBin "ghostty-start" /* bash */ ''
-  #   SESSION_NAME="home"
-  #   tmux has-session -t $SESSION_NAME 2>/dev/null
-  #   if [ $? -eq 0 ]; then
-  #     tmux attach-session -t $SESSION_NAME
-  #   else
-  #     tmux new-session -s $SESSION_NAME -d
-  #     tmux attach-session -t $SESSION_NAME
-  #   fi
-  # '';
 in
 {
   options.my-home.desktop = {
@@ -39,7 +28,6 @@ in
           else null;
         enableBashIntegration = true;
         settings = {
-          # command = "${ghostty-start}/bin/ghostty-start";
           font-size = cfg.terminal-font-size;
           font-family = user-conf.monofont;
           font-feature = "-calt, -liga, -dlig";
