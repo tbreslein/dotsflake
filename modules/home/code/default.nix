@@ -203,7 +203,8 @@ in
             bind-key -r C-f run-shell "tmux popup -E -w80 -h11 ${tmux-sessionizer}/bin/tmux-sessionizer"
             bind-key C-g popup -E -w90% -h90% "lazygit"
             bind-key C-o command-prompt -p "open app: " "popup -E -w90% -h90% '%%'"
-            bind-key C-t popup -w90% -h90%
+            bind-key C-space popup -w90% -h90%
+            bind-key C-t popup -E -w90% -h90% "nvim ${config.my-home.sync-dir}/notes/todos.md"
 
             bind-key C-s split-pane -l 30%
             bind-key C-v split-pane -h -b -l 40%
