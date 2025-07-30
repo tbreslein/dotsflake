@@ -12,6 +12,7 @@
 -- references:
 --   - colors:
 --     - https://youtu.be/CXVDfg3W9Jk?si=v_PS6OAxvUjhjUoM
+--     - https://youtu.be/LUtgHPOeefA?si=JxLQanuFo0hRGlVD
 --   - marks:
 --     - https://www.reddit.com/r/neovim/comments/1m8v8lw/what_wellknown_neovim_features_do_you_struggle_to/?utm_source=share&utm_medium=mweb3x&utm_name=mweb3xcss&utm_term=1
 --     - https://youtu.be/nJR5lHBrviI?si=qOOkSu-5E3DVBl1A
