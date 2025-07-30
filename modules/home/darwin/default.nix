@@ -1,7 +1,7 @@
 { config
 , lib
-, mk-syncthing-config
-, hostname
+# , mk-syncthing-config
+# , hostname
 , ...
 }:
 let
@@ -16,6 +16,6 @@ in
       [[ -f "/opt/homebrew/bin/brew" ]] && \
         eval "$(/opt/homebrew/bin/brew shellenv)"
     '';
-    services.syncthing = mk-syncthing-config config lib hostname;
+    # services.syncthing = mk-syncthing-config config lib hostname;
   };
 }

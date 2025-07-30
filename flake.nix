@@ -48,9 +48,9 @@
     , ...
     } @ inputs:
     let
-      mk-syncthing-config = config: lib: hostname:
+      mk-syncthing-config = config: lib: hostname: user-conf: sync-dir:
         let
-          inherit (config.home.my-home) sync-dir syncthing-server;
+          inherit (user-conf) syncthing-server;
         in
         {
           enable = true;
@@ -66,7 +66,7 @@
                   jacko.id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
                 } else
                 {
-                  elphelt.id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM";
+                  "${syncthing-server}".id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM";
                 };
             folders =
               let
@@ -134,6 +134,7 @@
           };
           bright = normal;
         };
+        syncthing-server = "elphelt";
         hosts = {
           "192.168.178.90" = [ "elphelt" ];
           "192.168.178.91" = [ "sol" ];
