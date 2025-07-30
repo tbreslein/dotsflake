@@ -251,6 +251,6 @@ in
       ripgrep.enable = true;
     };
 
-    services.syncthing = lib.mkIf cfg.enable-syncthing-client (mk-syncthing-config config lib hostname user-conf);
+    # services.syncthing = lib.mkIf cfg.enable-syncthing-client (mk-syncthing-config config lib hostname user-conf);
   };
 }

@@ -16,5 +16,5 @@
     enable-syncthing-server = false;
   };
 
-  services.syncthing = (mk-syncthing-config config lib hostname user-conf "/home/${user-conf.name}/sync");
+  # services.syncthing = (mk-syncthing-config config lib hostname user-conf "/home/${user-conf.name}/sync");
 }
