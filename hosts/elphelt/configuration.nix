@@ -1,4 +1,4 @@
-{ ... }:
+{ mk-syncthing-config, ... }:
 
 {
   imports = [
@@ -13,6 +13,8 @@
   my-system.nixos = {
     enable = true;
     enable-ssh-server = true;
-    enable-syncthing-server = true;
+    enable-syncthing-server = false;
   };
+
+  services.syncthing = (mk-syncthing-config config lib hostname user-conf "/home/${user-conf.name}/sync");
 }

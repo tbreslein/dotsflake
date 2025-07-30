@@ -3,7 +3,7 @@ _:
 {
   my-home = {
     enable = true;
-    enable-syncthing-client = true;
+    enable-syncthing-client = false;
     code.enable = true;
     code.nvim-config = "big";
     desktop.enable = true;

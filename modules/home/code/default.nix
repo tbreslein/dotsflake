@@ -7,7 +7,8 @@ let
       [ -d "$1" ] && folders+=("$1")
     }
     add_dir "${config.my-home.code-dir}"
-    add_dir "${config.my-home.sync-dir}"
+    add_dir "~/sync"
+    add_dir "~/syncthing"
     add_dir "${config.my-home.work-dir}/repos"
 
     selected=""
@@ -204,7 +205,7 @@ in
             bind-key C-g popup -E -w90% -h90% "lazygit"
             bind-key C-o command-prompt -p "open app: " "popup -E -w90% -h90% '%%'"
             bind-key C-space popup -w90% -h90%
-            bind-key C-t popup -E -w90% -h90% "nvim ${config.my-home.sync-dir}/notes/todos.md"
+            bind-key C-t popup -E -w90% -h90% "nvim ~/sync/notes/todos.md"
 
             bind-key C-s split-pane -l 30%
             bind-key C-v split-pane -h -b -l 40%

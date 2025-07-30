@@ -56,22 +56,7 @@ in
         layout = "us";
         variant = "";
       };
-      # syncthing =
-      #   (mk-syncthing-config config lib hostname) // {
-      #     openDefaultPorts = true;
-      #   };
-      syncthing = lib.mkMerge [
-        (if cfg.enable-ssh-server
-          then (mk-syncthing-config config lib hostname user-conf "/home/${user-conf.name}/sync")
-    # services.syncthing = lib.mkIf cfg.enable-syncthing-client (mk-syncthing-config config lib hostname user-conf cfg.sync-dir);
-          else {})
-        {
-          openDefaultPorts = true;
-        }
-      ];
-      # syncthing = {
-      #   openDefaultPorts = true;
-      # };
+      syncthing.openDefaultPorts = true;
       openssh = {
         enable = cfg.enable-ssh-server;
         openFirewall = true;

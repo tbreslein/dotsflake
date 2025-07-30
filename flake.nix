@@ -48,7 +48,7 @@
     , ...
     } @ inputs:
     let
-      mk-syncthing-config = config: lib: hostname: user-conf: sync-dir:
+      mk-syncthing-config = config: lib: hostname: user-conf:
         let
           inherit (user-conf) syncthing-server;
         in
@@ -61,9 +61,9 @@
               if hostname == syncthing-server then
                 {
                   sol.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
-                  ky.id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
-                  answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
-                  jacko.id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
+                  # ky.id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
+                  # answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
+                  # jacko.id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
                 } else
                 {
                   "${syncthing-server}".id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM";
@@ -71,7 +71,7 @@
             folders =
               let
                 mk-folder = { id, clients }: {
-                  "${sync-dir}/${id}" = {
+                  "~/syncthing/${id}" = {
                     enable = hostname == syncthing-server || lib.lists.elem hostname clients;
                     inherit id;
                     label = id;
@@ -85,24 +85,25 @@
               lib.mkMerge (lib.lists.map mk-folder [
                 {
                   id = "notes";
-                  clients = [ "sol" "ky" "answer" "jacko" ];
+                  # clients = [ "sol" "ky" "answer" "jacko" ];
+                  clients = [ "sol" ];
                 }
-                {
-                  id = "house-notes";
-                  clients = [ "sol" "ky" "answer" "jacko" ];
-                }
-                {
-                  id = "personal";
-                  clients = [ "sol" "ky" ];
-                }
-                {
-                  id = "security";
-                  clients = [ "sol" "ky" ];
-                }
-                {
-                  id = "wallpapers";
-                  clients = [ "sol" "ky" "answer" ];
-                }
+                # {
+                #   id = "house-notes";
+                #   clients = [ "sol" "ky" "answer" "jacko" ];
+                # }
+                # {
+                #   id = "personal";
+                #   clients = [ "sol" "ky" ];
+                # }
+                # {
+                #   id = "security";
+                #   clients = [ "sol" "ky" ];
+                # }
+                # {
+                #   id = "wallpapers";
+                #   clients = [ "sol" "ky" "answer" ];
+                # }
               ]);
           };
         };

@@ -27,10 +27,6 @@ in
       type = lib.types.str;
       default = config.home.homeDirectory + "/work";
     };
-    sync-dir = lib.mkOption {
-      type = lib.types.str;
-      default = config.home.homeDirectory + "/sync";
-    };
     enable-syncthing-client = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -138,7 +134,7 @@ in
         bashrcExtra = /* bash */ ''
           td() {
             local session="notes"
-            local notes_dir="${cfg.sync-dir}/notes"
+            local notes_dir="~/sync/notes"
             if [ "$TMUX" != "" ]; then
               if ! tmux has-session -t "$session"; then
                 tmux new-session -ds "$session" -c "$notes_dir" nvim todos.md
@@ -255,6 +251,6 @@ in
       ripgrep.enable = true;
     };
 
-    services.syncthing = lib.mkIf cfg.enable-syncthing-client (mk-syncthing-config config lib hostname user-conf cfg.sync-dir);
+    services.syncthing = lib.mkIf cfg.enable-syncthing-client (mk-syncthing-config config lib hostname user-conf);
   };
 }
