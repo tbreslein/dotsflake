@@ -48,6 +48,65 @@
     , ...
     } @ inputs:
     let
+      mk-syncthing-config = config: lib: hostname:
+        let
+          inherit (config.home.my-home) sync-dir syncthing-server;
+        in
+        {
+          enable = true;
+          overrideDevices = true;
+          overrideFolders = true;
+          settings = {
+            devices =
+              if hostname == syncthing-server then
+                {
+                  sol.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
+                  ky.id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
+                  answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
+                  jacko.id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
+                } else
+                {
+                  elphelt.id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM";
+                };
+            folders =
+              let
+                mk-folder = { id, clients }: {
+                  "${sync-dir}/${id}" = {
+                    enable = hostname == syncthing-server || lib.lists.elem hostname clients;
+                    inherit id;
+                    label = id;
+                    devices =
+                      if hostname == syncthing-server
+                      then clients
+                      else [ syncthing-server ];
+                  };
+                };
+              in
+              lib.mkMerge (lib.lists.map mk-folder [
+                {
+                  id = "notes";
+                  clients = [ "sol" "ky" "answer" "jacko" ];
+                }
+                {
+                  id = "house-notes";
+                  clients = [ "sol" "ky" "answer" "jacko" ];
+                }
+                {
+                  id = "personal";
+                  clients = [ "sol" "ky" ];
+                }
+                {
+                  id = "security";
+                  clients = [ "sol" "ky" ];
+                }
+                {
+                  id = "wallpapers";
+                  clients = [ "sol" "ky" "answer" ];
+                }
+              ]);
+          };
+        };
+
       user-conf = {
         name = "tommy";
         github-name = "tbreslein";
@@ -85,15 +144,15 @@
         };
       };
 
-      mkArgs = system: hostname:
+      mk-args = system: hostname:
         let
           pkgs-stable = import nixpkgs-stable { inherit system; };
         in
-        { inherit inputs pkgs-stable user-conf system hostname; };
+        { inherit inputs pkgs-stable user-conf system hostname mk-syncthing-config; };
 
-      mkNixos = version: system: hostname: extraModules:
+      mk-nixos = version: system: hostname: extraModules:
         let
-          args = mkArgs system hostname;
+          args = mk-args system hostname;
           home = "/home/${user-conf.name}";
 
           _nixpkgs =
@@ -136,16 +195,16 @@
     in
     {
       nixosConfigurations =
-        (mkNixos nixpkgs-unstable "x86_64-linux" "sol" [ chaotic.nixosModules.default ])
-        // (mkNixos nixpkgs-unstable "x86_64-linux" "ky" [ chaotic.nixosModules.default ])
-        // (mkNixos nixpkgs-stable "aarch64-linux" "elphelt" [ ]);
+        (mk-nixos nixpkgs-unstable "x86_64-linux" "sol" [ chaotic.nixosModules.default ])
+        // (mk-nixos nixpkgs-unstable "x86_64-linux" "ky" [ chaotic.nixosModules.default ])
+        // (mk-nixos nixpkgs-stable "aarch64-linux" "elphelt" [ ]);
 
       darwinConfigurations =
         let
           system = "aarch64-darwin";
           hostname = "answer";
           home = "/Users/${user-conf.name}";
-          args = mkArgs system hostname;
+          args = mk-args system hostname;
         in
         {
           "${hostname}" =

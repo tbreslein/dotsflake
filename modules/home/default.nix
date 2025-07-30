@@ -2,7 +2,6 @@
 
 let
   cfg = config.my-home;
-  syncthing-server = "elphelt";
 in
 {
   imports = [
@@ -31,6 +30,10 @@ in
     sync-dir = lib.mkOption {
       type = lib.types.str;
       default = config.home.homeDirectory + "/sync";
+    };
+    syncthing-server = lib.mkOption {
+      type = lib.types.str;
+      default = "elphelt";
     };
   };
 
@@ -250,60 +253,60 @@ in
       ripgrep.enable = true;
     };
 
-    services.syncthing = {
-      enable = true;
-      overrideDevices = true;
-      overrideFolders = true;
-      settings = {
-        devices =
-          if hostname == syncthing-server then
-            {
-              sol.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
-              ky.id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
-              answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
-              jacko.id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
-            } else
-            {
-              elphelt.id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM";
-            };
-
-        folders =
-          let
-            mkFolder = { id, clients }: {
-              "${cfg.sync-dir}/${id}" = {
-                enable = hostname == syncthing-server || lib.lists.elem hostname clients;
-                inherit id;
-                label = id;
-                devices =
-                  if hostname == syncthing-server
-                  then clients
-                  else [ syncthing-server ];
-              };
-            };
-          in
-          lib.mkMerge (lib.lists.map mkFolder [
-            {
-              id = "notes";
-              clients = [ "sol" "ky" "answer" "jacko" ];
-            }
-            {
-              id = "house-notes";
-              clients = [ "sol" "ky" "answer" "jacko" ];
-            }
-            {
-              id = "personal";
-              clients = [ "sol" "ky" ];
-            }
-            {
-              id = "security";
-              clients = [ "sol" "ky" ];
-            }
-            {
-              id = "wallpapers";
-              clients = [ "sol" "ky" "answer" ];
-            }
-          ]);
-      };
-    };
+    # services.syncthing = {
+    #   enable = true;
+    #   overrideDevices = true;
+    #   overrideFolders = true;
+    #   settings = {
+    #     devices =
+    #       if hostname == syncthing-server then
+    #         {
+    #           sol.id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
+    #           ky.id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
+    #           answer.id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
+    #           jacko.id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
+    #         } else
+    #         {
+    #           elphelt.id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM";
+    #         };
+    #
+    #     folders =
+    #       let
+    #         mkFolder = { id, clients }: {
+    #           "${cfg.sync-dir}/${id}" = {
+    #             enable = hostname == syncthing-server || lib.lists.elem hostname clients;
+    #             inherit id;
+    #             label = id;
+    #             devices =
+    #               if hostname == syncthing-server
+    #               then clients
+    #               else [ syncthing-server ];
+    #           };
+    #         };
+    #       in
+    #       lib.mkMerge (lib.lists.map mkFolder [
+    #         {
+    #           id = "notes";
+    #           clients = [ "sol" "ky" "answer" "jacko" ];
+    #         }
+    #         {
+    #           id = "house-notes";
+    #           clients = [ "sol" "ky" "answer" "jacko" ];
+    #         }
+    #         {
+    #           id = "personal";
+    #           clients = [ "sol" "ky" ];
+    #         }
+    #         {
+    #           id = "security";
+    #           clients = [ "sol" "ky" ];
+    #         }
+    #         {
+    #           id = "wallpapers";
+    #           clients = [ "sol" "ky" "answer" ];
+    #         }
+    #       ]);
+    #   };
+    # };
   };
 }

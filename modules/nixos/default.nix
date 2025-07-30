@@ -1,4 +1,4 @@
-{ config, lib, pkgs, system, user-conf, hostname, ... }:
+{ config, lib, pkgs, system, user-conf, hostname, mk-syncthing-config, ... }:
 let
   cfg = config.my-system.nixos;
   priv-group = "wheel";
@@ -52,7 +52,19 @@ in
         layout = "us";
         variant = "";
       };
-      syncthing.openDefaultPorts = true;
+      # syncthing =
+      #   (mk-syncthing-config config lib hostname) // {
+      #     openDefaultPorts = true;
+      #   };
+      syncthing = lib.mkMerge [
+        (mk-syncthing-config config lib hostname)
+        {
+          openDefaultPorts = true;
+        }
+      ];
+      # syncthing = {
+      #   openDefaultPorts = true;
+      # };
       openssh = {
         enable = cfg.enable-ssh-server;
         openFirewall = true;

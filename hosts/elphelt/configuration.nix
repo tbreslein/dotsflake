@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ ... }:
 
 {
   imports = [
@@ -9,10 +9,7 @@
   boot.loader.grub.enable = false;
   # Enables the generation of /boot/extlinux/extlinux.conf
   boot.loader.generic-extlinux-compatible.enable = true;
-
   networking.wireless.enable = false;
-  #networking.firewall.allowedTCPPorts = [ 22 ];
-
   my-system.nixos = {
     enable = true;
     enable-ssh-server = true;
