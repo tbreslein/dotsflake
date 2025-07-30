@@ -13,7 +13,10 @@ in
   options.my-system.nixos = {
     enable = lib.mkEnableOption "enable my-system.nixos";
     enable-ssh-server = lib.mkEnableOption "enable openssh server";
-    enable-syncthing-server = lib.mkEnableOption "enable syncthing server";
+    enable-syncthing-server = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
   };
 
   config = lib.mkIf cfg.enable {

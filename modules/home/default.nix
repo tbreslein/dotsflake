@@ -31,7 +31,10 @@ in
       type = lib.types.str;
       default = config.home.homeDirectory + "/sync";
     };
-    enable-syncthing-client = lib.mkEnableOption "enable being a syncthing client";
+    enable-syncthing-client = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -42,6 +45,8 @@ in
         bat
         rm-improved
         tmux
+        zip
+        unzip
 
         (
           let
