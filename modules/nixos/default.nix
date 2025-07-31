@@ -13,10 +13,7 @@ in
   options.my-system.nixos = {
     enable = lib.mkEnableOption "enable my-system.nixos";
     enable-ssh-server = lib.mkEnableOption "enable openssh server";
-    enable-syncthing-server = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
+    # enable-syncthing-server = lib.mkEnableOption "enable syncthing server";
   };
 
   config = lib.mkIf cfg.enable {
@@ -56,11 +53,11 @@ in
         layout = "us";
         variant = "";
       };
-      syncthing = { openDefaultPorts = true; } // (
-        if cfg.enable-syncthing-server
-        then user-conf.syncthing-config
-        else { }
-      );
+      # syncthing = { openDefaultPorts = true; } // (
+      #   if cfg.enable-syncthing-server
+      #   then user-conf.syncthing-config
+      #   else { }
+      # );
 
       openssh = {
         enable = cfg.enable-ssh-server;

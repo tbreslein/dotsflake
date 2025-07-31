@@ -15,7 +15,7 @@ in
 
   options.my-home = {
     enable = lib.mkEnableOption "Enable home role";
-    enable-syncthing-client = lib.mkEnableOption "Enable syncthing as a client";
+    # enable-syncthing-client = lib.mkEnableOption "Enable syncthing as a client";
   };
 
   config = lib.mkIf cfg.enable {
