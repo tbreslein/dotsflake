@@ -1,9 +1,7 @@
-{ mk-syncthing-config, ... }:
+{ ... }:
 
 {
-  imports = [
-    ./hardware-configuration.nix
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
   # on rbpi, you cannot use grub or systemd-boot
   boot.loader.grub.enable = false;
@@ -15,6 +13,4 @@
     enable-ssh-server = true;
     enable-syncthing-server = false;
   };
-
-  # services.syncthing = (mk-syncthing-config config lib hostname user-conf "/home/${user-conf.name}/sync");
 }

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, user-conf, hostname, mk-syncthing-config, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 
 let
   cfg = config.my-home;
@@ -15,22 +15,7 @@ in
 
   options.my-home = {
     enable = lib.mkEnableOption "Enable home role";
-    code-dir = lib.mkOption {
-      type = lib.types.str;
-      default = config.home.homeDirectory + "/Documents/code";
-    };
-    dots-dir = lib.mkOption {
-      type = lib.types.str;
-      default = cfg.code-dir + "/dotsflake";
-    };
-    work-dir = lib.mkOption {
-      type = lib.types.str;
-      default = config.home.homeDirectory + "/work";
-    };
-    enable-syncthing-client = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
+    enable-syncthing-client = lib.mkEnableOption "Enable syncthing as a client";
   };
 
   config = lib.mkIf cfg.enable {
@@ -41,8 +26,8 @@ in
         bat
         rm-improved
         tmux
-        zip
-        unzip
+        ccrypt
+        gnutar
 
         (
           let
@@ -58,14 +43,14 @@ in
           writeShellScriptBin "dm" /*bash*/
             ''
               set -euo pipefail
-              cd ${cfg.dots-dir}
+              cd ${user-conf.dots-dir}
               if [ $# -gt 0 ]; then
                 case $1 in
                   u) nix flake update;;
                   *);;
                 esac
               fi
-              # sudo ${sys}-rebuild switch --flake ${cfg.dots-dir}#${hostname}
+              # sudo ${sys}-rebuild switch --flake ${user-conf.dots-dir}#${hostname}
               deriv=$(${nix-bin-dir}/nix build --no-link --print-out-paths path:.#${sys}Configurations.${hostname}.config.system.build.toplevel)
               ${nvd} --nix-bin-dir=${nix-bin-dir} diff /run/current-system $deriv
 
@@ -222,7 +207,7 @@ in
         };
         includes = [
           {
-            condition = "gitdir:${cfg.work-dir}/**";
+            condition = "gitdir:${user-conf.work-dir}/**";
             contents = {
               user.name = user-conf.work-gitlab-name;
               user.email = user-conf.work-email;
@@ -239,7 +224,7 @@ in
           ui.editor = "nvim";
           "--scope" = [
             {
-              "--when.repositories" = [ "${cfg.work-dir}" ];
+              "--when.repositories" = [ "${user-conf.work-dir}" ];
               user.name = user-conf.work-gitlab-name;
               user.email = user-conf.work-email;
             }
@@ -251,6 +236,6 @@ in
       ripgrep.enable = true;
     };
 
-    # services.syncthing = lib.mkIf cfg.enable-syncthing-client (mk-syncthing-config config lib hostname user-conf);
+    # services.syncthing = lib.mkIf cfg.enable-syncthing-client user-conf.syncthing-config;
   };
 }

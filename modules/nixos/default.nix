@@ -1,4 +1,4 @@
-{ config, lib, pkgs, system, user-conf, hostname, mk-syncthing-config, ... }:
+{ config, lib, pkgs, system, user-conf, ... }:
 let
   cfg = config.my-system.nixos;
   priv-group = "wheel";
@@ -56,7 +56,12 @@ in
         layout = "us";
         variant = "";
       };
-      syncthing.openDefaultPorts = true;
+      syncthing = { openDefaultPorts = true; } // (
+        if cfg.enable-syncthing-server
+        then user-conf.syncthing-config
+        else { }
+      );
+
       openssh = {
         enable = cfg.enable-ssh-server;
         openFirewall = true;
@@ -82,19 +87,21 @@ in
         else [ ];
     };
 
-    nixpkgs = {
-      config.allowUnfree = true;
-      hostPlatform = system;
-    };
+    nixpkgs.config.allowUnfree = true;
     system.stateVersion = "25.05";
 
-    networking = {
-      useDHCP = lib.mkDefault true;
-      networkmanager.enable = true;
-      firewall.enable = true;
-      hostName = hostname;
-      inherit (user-conf) hosts;
-    };
+    networking =
+      let
+        mk-etc-hosts = hosts: with lib.attrsets;
+          mapAttrs' (name: value: nameValuePair value.ip [ name ]) hosts;
+      in
+      {
+        useDHCP = lib.mkDefault true;
+        networkmanager.enable = true;
+        firewall.enable = true;
+        hostName = user-conf.hostname;
+        hosts = mk-etc-hosts user-conf.hosts;
+      };
 
     time.timeZone = "Europe/Berlin";
     i18n = {

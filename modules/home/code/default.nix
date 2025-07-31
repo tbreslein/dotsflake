@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-home.code;
   tmux-sessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" /* bash */ ''
@@ -6,10 +6,9 @@ let
     add_dir() {
       [ -d "$1" ] && folders+=("$1")
     }
-    add_dir "${config.my-home.code-dir}"
-    add_dir "~/sync"
-    add_dir "~/syncthing"
-    add_dir "${config.my-home.work-dir}/repos"
+    add_dir "${user-conf.code-dir}"
+    add_dir "${user-conf.sync-dir}"
+    add_dir "${user-conf.work-dir}/repos"
 
     selected=""
     if [[ ''\$# -eq 1 ]]; then
@@ -81,7 +80,7 @@ in
           globals = { "vim" }
         '';
 
-        ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${config.my-home.dots-dir}/modules/home/code/${cfg.nvim-config}-nvim";
+        ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/home/code/${cfg.nvim-config}-nvim";
       };
     };
 
