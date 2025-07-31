@@ -85,15 +85,17 @@
           syncthing-server = "elphelt";
           is-syncthing-server = hostname == syncthing-server;
 
-          is-linux = hosts."${hostname}".is-linux;
-          is-darwin = hosts."${hostname}".is-darwin;
+          inherit (hosts."${hostname}") is-linux is-darwin;
           home-dir =
             if is-linux
             then "/home/${name}"
             else "/Users/${name}";
           work-dir = "${home-dir}/work";
           code-dir = "${home-dir}/Documents/code";
-          dots-dir = "${code-dir}/dotsflake";
+          dots-dir =
+            if hostname == "elphelt"
+            then "${home-dir}/dotsflake"
+            else "${code-dir}/dotsflake";
           sync-dir = "${home-dir}/sync";
 
           github-name = "tbreslein";
