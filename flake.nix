@@ -82,8 +82,6 @@
               syncthing-id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
             };
           };
-          syncthing-server = "elphelt";
-          is-syncthing-server = hostname == syncthing-server;
 
           inherit (hosts."${hostname}") is-linux is-darwin;
           home-dir =
@@ -123,6 +121,9 @@
             };
             bright = normal;
           };
+
+          syncthing-server = "elphelt";
+          is-syncthing-server = hostname == syncthing-server;
           syncthing-config = {
             enable = true;
             overrideDevices = true;
