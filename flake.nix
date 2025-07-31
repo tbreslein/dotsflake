@@ -59,7 +59,7 @@
             elphelt = {
               ip = "192.168.178.90";
               is-linux = true;
-              syncthing-id = "FYZX372-3CXKFX3-UNUEYLS-DKSQNIP-WZHMN4P-SJTNMRY-2NY5ZNB-DLLQJQM";
+              syncthing-id = "ZMLPSA5-66PDVYY-RELCF3L-6CPJUG4-64IOD2H-HAVEQFD-5LAVA26-LO4EGQS";
             };
             sol = {
               ip = "192.168.178.91";
