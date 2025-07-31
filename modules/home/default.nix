@@ -15,7 +15,7 @@ in
 
   options.my-home = {
     enable = lib.mkEnableOption "Enable home role";
-    # enable-syncthing-client = lib.mkEnableOption "Enable syncthing as a client";
+    enable-syncthing-client = lib.mkEnableOption "Enable syncthing as a client";
   };
 
   config = lib.mkIf cfg.enable {
@@ -48,8 +48,7 @@ in
 
               read -p "Continue? [Y/n]: " confirm
               case $confirm in
-                y|Y|"")
-                  sudo ${sys}-rebuild switch --flake ${user-conf.dots-dir}#${hostname}
+                y|Y|"") sudo ${sys}-rebuild switch --flake ${user-conf.dots-dir}#${hostname};;
                 n|N) exit 0;;
                 *) echo "that's neither yes or no"; exit 1;;
               esac
@@ -225,6 +224,6 @@ in
       ripgrep.enable = true;
     };
 
-    # services.syncthing = lib.mkIf cfg.enable-syncthing-client user-conf.syncthing-config;
+    services.syncthing = lib.mkIf cfg.enable-syncthing-client user-conf.syncthing-config;
   };
 }

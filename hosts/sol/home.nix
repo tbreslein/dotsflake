@@ -3,7 +3,7 @@ _:
 {
   my-home = {
     enable = true;
-    enable-syncthing-client = false;
+    enable-syncthing-client = true;
     code.enable = true;
     desktop.enable = true;
     desktop.terminal-font-size = 17;

@@ -152,10 +152,11 @@
                     # clients = [ "sol" "ky" "answer" "jacko" ];
                     clients = [ "sol" ];
                   }
-                  # {
-                  #   id = "house-notes";
-                  #   clients = [ "sol" "ky" "answer" "jacko" ];
-                  # }
+                  {
+                    id = "house-notes";
+                    # clients = [ "sol" "ky" "answer" "jacko" ];
+                    clients = [ "sol" ];
+                  }
                   # {
                   #   id = "personal";
                   #   clients = [ "sol" "ky" ];
