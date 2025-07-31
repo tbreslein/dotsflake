@@ -89,11 +89,8 @@
             then "/home/${name}"
             else "/Users/${name}";
           work-dir = "${home-dir}/work";
-          code-dir = "${home-dir}/Documents/code";
-          dots-dir =
-            if hostname == "elphelt"
-            then "${home-dir}/dotsflake"
-            else "${code-dir}/dotsflake";
+          code-dir = "${home-dir}/code";
+          dots-dir = "${home-dir}/dotsflake";
           sync-dir = "${home-dir}/sync";
 
           github-name = "tbreslein";
