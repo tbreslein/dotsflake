@@ -38,11 +38,12 @@ in
         layout = "us";
         variant = "";
       };
-      # syncthing = { openDefaultPorts = true; } // (
-      #   if cfg.enable-syncthing-server
-      #   then user-conf.syncthing-config
-      #   else { }
-      # );
+
+      syncthing = { openDefaultPorts = true; } // (
+        if cfg.enable-syncthing-server
+        then user-conf.syncthing-config
+        else { }
+      );
 
       openssh = {
         enable = cfg.enable-ssh-server;
