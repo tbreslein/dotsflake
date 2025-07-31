@@ -59,7 +59,7 @@
             elphelt = {
               ip = "192.168.178.90";
               is-linux = true;
-              syncthing-id = "ZMLPSA5-66PDVYY-RELCF3L-6CPJUG4-64IOD2H-HAVEQFD-5LAVA26-LO4EGQS";
+              syncthing-id = "ZZTPUBC-UHGT3I5-YOAXZF3-UDQHGE3-FE5XFMA-B6SQWSW-AKGD3UI-BTBB3QV";
             };
             sol = {
               ip = "192.168.178.91";
@@ -139,7 +139,6 @@
                       enable = is-syncthing-server || lib.lists.elem hostname clients;
                       inherit id;
                       label = id;
-                      ignorePerms = is-syncthing-server;
                       devices =
                         if is-syncthing-server
                         then clients
