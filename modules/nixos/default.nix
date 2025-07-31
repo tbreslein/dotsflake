@@ -41,7 +41,10 @@ in
 
       syncthing = { openDefaultPorts = true; } // (
         if cfg.enable-syncthing-server
-        then user-conf.syncthing-config
+        then {
+          user = user-conf.name;
+          configDir = "${user-conf.home-dir}/.config/syncthing";
+        } // user-conf.syncthing-config
         else { }
       );
 
