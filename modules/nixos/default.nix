@@ -1,4 +1,4 @@
-{ config, lib, pkgs, system, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.nixos;
   priv-group = "wheel";
@@ -19,33 +19,18 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       vim
-      neovim
       wget
       git
       gnumake
+      tmux
+      ccrypt
+      gnutar
+      htop
     ];
     nix = {
       settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
       gc.automatic = true;
       gc.dates = "weekly";
-    };
-
-    security = {
-      sudo = {
-        enable = true;
-        execWheelOnly = true;
-      };
-      doas = {
-        enable = true;
-        extraRules = [
-          {
-            groups = [ priv-group ];
-            noPass = false;
-            keepEnv = true;
-            persist = true;
-          }
-        ];
-      };
     };
 
     services = {

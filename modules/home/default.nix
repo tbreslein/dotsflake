@@ -25,20 +25,13 @@ in
         fzy
         bat
         rm-improved
-        tmux
-        ccrypt
-        gnutar
+        htop
 
         (
           let
             nvd = "${pkgs.nvd}/bin/nvd";
             nix-bin-dir = "${config.nix.package}/bin";
-            sys = if pkgs.stdenv.isLinux then "nixos" else "darwin";
-            doas = if pkgs.stdenv.isLinux then "doas" else "sudo";
-            activate =
-              if pkgs.stdenv.isLinux
-              then "bin/switch-to-configuration switch"
-              else "activate switch";
+            sys = if user-conf.is-linux then "nixos" else "darwin";
           in
           writeShellScriptBin "dm" /*bash*/
             ''
@@ -50,15 +43,13 @@ in
                   *);;
                 esac
               fi
-              # sudo ${sys}-rebuild switch --flake ${user-conf.dots-dir}#${hostname}
               deriv=$(${nix-bin-dir}/nix build --no-link --print-out-paths path:.#${sys}Configurations.${hostname}.config.system.build.toplevel)
               ${nvd} --nix-bin-dir=${nix-bin-dir} diff /run/current-system $deriv
 
               read -p "Continue? [Y/n]: " confirm
               case $confirm in
                 y|Y|"")
-                  ${doas} nix-env -p /nix/var/nix/profiles/system --set $deriv
-                  ${doas} $deriv/${activate};;
+                  sudo ${sys}-rebuild switch --flake ${user-conf.dots-dir}#${hostname}
                 n|N) exit 0;;
                 *) echo "that's neither yes or no"; exit 1;;
               esac
@@ -114,7 +105,6 @@ in
           "histappend"
         ];
         initExtra = /* bash */  ''
-          complete -cf doas
         '';
         bashrcExtra = /* bash */ ''
           td() {
@@ -232,7 +222,6 @@ in
         };
       };
 
-      htop.enable = true;
       ripgrep.enable = true;
     };
 

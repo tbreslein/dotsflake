@@ -180,7 +180,7 @@
         in
         { inherit inputs pkgs-stable user-conf; };
 
-      mk-nixos = version: system: hostname: extraModules:
+      mk-nixos = version: system: hostname: extraModules: include-hm:
         let
           args = mk-args system hostname;
           home = "/home/${username}";
@@ -202,7 +202,9 @@
             modules = [
               ./hosts/${hostname}/configuration.nix
               ./modules/nixos
-
+            ]
+            ++ extraModules
+            ++ (if include-hm then [
               _hm.nixosModules.home-manager
               {
                 users.users.${username}.home = "${home}";
@@ -218,15 +220,15 @@
                   };
                 };
               }
-            ] ++ extraModules;
+            ] else [ ]);
           };
         };
     in
     {
       nixosConfigurations =
-        (mk-nixos nixpkgs-unstable "x86_64-linux" "sol" [ chaotic.nixosModules.default ])
-        // (mk-nixos nixpkgs-unstable "x86_64-linux" "ky" [ chaotic.nixosModules.default ])
-        // (mk-nixos nixpkgs-stable "aarch64-linux" "elphelt" [ ]);
+        (mk-nixos nixpkgs-unstable "x86_64-linux" "sol" [ chaotic.nixosModules.default ] true)
+        // (mk-nixos nixpkgs-unstable "x86_64-linux" "ky" [ chaotic.nixosModules.default ] true)
+        // (mk-nixos nixpkgs-stable "aarch64-linux" "elphelt" [ ] false);
 
       darwinConfigurations =
         let
