@@ -139,6 +139,7 @@
                       enable = is-syncthing-server || lib.lists.elem hostname clients;
                       inherit id;
                       label = id;
+                      ignorePerms = is-syncthing-server;
                       devices =
                         if is-syncthing-server
                         then clients
