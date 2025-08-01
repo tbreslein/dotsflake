@@ -108,7 +108,7 @@ in
         bashrcExtra = /* bash */ ''
           td() {
             local session="notes"
-            local notes_dir="${user-conf}/notes"
+            local notes_dir="${user-conf.sync-dir}/notes"
             if [ "$TMUX" != "" ]; then
               if ! tmux has-session -t "$session"; then
                 tmux new-session -ds "$session" -c "$notes_dir" "nvim $notes-dir/todos.md"
