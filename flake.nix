@@ -150,25 +150,28 @@
                   {
                     id = "notes";
                     # clients = [ "sol" "ky" "answer" "jacko" ];
-                    clients = [ "sol" ];
+                    clients = [ "sol" "jacko" ];
                   }
                   {
                     id = "house-notes";
                     # clients = [ "sol" "ky" "answer" "jacko" ];
+                    clients = [ "sol" "jacko" ];
+                  }
+                  {
+                    id = "personal";
+                    # clients = [ "sol" "ky" ];
                     clients = [ "sol" ];
                   }
-                  # {
-                  #   id = "personal";
-                  #   clients = [ "sol" "ky" ];
-                  # }
-                  # {
-                  #   id = "security";
-                  #   clients = [ "sol" "ky" ];
-                  # }
-                  # {
-                  #   id = "wallpapers";
-                  #   clients = [ "sol" "ky" "answer" ];
-                  # }
+                  {
+                    id = "security";
+                    # clients = [ "sol" "ky" ];
+                    clients = [ "sol" ];
+                  }
+                  {
+                    id = "wallpapers";
+                    # clients = [ "sol" "ky" "answer" ];
+                    clients = [ "sol" ];
+                  }
                 ]);
             };
           };
