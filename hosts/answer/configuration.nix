@@ -1,4 +1,4 @@
-{ config, lib, pkgs-stable, pkgs, user-conf, hostname, ... }:
+{ config, lib, pkgs-stable, pkgs, user-conf, ... }:
 
 let
   appsSrc = config.system.build.applications + /Applications;
@@ -70,10 +70,10 @@ in
     };
   };
 
-  networking = {
-    hostName = hostname;
-    computerName = hostname;
-    localHostName = hostname;
+  networking = rec {
+    hostName = user-conf.hostname;
+    computerName = hostName;
+    localHostName = hostName;
   };
 
   nix = {

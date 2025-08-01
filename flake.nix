@@ -149,13 +149,11 @@
                 lib.mkMerge (lib.lists.map mk-folder [
                   {
                     id = "notes";
-                    # clients = [ "sol" "ky" "answer" "jacko" ];
-                    clients = [ "sol" "ky" "jacko" ];
+                    clients = [ "sol" "ky" "answer" "jacko" ];
                   }
                   {
                     id = "house-notes";
-                    # clients = [ "sol" "ky" "answer" "jacko" ];
-                    clients = [ "sol" "ky" "jacko" ];
+                    clients = [ "sol" "ky" "answer" "jacko" ];
                   }
                   {
                     id = "personal";
@@ -167,8 +165,7 @@
                   }
                   {
                     id = "wallpapers";
-                    # clients = [ "sol" "ky" "answer" ];
-                    clients = [ "sol" "ky" ];
+                    clients = [ "sol" "ky" "answer" ];
                   }
                 ]);
             };
