@@ -13,7 +13,31 @@ in
 
   config = lib.mkIf cfg.enable {
     ${hm} = {
-      home.shellAliases.v = "nvim";
+      home = {
+        shellAliases.v = "nvim";
+        packages = with pkgs; [
+          universal-ctags
+
+          stylua
+          luajitPackages.luacheck
+          lua-language-server
+          bash-language-server
+          shellharden
+          nodePackages.prettier
+          eslint
+          nixd
+          statix
+          nixpkgs-fmt
+          tree-sitter
+        ];
+        file = {
+          ".luacheckrc".text = ''
+            globals = { "vim" }
+          '';
+
+          ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/new-modules/common/code/${cfg.nvim-config}-nvim";
+        };
+      };
 
       programs = {
         tmux.extraConfig =
@@ -21,7 +45,7 @@ in
           tmux
           */
           ''
-            bind-key C-t popup -E -w90% -h90% "nvim ~/sync/notes/todos.md"
+            bind-key C-t popup -E -w90% -h90% "nvim ${user-conf.sync-dir}/notes/todos.md"
           '';
 
         neovim = {
