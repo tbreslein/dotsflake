@@ -50,36 +50,41 @@
     let
       username = "tommy";
 
-      mk-user-conf = lib: hostname:
+      mk-user-conf = lib: system: hostname:
         rec {
           name = username;
-          inherit hostname;
+          inherit hostname system;
 
           hosts = {
             elphelt = {
               ip = "192.168.178.90";
               is-linux = true;
               syncthing-id = "ZZTPUBC-UHGT3I5-YOAXZF3-UDQHGE3-FE5XFMA-B6SQWSW-AKGD3UI-BTBB3QV";
+              syncthing-folders = [ "notes" "house-notes" "personal" "security" "wallpapers" ];
             };
             sol = {
               ip = "192.168.178.91";
               is-linux = true;
               syncthing-id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
+              syncthing-folders = [ "notes" "house-notes" "personal" "security" "wallpapers" ];
             };
             ky = {
               ip = "192.168.178.92";
               is-linux = true;
               syncthing-id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
+              syncthing-folders = [ "notes" "house-notes" "personal" "security" "wallpapers" ];
             };
             answer = {
               ip = "192.168.178.93";
               is-linux = false;
               syncthing-id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
+              syncthing-folders = [ "notes" "house-notes" "wallpapers" ];
             };
             jacko = {
               ip = "192.168.178.94";
               is-linux = false;
               syncthing-id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
+              syncthing-folders = [ "notes" "house-notes" ];
             };
           };
 
@@ -120,6 +125,8 @@
           };
 
           syncthing-server = "elphelt";
+
+          # THROW OUT
           is-syncthing-server = hostname == syncthing-server;
           syncthing-config = {
             enable = true;
@@ -132,6 +139,33 @@
                   (if is-syncthing-server
                   then (lib.filterAttrs (n: _: n != syncthing-server) hosts)
                   else (lib.filterAttrs (n: _: n == syncthing-server) hosts));
+              # folders =
+              #   let
+              #     host-folders = lib.mapAttrs (n: v: { "${n}" = v.syncthing-folders; });
+              #     all-folders = lib.lists.unique (lib.attrsets.attrValues host-folders);
+              #
+              #     mk-folder = id: {
+              #       "${sync-dir}/${id}" = {
+              #         enable = true;
+              #         inherit id;
+              #         label = id;
+              #         devices =
+              #           if is-syncthing-server
+              #           then
+              #             let
+              #               # from host-folders, pull out all the attribute names
+              #               # where this folder-id is an element of the syncthing-
+              #               # folders. also filter out this hostname, because we
+              #               # don't want the syncthing-server to share folders with
+              #               # itself.
+              #               _filter = n: v: n != hostname && lib.lists.elem id v;
+              #             in
+              #             lib.attrsets.attrNames (lib.filterAttrs _filter host-folders)
+              #           else [ syncthing-server ];
+              #       };
+              #     };
+              #   in
+              #   lib.mkMerge (lib.lists.map mk-folder all-folders);
               folders =
                 let
                   mk-folder = { id, clients }: {
@@ -170,12 +204,13 @@
                 ]);
             };
           };
+          # STOP
         };
 
       mk-args = system: hostname:
         let
           pkgs-stable = import nixpkgs-stable { inherit system; };
-          user-conf = mk-user-conf pkgs-stable.lib hostname;
+          user-conf = mk-user-conf pkgs-stable.lib system hostname;
         in
         { inherit inputs pkgs-stable user-conf; };
 

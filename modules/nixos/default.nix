@@ -32,6 +32,10 @@ in
       gc.automatic = true;
       gc.dates = "weekly";
     };
+    nixpkgs = {
+      config.allowUnfree = true;
+      hostPlatform = user-conf.system;
+    };
 
     services = {
       xserver.xkb = {
@@ -73,7 +77,6 @@ in
         else [ ];
     };
 
-    nixpkgs.config.allowUnfree = true;
     system.stateVersion = "25.05";
 
     networking =

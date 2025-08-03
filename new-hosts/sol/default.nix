@@ -1,0 +1,49 @@
+{ pkgs, hm, ... }:
+
+{
+  imports = [ ./hardware-configuration.nix ];
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
+
+  my-system = {
+    ghostty.enable = false;
+    alacritty.enable = false;
+    foot.enable = true;
+    terminal-font-size = 17;
+
+    has-gui = true;
+    kanata.enable = false;
+
+    bash.enable = true;
+    syncthing.enable-syncthing-client = true;
+
+    git.enable = true;
+    jujutsu.enable = true;
+
+    code = {
+      # emacs.enable = true;
+      neovim = {
+        enable = true;
+        nvim-config = "minimal";
+      };
+      zed.enable = true;
+    };
+    tmux.enable = true;
+
+    desktop = {
+      enable = true;
+      hypr.enable = true;
+      laptop.enable = false;
+      nvidia.enable = true;
+      gaming.enable = true;
+    };
+
+    syke.enable = true;
+
+  };
+
+  ${hm}.home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    MANPAGER = "nvim +Man!";
+  };
+}

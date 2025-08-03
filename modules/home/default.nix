@@ -43,12 +43,12 @@ in
                   *);;
                 esac
               fi
-              deriv=$(${nix-bin-dir}/nix build --no-link --print-out-paths path:.#${sys}Configurations.${hostname}.config.system.build.toplevel)
+              deriv=$(${nix-bin-dir}/nix build --no-link --print-out-paths path:.#${sys}Configurations.${user-conf.hostname}.config.system.build.toplevel)
               ${nvd} --nix-bin-dir=${nix-bin-dir} diff /run/current-system $deriv
 
               read -p "Continue? [Y/n]: " confirm
               case $confirm in
-                y|Y|"") sudo ${sys}-rebuild switch --flake ${user-conf.dots-dir}#${hostname};;
+                y|Y|"") sudo ${sys}-rebuild switch --flake ${user-conf.dots-dir}#${user-conf.hostname};;
                 n|N) exit 0;;
                 *) echo "that's neither yes or no"; exit 1;;
               esac
@@ -111,10 +111,10 @@ in
             local notes_dir="${user-conf.sync-dir}/notes"
             if [ "$TMUX" != "" ]; then
               if ! tmux has-session -t "$session"; then
-                tmux new-session -ds "$session" -c "$notes_dir" "nvim $notes-dir/todos.md"
+                tmux new-session -ds "$session" -c "$notes_dir" "nvim $notes_dir/todos.md"
               fi
             else
-              tmux new-session -ds "$session" -c "$notes_dir" "nvim $notes-dir/todos.md"
+              tmux new-session -ds "$session" -c "$notes_dir" "nvim $notes_dir/todos.md"
               tmux a -t "$session"
             fi
           }
