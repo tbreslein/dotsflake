@@ -4,9 +4,9 @@ let
 in
 {
   imports = [
-    ./neovim
-    ./emacs
-    ./zed
+    ./neovim.nix
+    ./emacs.nix
+    ./zed.nix
   ];
 
   options.my-system.code.enable = lib.mkEnableOption "Enable code role";

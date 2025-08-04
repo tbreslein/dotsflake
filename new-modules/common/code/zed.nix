@@ -3,12 +3,11 @@ let
   cfg = config.my-system.code.zed;
 in
 {
-
   options.my-system.code.zed.enable = lib.mkEnableOption "Enable zed";
 
   config = lib.mkIf cfg.enable {
     ${hm}.programs.zed-editor = {
-        inherit (config.my-home.linux) enable;
+        enable = user-conf.is-linux;
         extensions = [
           # syntax ++ languages
           "angular"

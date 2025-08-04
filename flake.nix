@@ -54,6 +54,15 @@
         rec {
           name = username;
           inherit hostname system;
+          inherit (hosts."${hostname}") is-linux is-darwin;
+          home-dir =
+            if is-linux
+            then "/home/${name}"
+            else "/Users/${name}";
+          work-dir = "${home-dir}/work";
+          code-dir = "${home-dir}/code";
+          dots-dir = "${home-dir}/dotsflake";
+          sync-dir = "${home-dir}/sync";
 
           hosts = {
             elphelt = {
@@ -87,16 +96,7 @@
               syncthing-folders = [ "notes" "house-notes" ];
             };
           };
-
-          inherit (hosts."${hostname}") is-linux is-darwin;
-          home-dir =
-            if is-linux
-            then "/home/${name}"
-            else "/Users/${name}";
-          work-dir = "${home-dir}/work";
-          code-dir = "${home-dir}/code";
-          dots-dir = "${home-dir}/dotsflake";
-          sync-dir = "${home-dir}/sync";
+          syncthing-server = "elphelt";
 
           github-name = "tbreslein";
           work-gitlab-name = "Tommy Breslein";
@@ -123,101 +123,18 @@
             };
             bright = normal;
           };
-
-          syncthing-server = "elphelt";
-
-          # THROW OUT
-          is-syncthing-server = hostname == syncthing-server;
-          syncthing-config = {
-            enable = true;
-            overrideDevices = true;
-            overrideFolders = true;
-            settings = {
-              devices =
-                lib.mapAttrs
-                  (_: v: { id = v.syncthing-id; })
-                  (if is-syncthing-server
-                  then (lib.filterAttrs (n: _: n != syncthing-server) hosts)
-                  else (lib.filterAttrs (n: _: n == syncthing-server) hosts));
-              # folders =
-              #   let
-              #     host-folders = lib.mapAttrs (n: v: { "${n}" = v.syncthing-folders; });
-              #     all-folders = lib.lists.unique (lib.attrsets.attrValues host-folders);
-              #
-              #     mk-folder = id: {
-              #       "${sync-dir}/${id}" = {
-              #         enable = true;
-              #         inherit id;
-              #         label = id;
-              #         devices =
-              #           if is-syncthing-server
-              #           then
-              #             let
-              #               # from host-folders, pull out all the attribute names
-              #               # where this folder-id is an element of the syncthing-
-              #               # folders. also filter out this hostname, because we
-              #               # don't want the syncthing-server to share folders with
-              #               # itself.
-              #               _filter = n: v: n != hostname && lib.lists.elem id v;
-              #             in
-              #             lib.attrsets.attrNames (lib.filterAttrs _filter host-folders)
-              #           else [ syncthing-server ];
-              #       };
-              #     };
-              #   in
-              #   lib.mkMerge (lib.lists.map mk-folder all-folders);
-              folders =
-                let
-                  mk-folder = { id, clients }: {
-                    "${sync-dir}/${id}" = {
-                      enable = is-syncthing-server || lib.lists.elem hostname clients;
-                      inherit id;
-                      label = id;
-                      devices =
-                        if is-syncthing-server
-                        then clients
-                        else [ syncthing-server ];
-                    };
-                  };
-                in
-                lib.mkMerge (lib.lists.map mk-folder [
-                  {
-                    id = "notes";
-                    clients = [ "sol" "ky" "answer" "jacko" ];
-                  }
-                  {
-                    id = "house-notes";
-                    clients = [ "sol" "ky" "answer" "jacko" ];
-                  }
-                  {
-                    id = "personal";
-                    clients = [ "sol" "ky" ];
-                  }
-                  {
-                    id = "security";
-                    clients = [ "sol" "ky" ];
-                  }
-                  {
-                    id = "wallpapers";
-                    clients = [ "sol" "ky" "answer" ];
-                  }
-                ]);
-            };
-          };
-          # STOP
         };
 
-      mk-args = system: hostname:
+      mk-args = system: hostname: hm:
         let
           pkgs-stable = import nixpkgs-stable { inherit system; };
           user-conf = mk-user-conf pkgs-stable.lib system hostname;
         in
-        { inherit inputs pkgs-stable user-conf; };
+        { inherit inputs pkgs-stable hm user-conf; };
 
       mk-nixos = version: system: hostname: extraModules: include-hm:
         let
-          args = mk-args system hostname;
-          home = "/home/${username}";
+          args = mk-args system hostname "home-manager.users.${username}";
 
           _nixpkgs =
             if version == "stable"
@@ -234,27 +151,39 @@
             inherit system;
             specialArgs = args;
             modules = [
-              ./hosts/${hostname}/configuration.nix
-              ./modules/nixos
-            ]
-            ++ extraModules
-            ++ (if include-hm then [
+              ./new-hosts/${hostname}
+              ./new-modules/nixos
               _hm.nixosModules.home-manager
               {
-                users.users.${username}.home = "${home}";
+                users.users.${username}.home = "${args.user-conf.home-dir}";
                 home-manager = {
                   useGlobalPkgs = true;
                   useUserPackages = true;
-                  extraSpecialArgs = args;
-                  users.${username} = {
-                    imports = [
-                      ./modules/home
-                      ./hosts/${hostname}/home.nix
-                    ];
-                  };
                 };
               }
-            ] else [ ]);
+            ];
+            # modules = [
+            #   ./hosts/${hostname}/configuration.nix
+            #   ./modules/nixos
+            # ]
+            # ++ extraModules
+            # ++ (if include-hm then [
+            #   _hm.nixosModules.home-manager
+            #   {
+            #     users.users.${username}.home = "${home}";
+            #     home-manager = {
+            #       useGlobalPkgs = true;
+            #       useUserPackages = true;
+            #       extraSpecialArgs = args;
+            #       users.${username} = {
+            #         imports = [
+            #           ./modules/home
+            #           ./hosts/${hostname}/home.nix
+            #         ];
+            #       };
+            #     };
+            #   }
+            # ] else [ ]);
           };
         };
     in

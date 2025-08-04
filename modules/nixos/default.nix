@@ -10,6 +10,7 @@ in
     ./desktop
     ./laptop
   ];
+
   options.my-system.nixos = {
     enable = lib.mkEnableOption "enable my-system.nixos";
     enable-ssh-server = lib.mkEnableOption "enable openssh server";

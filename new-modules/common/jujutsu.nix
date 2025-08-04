@@ -1,4 +1,4 @@
-{ config, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, hm, user-conf, ... }:
 
 let
   cfg = config.my-system.jujutsu;

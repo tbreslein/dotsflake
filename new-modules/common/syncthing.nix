@@ -23,7 +23,7 @@ let
           all-folders = lib.lists.unique (lib.attrsets.attrValues host-folders);
 
           mk-folder = id: {
-            "${sync-dir}/${id}" = {
+            "${user-conf.sync-dir}/${id}" = {
               enable = true;
               inherit id;
               label = id;

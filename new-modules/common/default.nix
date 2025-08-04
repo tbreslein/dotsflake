@@ -1,20 +1,20 @@
-{ pkgs, hm, ... }:
+{ config, lib, pkgs, hm, user-conf, ... }:
 
 let
   cfg = config.my-system;
 in
 {
   imports = [
-    ./bash
-    ./syncthing
+    ./bash.nix
+    ./syncthing.nix
     ./code
-    ./tmux
-    ./ghostty
-    ./alacritty
-    ./kanata
-    ./git
-    ./jujutsu
-    ./syke
+    ./tmux.nix
+    ./ghostty.nix
+    ./alacritty.nix
+    ./kanata.nix
+    ./git.nix
+    ./jujutsu.nix
+    ./syke.nix
   ];
 
   options.my-system = {
