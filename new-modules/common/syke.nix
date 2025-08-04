@@ -31,47 +31,49 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home-manager.users.${user-conf.name}.home.activation = lib.mkMerge [
-      {
-        code-repos =
-          let
-            clone = remote:
-              let
-                dir = code-dir + "/" + (lib.strings.removeSuffix ".git" (lib.lists.last (builtins.split "/" remote)));
-                git = "${pkgs.git}/bin/git";
-                gitConf = "--config core.sshCommand=\"${pkgs.openssh}/bin/ssh -i ${home-dir}/.ssh/id_rsa\"";
-              in
-                /* bash */
-              ''
-                if [ ! -d ${dir} ]; then
-                  ${git} clone ${remote} ${dir} ${gitConf} &
-                else
-                  pushd ${dir}
-                  ${git} pull &
-                  popd
-                fi
-              '';
-          in
-          lib.hm.dag.entryAfter [ "writeBoundary" "installPackages" "git" "ssh" ]
-            (lib.strings.concatLines [
-              /*bash*/
-              ''
-                set +o pipefail
-                set +e
+    home-manager.users.${user-conf.name} = { lib, ... }: {
+      home.activation = lib.mkMerge [
+        {
+          code-repos =
+            let
+              clone = remote:
+                let
+                  dir = code-dir + "/" + (lib.strings.removeSuffix ".git" (lib.lists.last (builtins.split "/" remote)));
+                  git = "${pkgs.git}/bin/git";
+                  gitConf = "--config core.sshCommand=\"${pkgs.openssh}/bin/ssh -i ${home-dir}/.ssh/id_rsa\"";
+                in
+                  /* bash */
+                ''
+                  if [ ! -d ${dir} ]; then
+                    ${git} clone ${remote} ${dir} ${gitConf} &
+                  else
+                    pushd ${dir}
+                    ${git} pull &
+                    popd
+                  fi
+                '';
+            in
+            lib.hm.dag.entryAfter [ "writeBoundary" "installPackages" "git" "ssh" ]
+              (lib.strings.concatLines [
+                /*bash*/
+                ''
+                  set +o pipefail
+                  set +e
 
-                ${setPath}
-                if [ ! -d ${code-dir} ]; then
-                  mkdir -p ${code-dir}
-                fi
-              ''
+                  ${setPath}
+                  if [ ! -d ${code-dir} ]; then
+                    mkdir -p ${code-dir}
+                  fi
+                ''
 
-              (lib.strings.concatMapStringsSep "\n" clone cfg.code-repos)
+                (lib.strings.concatMapStringsSep "\n" clone cfg.code-repos)
 
-              ''
-                wait
-              ''
-            ]);
-      }
-    ];
+                ''
+                  wait
+                ''
+              ]);
+        }
+      ];
+    };
   };
 }

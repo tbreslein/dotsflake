@@ -68,30 +68,35 @@
             elphelt = {
               ip = "192.168.178.90";
               is-linux = true;
+              is-darwin = false;
               syncthing-id = "ZZTPUBC-UHGT3I5-YOAXZF3-UDQHGE3-FE5XFMA-B6SQWSW-AKGD3UI-BTBB3QV";
               syncthing-folders = [ "notes" "house-notes" "personal" "security" "wallpapers" ];
             };
             sol = {
               ip = "192.168.178.91";
               is-linux = true;
+              is-darwin = false;
               syncthing-id = "ROFGBXL-IPVQEPW-OJSL7O6-ESRCYLE-EI46JFL-KSX4AF7-FXFIDGD-USAXRAQ";
               syncthing-folders = [ "notes" "house-notes" "personal" "security" "wallpapers" ];
             };
             ky = {
               ip = "192.168.178.92";
               is-linux = true;
+              is-darwin = false;
               syncthing-id = "UUCQ3DZ-QEF46SM-GK4MTAV-GNHSI4F-ZHC4L2D-U6FY7RC-6INILQA-OYEV2AD";
               syncthing-folders = [ "notes" "house-notes" "personal" "security" "wallpapers" ];
             };
             answer = {
               ip = "192.168.178.93";
               is-linux = false;
+              is-darwin = true;
               syncthing-id = "ISYIUF2-TKA6QSR-74YFSUM-BW2C76T-JLDH6MR-EPRG7ZR-3XNF46T-G2V54AM";
               syncthing-folders = [ "notes" "house-notes" "wallpapers" ];
             };
             jacko = {
               ip = "192.168.178.94";
               is-linux = false;
+              is-darwin = false;
               syncthing-id = "EPIB45M-EYSLN3M-T4NGOGN-Y7LAAR5-PEZHHL2-IOEX55W-OUCLTAI-EEEXEAD";
               syncthing-folders = [ "notes" "house-notes" ];
             };
@@ -132,17 +137,26 @@
         in
         { inherit inputs pkgs-stable user-conf; };
 
-      mk-nixos = version: system: hostname: extraModules:
+      mk-system = version: system: hostname: extraModules:
         let
           args = mk-args system hostname;
 
           sys-func =
-            if version == "stable"
+            if args.user-conf.is-darwin
+            then nix-darwin.lib.darwinSystem
+            else if version == "stable"
             then nixpkgs-stable.lib.nixosSystem
             else nixpkgs-unstable.lib.nixosSystem;
 
+          sys-module =
+            if args.user-conf.is-linux
+            then ./new-modules/nixos
+            else ./new-modules/darwin;
+
           hm-module =
-            if version == "stable"
+            if args.user-conf.is-darwin
+            then home-manager-unstable.darwinModules.home-manager
+            else if version == "stable"
             then home-manager-stable.nixosModules.home-manager
             else home-manager-unstable.nixosModules.home-manager;
         in
@@ -152,87 +166,33 @@
             specialArgs = args;
             modules = [
               ./new-hosts/${hostname}
-              ./new-modules/nixos
+              sys-module
               hm-module
             ] ++ extraModules;
-            # modules = [
-            #   ./hosts/${hostname}/configuration.nix
-            #   ./modules/nixos
-            # ]
-            # ++ extraModules
-            # ++ (if include-hm then [
-            #   _hm.nixosModules.home-manager
-            #   {
-            #     users.users.${username}.home = "${home}";
-            #     home-manager = {
-            #       useGlobalPkgs = true;
-            #       useUserPackages = true;
-            #       extraSpecialArgs = args;
-            #       users.${username} = {
-            #         imports = [
-            #           ./modules/home
-            #           ./hosts/${hostname}/home.nix
-            #         ];
-            #       };
-            #     };
-            #   }
-            # ] else [ ]);
           };
         };
     in
     {
       nixosConfigurations =
-        (mk-nixos nixpkgs-unstable "x86_64-linux" "sol" [ chaotic.nixosModules.default ])
-        // (mk-nixos nixpkgs-unstable "x86_64-linux" "ky" [ chaotic.nixosModules.default ])
-        // (mk-nixos nixpkgs-stable "aarch64-linux" "elphelt" [ ]);
+        (mk-system "unstable" "x86_64-linux" "sol" [ chaotic.nixosModules.default ])
+        // (mk-system "unstable" "x86_64-linux" "ky" [ chaotic.nixosModules.default ])
+        // (mk-system "stable" "aarch64-linux" "elphelt" [ ]);
 
       darwinConfigurations =
-        let
-          system = "aarch64-darwin";
-          hostname = "answer";
-          home = "/Users/${username}";
-          args = mk-args system hostname;
-        in
-        {
-          "${hostname}" =
-            nix-darwin.lib.darwinSystem {
-              inherit system;
-              specialArgs = args;
-              modules = [
-                ./hosts/${hostname}/configuration.nix
-                ./modules/darwin
-
-                nix-homebrew.darwinModules.nix-homebrew
-                {
-                  nix-homebrew = {
-                    enable = true;
-                    enableRosetta = true;
-                    user = "${username}";
-                    taps = {
-                      "homebrew/homebrew-core" = homebrew-core;
-                      "homebrew/homebrew-cask" = homebrew-cask;
-                      "homebrew/homebrew-bundle" = homebrew-bundle;
-                    };
-                  };
-                }
-
-                home-manager-unstable.darwinModules.home-manager
-                {
-                  users.users.${username}.home = "${home}";
-                  home-manager = {
-                    useGlobalPkgs = true;
-                    useUserPackages = true;
-                    extraSpecialArgs = args;
-                    users.${username} = {
-                      imports = [
-                        ./modules/home
-                        ./hosts/${hostname}/home.nix
-                      ];
-                    };
-                  };
-                }
-              ];
+        (mk-system "unstable" "aarch64-darwin" "answer" [
+          nix-homebrew.darwinModules.nix-homebrew
+          {
+            nix-homebrew = {
+              enable = true;
+              enableRosetta = true;
+              user = "${username}";
+              taps = {
+                "homebrew/homebrew-core" = homebrew-core;
+                "homebrew/homebrew-cask" = homebrew-cask;
+                "homebrew/homebrew-bundle" = homebrew-bundle;
+              };
             };
-        };
+          }
+        ]);
     };
 }

@@ -1,7 +1,7 @@
 { config, lib, pkgs, user-conf, ... }:
 
 let
-  cfg = config.my-system;
+  cfg = config.my-system.nixos;
 in
 {
   imports = [
@@ -14,7 +14,7 @@ in
     ./hypr.nix
   ];
 
-  options.my-system = {
+  options.my-system.nixos = {
     enable-ssh-server = lib.mkEnableOption "enable openssh server";
   };
 

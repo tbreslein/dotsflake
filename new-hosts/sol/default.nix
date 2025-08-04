@@ -7,7 +7,7 @@
   my-system = {
     ghostty.enable = false;
     alacritty.enable = false;
-    foot.enable = true;
+    nixos.foot.enable = true;
     terminal-font-size = 17;
 
     has-gui = true;
@@ -29,8 +29,8 @@
     };
     tmux.enable = true;
 
-    desktop = {
-      enable = true;
+    nixos = {
+      desktop.enable = true;
       hypr.enable = true;
       laptop.enable = false;
       nvidia.enable = true;

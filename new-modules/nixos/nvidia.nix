@@ -4,7 +4,7 @@ let
   cfg = config.my-system.nixos.nvidia;
 in
 {
-  options.my-system.desktop.nvidia = {
+  options.my-system.nixos.nvidia = {
     enable = lib.mkEnableOption "Enable nixos.nvidia";
   };
 

@@ -19,8 +19,7 @@ let
           else (lib.filterAttrs (n: _: n == syncthing-server) hosts));
       folders =
         let
-          host-folders = lib.mapAttrs (n: v: { "${n}" = v.syncthing-folders; });
-          all-folders = lib.lists.unique (lib.attrsets.attrValues host-folders);
+          host-folders = lib.mapAttrs (n: v: v.syncthing-folders) user-conf.hosts;
 
           mk-folder = id: {
             "${user-conf.sync-dir}/${id}" = {
@@ -42,7 +41,11 @@ let
             };
           };
         in
-        lib.mkMerge (lib.lists.map mk-folder all-folders);
+        lib.mkMerge (
+          lib.lists.map
+            mk-folder
+            user-conf.hosts.${hostname}.syncthing-folders
+        );
     };
   };
 in
@@ -59,14 +62,13 @@ in
         then {
           user = user-conf.name;
           configDir = "${user-conf.home-dir}/.config/syncthing";
-        } // user-conf.syncthing-config
+        } // syncthing-config
         else { }
       );
     })
 
     (lib.mkIf cfg.enable-syncthing-client {
-      home-manager.users.${user-conf.name}.services.syncthing =
-        lib.mkIf cfg.enable-syncthing-client user-conf.syncthing-config;
+      home-manager.users.${user-conf.name}.services.syncthing = syncthing-config;
     })
   ];
 }

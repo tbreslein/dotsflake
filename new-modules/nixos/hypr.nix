@@ -90,7 +90,7 @@ in
             "SDL_VIDEODRIVER,wayland"
             "_JAVA_AWT_WM_NONREPARENTING,1"
           ] ++ (
-            if config.my-system.desktop.nvidia.enable
+            if config.my-system.nixos.nvidia.enable
             then [
               "LIBVA_DRIVER_NAME,nvidia"
               "__GLX_VENDOR_LIBRARY_NAME,nvidia"
@@ -140,7 +140,7 @@ in
             ''
               $mod, Space, exec, wmenu-run -i -f \
                 "${user-conf.monofont} Normal \
-                ${builtins.toString config.my-home.desktop.terminal-font-size}" \
+                ${builtins.toString config.my-system.terminal-font-size}" \
                 -N ${user-conf.colors.primary.background} \
                 -n ${user-conf.colors.primary.foreground} \
                 -S ${user-conf.colors.normal.black} \
@@ -314,7 +314,7 @@ in
           style = /* css */ ''
             * {
               font-family: "${user-conf.monofont}";
-              font-size: ${builtins.toString config.my-home.desktop.terminal-font-size}px;
+              font-size: ${builtins.toString config.my-system.terminal-font-size}px;
             }
 
             window#waybar {
@@ -412,7 +412,7 @@ in
             border-color = "#${user-conf.colors.primary.border}";
             border-radius = 0;
             default-timeout = 0;
-            font = "Noto Font ${builtins.toString (config.my-home.desktop.terminal-font-size - 5)}";
+            font = "Noto Font ${builtins.toString (config.my-system.terminal-font-size - 5)}";
             height = 1000;
             width = 500;
             icons = true;

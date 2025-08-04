@@ -1,9 +1,9 @@
 { config, lib, pkgs, user-conf, ... }:
 let
-  cfg = config.my-system.neovim;
+  cfg = config.my-system.code.neovim;
 in
 {
-  options.my-system.neovim = {
+  options.my-system.code.neovim = {
     enable = lib.mkEnableOption "Enable neovim";
     nvim-config = lib.mkOption {
       type = lib.types.enum [ "minimal" "big" ];
@@ -12,7 +12,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home-manager.users.${user-conf.name} = {
+    home-manager.users.${user-conf.name} = { config, ... }: {
       home = {
         shellAliases.v = "nvim";
         packages = with pkgs; [

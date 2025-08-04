@@ -13,5 +13,6 @@
     bash.enable = true;
     git.enable = true;
     tmux.enable = true;
+    nixos.enable-ssh-server = true;
   };
 }
