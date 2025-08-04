@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.nixos.foot;
 in
@@ -6,7 +6,7 @@ in
   options.my-system.nixos.foot.enable = lib.mkEnableOption "Enable nixos.foot";
 
   config = lib.mkIf cfg.enable {
-    ${hm}.programs = {
+    home-manager.users.${user-conf.name}.programs = {
       tmux = {
         terminal = "foot";
         extraConfig = ''

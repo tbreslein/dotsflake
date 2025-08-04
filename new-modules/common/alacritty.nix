@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.alacritty;
 in
@@ -6,7 +6,7 @@ in
   options.my-system.alacritty.enable = lib.mkEnableOption "Enable alacritty";
 
   config = lib.mkIf cfg.enable {
-    ${hm}.programs = {
+    home-manager.users.${user-conf.name}.programs = {
       tmux = {
         terminal = "alacritty";
         extraConfig = ''

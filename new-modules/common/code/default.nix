@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.code;
 in
@@ -12,7 +12,7 @@ in
   options.my-system.code.enable = lib.mkEnableOption "Enable code role";
 
   config = lib.mkIf cfg.enable {
-    ${hm} = {
+    home-manager.users.${user-conf.name} = {
       home.packages = with pkgs; [
         universal-ctags
 

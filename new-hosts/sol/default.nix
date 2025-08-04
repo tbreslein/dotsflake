@@ -1,4 +1,4 @@
-{ pkgs, hm, ... }:
+{ pkgs, user-conf, ... }:
 
 {
   imports = [ ./hardware-configuration.nix ];
@@ -41,7 +41,7 @@
 
   };
 
-  ${hm}.home.sessionVariables = {
+  home-manager.users.${user-conf.name}.home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
     MANPAGER = "nvim +Man!";

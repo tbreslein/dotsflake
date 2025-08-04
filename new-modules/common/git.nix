@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 
 let
   cfg = config.my-system.git;
@@ -7,7 +7,7 @@ in
   options.my-system.git.enable = lib.mkEnableOption "Enable git";
 
   config = lib.mkIf cfg.enable {
-    ${hm} = {
+    home-manager.users.${user-conf.name} = {
       home.shellAliases = {
         g = "git";
         gs = "git status";

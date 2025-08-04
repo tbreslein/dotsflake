@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 
 let
   cfg = config.my-system.jujutsu;
@@ -7,7 +7,7 @@ in
   options.my-system.jujutsu.enable = lib.mkEnableOption "Enable jujutsu";
 
   config = lib.mkIf cfg.enable {
-    ${hm}.programs.jujutsu = {
+    home-manager.users.${user-conf.name}.programs.jujutsu = {
       enable = false;
       settings = {
         user.name = user-conf.github-name;

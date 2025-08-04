@@ -125,43 +125,36 @@
           };
         };
 
-      mk-args = system: hostname: hm:
+      mk-args = system: hostname:
         let
           pkgs-stable = import nixpkgs-stable { inherit system; };
           user-conf = mk-user-conf pkgs-stable.lib system hostname;
         in
-        { inherit inputs pkgs-stable hm user-conf; };
+        { inherit inputs pkgs-stable user-conf; };
 
-      mk-nixos = version: system: hostname: extraModules: include-hm:
+      mk-nixos = version: system: hostname: extraModules:
         let
-          args = mk-args system hostname "home-manager.users.${username}";
+          args = mk-args system hostname;
 
-          _nixpkgs =
+          sys-func =
             if version == "stable"
-            then nixpkgs-stable
-            else nixpkgs-unstable;
+            then nixpkgs-stable.lib.nixosSystem
+            else nixpkgs-unstable.lib.nixosSystem;
 
-          _hm =
+          hm-module =
             if version == "stable"
-            then home-manager-stable
-            else home-manager-unstable;
+            then home-manager-stable.nixosModules.home-manager
+            else home-manager-unstable.nixosModules.home-manager;
         in
         {
-          "${hostname}" = _nixpkgs.lib.nixosSystem {
+          "${hostname}" = sys-func {
             inherit system;
             specialArgs = args;
             modules = [
               ./new-hosts/${hostname}
               ./new-modules/nixos
-              _hm.nixosModules.home-manager
-              {
-                users.users.${username}.home = "${args.user-conf.home-dir}";
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                };
-              }
-            ];
+              hm-module
+            ] ++ extraModules;
             # modules = [
             #   ./hosts/${hostname}/configuration.nix
             #   ./modules/nixos
@@ -189,9 +182,9 @@
     in
     {
       nixosConfigurations =
-        (mk-nixos nixpkgs-unstable "x86_64-linux" "sol" [ chaotic.nixosModules.default ] true)
-        // (mk-nixos nixpkgs-unstable "x86_64-linux" "ky" [ chaotic.nixosModules.default ] true)
-        // (mk-nixos nixpkgs-stable "aarch64-linux" "elphelt" [ ] false);
+        (mk-nixos nixpkgs-unstable "x86_64-linux" "sol" [ chaotic.nixosModules.default ])
+        // (mk-nixos nixpkgs-unstable "x86_64-linux" "ky" [ chaotic.nixosModules.default ])
+        // (mk-nixos nixpkgs-stable "aarch64-linux" "elphelt" [ ]);
 
       darwinConfigurations =
         let

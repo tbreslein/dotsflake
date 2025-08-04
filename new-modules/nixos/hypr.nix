@@ -41,7 +41,7 @@ in
         };
     };
 
-    ${hm} = {
+    home-manager.users.${user-conf.name} = {
       home = {
         packages = with pkgs; [
           playerctl

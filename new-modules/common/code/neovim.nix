@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.neovim;
 in
@@ -12,7 +12,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    ${hm} = {
+    home-manager.users.${user-conf.name} = {
       home = {
         shellAliases.v = "nvim";
         packages = with pkgs; [

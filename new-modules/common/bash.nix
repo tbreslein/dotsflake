@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.bash;
 in
@@ -6,7 +6,7 @@ in
   options.my-system.bash.enable = lib.mkEnableOption "Enable bash";
 
   config = lib.mkIf cfg.enable {
-    ${hm}.programs = {
+    home-manager.users.${user-conf.name}.programs = {
       bash = {
         enable = true;
         enableCompletion = true;

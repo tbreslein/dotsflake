@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.ghostty;
 in
@@ -6,7 +6,7 @@ in
   options.my-system.ghostty.enable = lib.mkEnableOption "Enable ghostty";
 
   config = lib.mkIf cfg.enable {
-    ${hm}.programs = {
+    home-manager.users.${user-conf.name}.programs = {
       tmux = {
         terminal = "ghostty";
         extraConfig = ''

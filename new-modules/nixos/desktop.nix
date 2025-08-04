@@ -35,6 +35,6 @@ in
       pulse.enable = true;
     };
 
-    ${hm}.fonts.fontconfig.enable = true;
+    home-manager.users.${user-conf.name}.fonts.fontconfig.enable = true;
   };
 }

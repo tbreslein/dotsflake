@@ -7,7 +7,7 @@ in
   options.my-system.aerospace.enable = lib.mkEnableOption "Enable aerospace";
 
   config = lib.mkIf cfg.enable {
-    ${hm}.services = {
+    home-manager.users.${user-conf.name}.services = {
       aerospace = {
         enable = true;
         settings = {

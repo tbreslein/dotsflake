@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 
 let
   cfg = config.my-system.syncthing;
@@ -65,7 +65,8 @@ in
     })
 
     (lib.mkIf cfg.enable-syncthing-client {
-      ${hm}.services.syncthing = lib.mkIf cfg.enable-syncthing-client user-conf.syncthing-config;
+      home-manager.users.${user-conf.name}.services.syncthing =
+        lib.mkIf cfg.enable-syncthing-client user-conf.syncthing-config;
     })
   ];
 }

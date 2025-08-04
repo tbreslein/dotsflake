@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 
 let
   cfg = config.my-system.kanata;
@@ -7,7 +7,7 @@ in
   options.my-system.kanata.enable = lib.mkEnableOption "Enable my-system.kanata";
 
   config = lib.mkIf cfg.enable {
-    ${hm} = {
+    home-manager.users.${user-conf.name} = {
       home = {
         packages = [ pkgs.kanata ];
         # setup kanata for macos:

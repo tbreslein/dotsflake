@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.syke;
   inherit (user-conf) code-dir home-dir;
@@ -31,7 +31,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    ${hm}.home.activation = lib.mkMerge [
+    home-manager.users.${user-conf.name}.home.activation = lib.mkMerge [
       {
         code-repos =
           let

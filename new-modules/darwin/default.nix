@@ -37,8 +37,8 @@ in
   nixpkgs.config.allowUnfree = true;
 
   programs.man.enable = true;
-  # ${hm}.programs.man.enable = true;
-  ${hm}.programs.bash.profileExtra = /* bash */ ''
+
+  home-manager.users.${user-conf.name}.programs.bash.profileExtra = /* bash */ ''
     [[ -f "/opt/homebrew/bin/brew" ]] && \
       eval "$(/opt/homebrew/bin/brew shellenv)"
   '';

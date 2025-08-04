@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 
 let
   cfg = config.my-system;
@@ -25,6 +25,12 @@ in
   };
 
   config = {
+    users.users.${user-conf.name}.home = user-conf.home-dir;
+    home-manager = {
+      useGlobalPkgs = true;
+      useUserPackages = true;
+    };
+
     environment.systemPackages = with pkgs; [
       vim
       wget
@@ -73,13 +79,13 @@ in
     ]
     else [ ]);
 
-    ${hm} = {
+    home-manager.users.${user-conf.name} = {
       home = {
         sessionVariables = {
           EDITOR = lib.mkDefault "vim";
           VISUAL = lib.mkDefault "vim";
         };
-        sessionPath = lib.lists.map (x: "${config.home.homeDirectory}/${x}") [
+        sessionPath = lib.lists.map (x: "${user-conf.home-dir}/${x}") [
           ".cargo/bin"
           ".local/bin"
           "bin"

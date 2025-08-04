@@ -58,7 +58,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config.home-manager.users.${user-conf.name} = lib.mkIf cfg.enable {
     home = {
       packages = with pkgs; [
         universal-ctags
