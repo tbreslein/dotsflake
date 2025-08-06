@@ -77,8 +77,8 @@ in
           '';
 
         bash.profileExtra = /* bash */ ''
-          [[ -f "${config.home.homeDirectory}/.cargo/env" ]] && \
-            source "${config.home.homeDirectory}/.cargo/env"
+          [[ -f "${user-conf.home-dir}/.cargo/env" ]] && \
+            source "${user-conf.home-dir}/.cargo/env"
         '';
       };
     };

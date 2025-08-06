@@ -49,6 +49,10 @@ in
       htop
       caligula
 
+      alacritty.terminfo
+      foot.terminfo
+      ghostty.terminfo
+
       (
         let
           nvd = "${pkgs.nvd}/bin/nvd";
@@ -76,14 +80,11 @@ in
             esac
           ''
       )
-    ] ++ (if cfg.has-gui
-    then [
-      pkgs.nerd-fonts.commit-mono
-    ]
-    else [ ]);
+    ];
 
     home-manager.users.${user-conf.name} = {
       home = {
+        packages = if cfg.has-gui then [ pkgs.nerd-fonts.commit-mono ] else [];
         sessionVariables = {
           EDITOR = lib.mkDefault "vim";
           VISUAL = lib.mkDefault "vim";

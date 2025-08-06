@@ -7,14 +7,14 @@ in
 
   config = lib.mkIf cfg.enable {
     home-manager.users.${user-conf.name}.programs.ghostty = {
-      enable = lib.mkDefault (config.my-system.terminal == "ghostty");
+      enable = true;
       package =
         if pkgs.stdenv.isLinux
         then pkgs.ghostty
         else null;
       enableBashIntegration = true;
       settings = {
-        font-size = cfg.terminal-font-size;
+        font-size = config.my-system.terminal-font-size;
         font-family = user-conf.monofont;
         font-feature = "-calt, -liga, -dlig";
         theme = "_gruvbox-material";

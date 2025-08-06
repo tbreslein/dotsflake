@@ -7,7 +7,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home-manager.users.${user-conf.name}.programs.foot = {
-      enable = lib.mkDefault (config.my-system.terminal == "foot");
+      enable = true;
       settings = {
         main.font = "${user-conf.monofont}:size=${toString config.my-system.terminal-font-size}";
         mouse.hide-when-typing = "yes";

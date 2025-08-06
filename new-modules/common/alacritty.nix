@@ -7,7 +7,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home-manager.users.${user-conf.name}.programs.alacritty = {
-      enable = lib.mkDefault (config.my-system.terminal == "alacritty");
+      enable = true;
       package =
         if pkgs.stdenv.isLinux
         then pkgs.alacritty

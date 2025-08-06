@@ -21,6 +21,7 @@
     jujutsu.enable = true;
 
     code = {
+      enable = true;
       # emacs.enable = true;
       neovim = {
         enable = true;
