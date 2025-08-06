@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, user-conf, ... }:
 
 {
   imports = [ ./hardware-configuration.nix ];
@@ -7,11 +7,12 @@
   my-system = {
     ghostty.enable = false;
     alacritty.enable = false;
-    foot.enable = true;
+    nixos.foot.enable = true;
+    terminal = "foot";
     terminal-font-size = 17;
 
     has-gui = true;
-    kanata.enable = true;
+    kanata.enable = false;
 
     bash.enable = true;
     syncthing.enable-syncthing-client = true;
@@ -19,18 +20,17 @@
     git.enable = true;
     jujutsu.enable = true;
 
+    tmux.enable = true;
     code = {
+      enable = true;
       # emacs.enable = true;
-      neovim = {
-        enable = true;
-        nvim-config = "minimal"; # or "big"
-      };
+      neovim.enable = true;
+      neovim.nvim-config = "minimal";
       zed.enable = true;
     };
-    tmux.enable = true;
 
-    desktop = {
-      enable = true;
+    nixos = {
+      desktop.enable = true;
       hypr.enable = true;
       laptop.enable = true;
       nvidia.enable = false;
@@ -38,11 +38,9 @@
     };
 
     syke.enable = true;
-
-    # aerospace.enable = true;
   };
 
-  ${hm}.home.sessionVariables = {
+  home-manager.users.${user-conf.name}.home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
     MANPAGER = "nvim +Man!";

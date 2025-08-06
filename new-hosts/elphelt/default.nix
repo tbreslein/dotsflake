@@ -15,4 +15,9 @@
     tmux.enable = true;
     nixos.enable-ssh-server = true;
   };
+
+  home-manager.users.${user-conf.name}.home.sessionVariables = {
+    EDITOR = "vim";
+    VISUAL = "vim";
+  };
 }

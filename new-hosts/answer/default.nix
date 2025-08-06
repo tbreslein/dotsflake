@@ -1,10 +1,9 @@
 { config, lib, pkgs-stable, pkgs, hm, user-conf, ... }:
 
 {
-  config.my-system = {
-    ghostty.enable = false;
+  my-system = {
     alacritty.enable = true;
-    foot.enable = false;
+    terminal = "alacritty";
     terminal-font-size = 21;
 
     has-gui = true;
@@ -17,6 +16,7 @@
     jujutsu.enable = true;
 
     code = {
+      enable = true;
       # emacs.enable = true;
       neovim = {
         enable = true;
@@ -38,7 +38,7 @@
       "1password"
       "anki"
       "ghostty"
-      "alacritty"
+      config.my-system.terminal
       "brave-browser"
     ];
   };

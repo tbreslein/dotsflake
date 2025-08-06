@@ -5,7 +5,7 @@
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
 
   my-system = {
-    ghostty.enable = true;
+    ghostty.enable = false;
     alacritty.enable = false;
     nixos.foot.enable = true;
     terminal = "foot";
@@ -20,16 +20,14 @@
     git.enable = true;
     jujutsu.enable = true;
 
+    tmux.enable = true;
     code = {
       enable = true;
       # emacs.enable = true;
-      neovim = {
-        enable = true;
-        nvim-config = "minimal";
-      };
+      neovim.enable = true;
+      neovim.nvim-config = "minimal";
       zed.enable = true;
     };
-    tmux.enable = true;
 
     nixos = {
       desktop.enable = true;
@@ -40,7 +38,6 @@
     };
 
     syke.enable = true;
-
   };
 
   home-manager.users.${user-conf.name}.home.sessionVariables = {
