@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.my-system.nixos.desktop;
@@ -34,7 +34,5 @@ in
       alsa.support32Bit = true;
       pulse.enable = true;
     };
-
-    home-manager.users.${user-conf.name}.fonts.fontconfig.enable = true;
   };
 }

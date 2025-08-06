@@ -1,4 +1,4 @@
-{ config, lib, pkgs-stable, pkgs, user-conf, ... }:
+{ config, pkgs, user-conf, ... }:
 
 {
   my-system = {
@@ -37,7 +37,6 @@
     casks = [
       "1password"
       "anki"
-      "ghostty"
       config.my-system.terminal
       "brave-browser"
     ];
@@ -54,7 +53,7 @@
 
   launchd.user.agents = {
     mococlient = {
-      command = "${pkgs-stable.poetry}/bin/poetry run python moco_client.py";
+      command = "${pkgs.poetry}/bin/poetry run python moco_client.py";
       environment.AUTO_STOP_AND_NAG = "False";
       serviceConfig = {
         KeepAlive = true;

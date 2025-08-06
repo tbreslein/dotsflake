@@ -22,7 +22,7 @@ in
         };
         font = {
           normal.family = user-conf.monofont;
-          size = cfg.terminal-font-size;
+          size = config.my-system.terminal-font-size;
         };
         cursor.style.blinking = "Never";
         colors = rec {

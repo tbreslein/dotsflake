@@ -18,7 +18,7 @@ in
 
   options.my-system = {
     terminal = lib.mkOption {
-      type = with lib.types; enum ["ghostty" "foot" "alacritty"];
+      type = with lib.types; enum [ "ghostty" "foot" "alacritty" ];
     };
     terminal-font-size = lib.mkOption {
       type = lib.types.int;
@@ -49,9 +49,6 @@ in
       caligula
 
       alacritty.terminfo
-      foot.terminfo
-      ghostty.terminfo
-
       (
         let
           nvd = "${pkgs.nvd}/bin/nvd";
@@ -82,8 +79,9 @@ in
     ];
 
     home-manager.users.${user-conf.name} = {
+      fonts.fontconfig.enable = cfg.has-gui;
       home = {
-        packages = if cfg.has-gui then [ pkgs.nerd-fonts.commit-mono ] else [];
+        packages = if cfg.has-gui then [ pkgs.nerd-fonts.commit-mono ] else [ ];
         sessionVariables = {
           EDITOR = lib.mkDefault "vim";
           VISUAL = lib.mkDefault "vim";

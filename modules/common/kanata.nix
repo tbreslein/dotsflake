@@ -45,10 +45,10 @@ in
       };
       programs.bash.bashrcExtra = /* bash */ ''
         toggle_kanata() {
-          local kanatadir="${config.home.homeDirectory}/.config/kanata/"
+          local kanatadir="${user-conf.home-dir}/.config/kanata/"
           if ! tmux has-session -t "kanata" 2>/dev/null; then
             tmux new-session -ds "kanata" -c "$kanatadir"
-            ${if pkgs.stdenv.isLinux
+            ${if user-conf.is-linux
               then "tmux send-keys -t kanata 'kanata -c ./kanata.kbd' C-m"
               else ("tmux send-keys -t kanata 'sudo kanata -c ./kanata.kbd'" +
                 " && tmux switch-client -t kanata")}

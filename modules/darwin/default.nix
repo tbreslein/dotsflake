@@ -69,7 +69,6 @@ in
     optimise.automatic = true;
     settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
     gc.automatic = true;
-    gc.dates = "weekly";
   };
 
   system = {
@@ -97,7 +96,7 @@ in
         persistent-apps = [
           { app = "/Applications/Spotify.app"; }
           { app = "/Applications/Brave Browser.app"; }
-          { app = "/Applications/Ghostty.app"; }
+          { app = "/Applications/Alacritty.app"; }
           { app = "/Applications/Microsoft Teams.app"; }
           { app = "/Applications/Microsoft Outlook.app/"; }
           { app = "/Applications/1Password.app"; }

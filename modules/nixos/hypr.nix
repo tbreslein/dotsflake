@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs, user-conf, ... }:
 
 let
   cfg = config.my-system.nixos.hypr;
@@ -173,18 +173,22 @@ in
             "$mod, 2, workspace, 2"
             "$mod, 3, workspace, 3"
             "$mod, 4, workspace, 4"
+            "$mod, 5, workspace, 5"
             "$mod CTRL, 1, movetoworkspace, 1"
             "$mod CTRL, 2, movetoworkspace, 2"
             "$mod CTRL, 3, movetoworkspace, 3"
             "$mod CTRL, 4, movetoworkspace, 4"
-            "$mod, t, workspace, 1"
-            "$mod, s, workspace, 2"
-            "$mod, r, workspace, 3"
+            "$mod CTRL, 5, movetoworkspace, 5"
+            "$mod, f, workspace, 1"
+            "$mod, d, workspace, 2"
+            "$mod, s, workspace, 3"
             "$mod, a, workspace, 4"
-            "$mod CTRL, t, movetoworkspace, 1"
-            "$mod CTRL, s, movetoworkspace, 2"
-            "$mod CTRL, r, movetoworkspace, 3"
+            "$mod, g, workspace, 5"
+            "$mod CTRL, f, movetoworkspace, 1"
+            "$mod CTRL, d, movetoworkspace, 2"
+            "$mod CTRL, s, movetoworkspace, 3"
             "$mod CTRL, a, movetoworkspace, 4"
+            "$mod CTRL, g, movetoworkspace, 5"
             "$mod, b, workspace, -1"
             "$mod, w, workspace, +1"
             "$mod CTRL, b, movetoworkspace, -1"

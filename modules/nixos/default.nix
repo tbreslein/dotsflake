@@ -20,6 +20,10 @@ in
   };
 
   config = {
+    environment.systemPackages = with pkgs; [
+      foot.terminfo
+    ];
+
     nix = {
       settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
       gc.automatic = true;
