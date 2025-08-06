@@ -150,8 +150,8 @@
 
           sys-module =
             if args.user-conf.is-linux
-            then ./new-modules/nixos
-            else ./new-modules/darwin;
+            then ./modules/nixos
+            else ./modules/darwin;
 
           hm-module =
             if args.user-conf.is-darwin
@@ -165,7 +165,7 @@
             inherit system;
             specialArgs = args;
             modules = [
-              ./new-hosts/${hostname}
+              ./hosts/${hostname}
               sys-module
               hm-module
             ] ++ extraModules;
