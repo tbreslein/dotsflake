@@ -27,6 +27,7 @@ in
   imports = [
     ../common
     ./aerospace.nix
+    ./syncthing.nix
   ];
 
   environment = {

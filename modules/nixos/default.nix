@@ -12,6 +12,7 @@ in
     ./gaming.nix
     ./nvidia.nix
     ./hypr.nix
+    ./syncthing.nix
   ];
 
   options.my-system.nixos = {

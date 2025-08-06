@@ -6,7 +6,6 @@ in
 {
   imports = [
     ./bash.nix
-    ./syncthing.nix
     ./code
     ./tmux.nix
     ./ghostty.nix
