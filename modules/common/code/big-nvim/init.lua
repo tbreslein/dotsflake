@@ -343,13 +343,13 @@ local lspconfig, blink = require("lspconfig"), require("blink.cmp")
 blink.setup({
   keymap = {
     preset = "default",
-    ["<c-n>"] = { "select_next" },
-    ["<c-e>"] = { "select_prev" },
-    ["<c-y>"] = { "accept" },
-    ["<c-k>"] = { "scroll_documentation_up" },
-    ["<c-j>"] = { "scroll_documentation_down" },
-    ["<c-u>"] = { "snippet_forward", "fallback" },
-    ["<c-l>"] = { "snippet_backward", "fallback" },
+    ["<c-j>"] = { "select_next" },
+    ["<c-k>"] = { "select_prev" },
+    ["<c-l>"] = { "accept" },
+    ["<c-i>"] = { "scroll_documentation_up" },
+    ["<c-u>"] = { "scroll_documentation_down" },
+    ["<c-o>"] = { "snippet_forward", "fallback" },
+    ["<c-y>"] = { "snippet_backward", "fallback" },
   },
   completion = {
     accept = { auto_brackets = { enabled = false } },

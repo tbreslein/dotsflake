@@ -16,12 +16,12 @@ in
         window = {
           dynamic_padding = true;
           decorations = "None";
-          opacity = 0.95;
+          opacity = 0.93;
           blur = true;
           option_as_alt = "Both";
         };
         font = {
-          normal.family = user-conf.monofont;
+          normal.family = "CommitMono Nerd Font";
           size = config.my-system.terminal-font-size;
         };
         cursor.style.blinking = "Never";
