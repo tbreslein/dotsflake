@@ -73,11 +73,13 @@ in
         keyMode = "vi";
         mouse = true;
         prefix = "C-Space";
+        terminal = lib.mkDefault config.my-system.terminal;
         extraConfig =
           /*
         tmux
           */
           ''
+            set -sa terminal-overrides ",${config.my-system.terminal}:RGB"
             set -g allow-passthrough on
             #set -ga update-environment TERM
             #set -ga update-environment TERM_PROGRAM

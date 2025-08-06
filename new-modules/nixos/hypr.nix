@@ -146,7 +146,7 @@ in
                 -S ${user-conf.colors.normal.black} \
                 -s ${user-conf.colors.primary.accent} \
             ''
-            "$mod, Return, exec, [workspace 2] ghostty"
+            "$mod, Return, exec, [workspace 2] ${config.my-system.terminal}"
             "$mod, b, exec, [workspace 1] brave"
             "$mod ALT, n, exec, makoctl dismiss -a"
             "$mod CTRL, q, killactive"

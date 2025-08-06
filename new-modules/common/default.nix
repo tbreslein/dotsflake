@@ -18,6 +18,9 @@ in
   ];
 
   options.my-system = {
+    terminal = lib.mkOption {
+      type = with lib.types; enum ["ghostty" "foot" "alacritty"];
+    };
     terminal-font-size = lib.mkOption {
       type = lib.types.int;
     };
