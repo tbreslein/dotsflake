@@ -18,7 +18,7 @@ let
         --no-owner
       )
       $DRY_RUN_CMD mkdir -p "$baseDir"
-      $DRY_RUN_CMD ${lib.getBin pkgs-stable.rsync}/bin/rsync \
+      $DRY_RUN_CMD ${lib.getBin pkgs.rsync}/bin/rsync \
         ''${VERBOSE_ARG:+-v} "''${rsyncFlags[@]}" "$appsSrc/" "$baseDir"
     fi
   '';
@@ -26,7 +26,7 @@ in
 {
   imports = [
     ../common
-    ./aerospace
+    ./aerospace.nix
   ];
 
   environment = {
@@ -64,7 +64,7 @@ in
 
   nix = {
     enable = true;
-    package = pkgs-stable.nix;
+    package = pkgs.nix;
     optimise.automatic = true;
     settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
     gc.automatic = true;

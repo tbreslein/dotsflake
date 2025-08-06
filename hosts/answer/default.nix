@@ -1,4 +1,4 @@
-{ config, lib, pkgs-stable, pkgs, hm, user-conf, ... }:
+{ config, lib, pkgs-stable, pkgs, user-conf, ... }:
 
 {
   my-system = {
@@ -43,7 +43,7 @@
     ];
   };
 
-  ${hm}.home = {
+  home-manager.users.${user-conf.name}.home = {
     shellAliases.mocostate = "tail -10 /tmp/mococlient.err.log";
     sessionVariables = {
       EDITOR = "nvim";
