@@ -35,7 +35,7 @@ in
             globals = { "vim" }
           '';
 
-          ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/new-modules/common/code/${cfg.nvim-config}-nvim";
+          ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/common/code/${cfg.nvim-config}-nvim";
         };
       };
 
