@@ -82,7 +82,10 @@ in
               ]) else
               (with pkgs.vimPlugins; [
                 nvim-treesitter.withAllGrammars
-                gruvbox-material
+                nvim-treesitter-context
+                mini-base16
+                mini-files
+                mini-pick
               ]);
           withNodeJs = false;
           withPython3 = false;
