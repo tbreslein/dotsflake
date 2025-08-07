@@ -451,6 +451,23 @@ local highlights = {
   LineWarning = { link = "DiagnosticWarn" },
 }
 
+-- adding matches and colors for TODO, WARN, etc.
+local function setup_highlights()
+  if not vim.g.my_highlights_loaded then
+    vim.fn.matchadd('Todo', 'TODO')
+    vim.fn.matchadd('Warn', 'WARN')
+    vim.api.nvim_set_hl(0, 'Todo', { ... color def ... })
+    vim.api.nvim_set_hl(0, 'Warn', { ... color def ... })
+
+    vim.g.my_highlights_loaded = true
+  end
+end
+
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = "*",
+  callback = setup_highlights
+})
+
 for group, opts in pairs(highlights) do
   api.nvim_set_hl(0, group, opts)
 end

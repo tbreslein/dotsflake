@@ -1,4 +1,4 @@
-{ config, lib, pkgs, user-conf, ... }:
+{ inputs, config, lib, pkgs, user-conf, ... }:
 let
   cfg = config.my-system.code.neovim;
 in
@@ -49,7 +49,8 @@ in
 
         neovim = {
           enable = true;
-          package = pkgs.neovim-unwrapped;
+          # package = pkgs.neovim-unwrapped;
+          package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
           defaultEditor = true;
           plugins =
             if cfg.nvim-config == "big" then

@@ -46,19 +46,19 @@ in
               cmd-ctrl-l = "move right";
               cmd-alt-i = "resize smart -50";
               cmd-alt-o = "resize smart +50";
-              cmd-f = "workspace 1";
-              cmd-d = "workspace 2";
-              cmd-s = "workspace 3";
+              cmd-t = "workspace 1";
+              cmd-s = "workspace 2";
+              cmd-r = "workspace 3";
               cmd-a = "workspace 4";
               cmd-g = "workspace 5";
-              cmd-ctrl-f = "move-node-to-workspace 1";
-              cmd-ctrl-d = "move-node-to-workspace 2";
-              cmd-ctrl-s = "move-node-to-workspace 3";
+              cmd-ctrl-t = "move-node-to-workspace 1";
+              cmd-ctrl-s = "move-node-to-workspace 2";
+              cmd-ctrl-r = "move-node-to-workspace 3";
               cmd-ctrl-a = "move-node-to-workspace 4";
               cmd-ctrl-g = "move-node-to-workspace 5";
               cmd-ctrl-n = "move-node-to-monitor --wrap-around next";
 
-              cmd-ctrl-v = "fullscreen";
+              cmd-ctrl-f = "fullscreen";
               cmd-ctrl-semicolon = "mode service";
             };
             service.binding = {

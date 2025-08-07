@@ -26,6 +26,11 @@ local function find_root(additional_markers)
   return vim.fs.dirname(vim.fs.find(markers, { path = fn.expand("%:p :h"), upward = true })[1])
 end
 
+local function is_git_repo()
+  _ = fn.system("git rev-parse --is-inside-work-tree")
+  return vim.v.shell_error == 0
+end
+
 -- >>> SETTINGS
 g.mapleader = " "
 g.maplocalleader = ","
@@ -43,6 +48,8 @@ if fn.isdirectory(undodir) == 0 then
   fn.mkdir(undodir, "p")
 end
 opt.undodir = undodir
+opt.undofile = true
+
 diag.config({ virtual_text = { current_line = true } })
 
 -- >>> AUTOCMDS
@@ -92,7 +99,7 @@ create_autocmd("FileType", {
 create_autocmd("FileType", {
   pattern = { "bash", "sh" },
   callback = function()
-    create_cmd("TForm", function(opts)
+    create_cmd("Tform", function(opts)
       cmd(":silent ! shellharden --replace " .. opts.fargs[1])
     end, { nargs = 1, desc = "Format file" })
   end,
@@ -101,7 +108,7 @@ create_autocmd("FileType", {
 create_autocmd("FileType", {
   pattern = { "c", "cpp" },
   callback = function()
-    create_cmd("TForm", function(opts)
+    create_cmd("Tform", function(opts)
       cmd(":silent ! clang-format -i " .. opts.fargs[1])
     end, { nargs = 1, desc = "Format file" })
   end,
@@ -121,7 +128,7 @@ create_autocmd("FileType", {
     "markdown",
   },
   callback = function()
-    create_cmd("TForm", function(opts)
+    create_cmd("Tform", function(opts)
       cmd(":silent ! prettier -w " .. opts.fargs[1])
     end, { nargs = 1, desc = "Format file" })
   end,
@@ -130,7 +137,7 @@ create_autocmd("FileType", {
 create_autocmd("FileType", {
   pattern = { "lua" },
   callback = function()
-    create_cmd("TForm", function(opts)
+    create_cmd("Tform", function(opts)
       cmd(":silent ! stylua " .. opts.fargs[1])
     end, { nargs = 1, desc = "Format file" })
   end,
@@ -139,7 +146,7 @@ create_autocmd("FileType", {
 create_autocmd("FileType", {
   pattern = { "nix" },
   callback = function()
-    create_cmd("TForm", function(opts)
+    create_cmd("Tform", function(opts)
       cmd(":silent ! nixpkgs-fmt " .. opts.fargs[1])
     end, { nargs = 1, desc = "Format file" })
   end,
@@ -148,7 +155,7 @@ create_autocmd("FileType", {
 create_autocmd("FileType", {
   pattern = { "python" },
   callback = function()
-    create_cmd("TForm", function(opts)
+    create_cmd("Tform", function(opts)
       local root_dir = find_root({ "pyproject.toml" })
       cmd(":silent ! poetry --project " .. root_dir .. " run black " .. opts.fargs[1])
     end, { nargs = 1, desc = "Format file" })
@@ -158,7 +165,7 @@ create_autocmd("FileType", {
 create_autocmd("FileType", {
   pattern = { "rust" },
   callback = function()
-    create_cmd("TForm", function(opts)
+    create_cmd("Tform", function(opts)
       cmd(":silent ! cargo fmt " .. opts.fargs[1])
     end, { nargs = 1, desc = "Format file" })
   end,
@@ -167,7 +174,7 @@ create_autocmd("FileType", {
 create_autocmd("FileType", {
   pattern = { "zig" },
   callback = function()
-    create_cmd("TForm", function(opts)
+    create_cmd("Tform", function(opts)
       cmd(":silent ! zig fmt " .. opts.fargs[1])
     end, { nargs = 1, desc = "Format file" })
   end,
@@ -204,6 +211,9 @@ create_autocmd("BufEnter", {
 
 -- >>> KEYMAPS
 keymap("<leader>w", ":w<cr>", "write")
+keymap("<leader>a", ":e #<cr>", "switch to alternate file", { "n", "x", "v" })
+keymap("<leader>A", ":sf #<cr>", "split find alternate file", { "n", "x", "v" })
+keymap("<leader>n", ":set relativenumber!<cr>", "toggle relative lines")
 keymap("<esc>", ":noh<cr>", "remove hlsearch")
 keymap("n", "nzzzv", "center after n")
 keymap("N", "Nzzzv", "center after N")
@@ -221,22 +231,45 @@ keymap("<leader>y", [["+y]], "yank into clipboard", "v")
 keymap("<leader>Y", [["+yg$]], "yank till end of line into clipboard")
 keymap("<leader>p", [["+p]], "paste from clipboard", { "n", "v" })
 keymap("J", "mzJ`z", "better join")
-keymap("<m-j>", ":m .+1<cr>==", "")
-keymap("<m-k>", ":m .-2<cr>==", "")
-keymap("<m-h>", ":m '>+1<cr>gv=gv", "", "v")
-keymap("<m-l>", ":m '<-2<cr>gv=gv", "", "v")
+keymap("<m-j>", ":m .+1<cr>==", "move line down")
+keymap("<m-k>", ":m .-2<cr>==", "move line up")
+keymap("<m-j>", ":m '>+1<cr>gv=gv", "move block down", "v")
+keymap("<m-k>", ":m '<-2<cr>gv=gv", "move block up", "v")
 keymap("<", "<gv", "de-indent", "v")
 keymap(">", ">gv", "indent", "v")
+keymap("<c-h>", "<c-w>h", "move to split left")
+keymap("<c-j>", "<c-w>j", "move to split down")
+keymap("<c-k>", "<c-w>k", "move to split up")
+keymap("<c-l>", "<c-w>l", "move to split right")
+keymap("<m-H>", "<cmd>vertical resize -2<cr>", "decrease width")
+keymap("<m-J>", "<cmd>resize +2<cr>", "increase height")
+keymap("<m-K>", "<cmd>resize -2<cr>", "decrease height")
+keymap("<m-L>", "<cmd>vertical resize +2<cr>", "increase width")
+keymap("<c-s><c-s>", ":split<cr>", "horizontal split")
+keymap("<c-s><c-v>", ":vsplit<cr>", "vertical split")
 keymap("]c", ":cnext<cr>", "cnext")
 keymap("[c", ":cprev<cr>", "cprev")
 keymap("<F8>", ":cnext<cr>", "cnext")
 keymap("<F7>", ":cprev<cr>", "cprev")
-keymap("<leader>fo", ":Explore<cr>", "netrw")
+keymap("<F6>", ":cclose<cr>", "cprev")
+keymap("<leader>fd", ":Explore<cr>", "netrw")
 keymap("jk", "<C-\\><C-n>", "normal mode", "t")
-keymap("<leader>;f", ":TForm %<cr>", "run formatter")
-keymap("<leader>;t", ":TTest<cr>", "run tests")
-keymap("<leader>;c", ":TCheck<cr>", "run lints")
+keymap("<leader>;f", ":Tform %<cr>", "run formatter")
+keymap("<leader>;t", ":Ttest<cr>", "run tests")
+keymap("<leader>;c", ":Tcheck<cr>", "run lints")
 keymap("<leader>;m", ":make<cr>", "run make")
+
+keymap("<leader>mp", "mP", "mark P")
+keymap("<leader>mf", "mF", "mark F")
+keymap("<leader>mw", "mW", "mark W")
+keymap("<leader>mq", "mQ", "mark Q")
+keymap("<leader>mb", "mB", "mark B")
+
+keymap("<m-p>", "`P", "goto mark P")
+keymap("<m-f>", "`F", "goto mark F")
+keymap("<m-w>", "`W", "goto mark W")
+keymap("<m-q>", "`Q", "goto mark Q")
+keymap("<m-b>", "`B", "goto mark B")
 
 -- >>> UI
 g.gruvbox_material_enable_italic = 1
@@ -263,6 +296,7 @@ opt.signcolumn = "no"
 opt.cursorline = true
 opt.cursorlineopt = "screenline"
 opt.scrolloff = 5
+opt.laststatus = 3
 
 o.foldenable = true
 o.foldlevel = 99
@@ -273,15 +307,21 @@ opt.foldcolumn = "0"
 opt.fillchars:append({ fold = " " })
 
 -- >>> NAVIGATION
-vim.opt.grepprg = "rg --vimgrep --ignore-file=.gitignore --iglob='!.git/' --iglob='!**/*.ipynb'"
+g.netrw_banner = 0
+-- g.netrw_browse_split = 4
+-- g.netrw_altv = 1
+g.netrw_liststyle = 3
 
-local function fuzzy_search(cmd, exit_fn)
-  local width = o.columns - 4
+local function fuzzy_search(_cmd, exit_fn)
+  local width = o.columns - 2
+  if width > 120 then
+    width = 120
+  end
   local height = 11
 
   local buf = api.nvim_create_buf(false, true)
-  api.nvim_buf_set_option(buf, "bufhidden", "wipe")
-  api.nvim_buf_set_option(buf, "modifiable", true)
+  api.nvim_set_option_value("bufhidden", "wipe", { buf = buf })
+  api.nvim_set_option_value("modifiable", true, { buf = buf })
   keymap("<esc>", ":bd!<cr>", { desc = "exit", buffer = buf }, "i")
 
   api.nvim_open_win(buf, true, {
@@ -290,13 +330,13 @@ local function fuzzy_search(cmd, exit_fn)
     noautocmd = true,
     width = width,
     height = height,
-    col = 1,
-    row = math.min((o.lines - height) / 2 - 1),
+    col = math.min((o.columns - width) / 2),
+    row = o.lines - height,
   })
   local file = fn.tempname()
   api.nvim_command("startinsert!")
 
-  fn.jobstart(cmd .. " > " .. file, {
+  fn.jobstart(_cmd .. " > " .. file, {
     term = true,
     on_exit = function()
       local f = io.open(file, "r")
@@ -328,68 +368,127 @@ keymap("<leader>fg", function()
   file_search("-u")
 end, "file search hidden")
 
--- vim.keymap.set("n", "<leader>fs", function()
---   fuzzy.fuzzy_search([[sk --reverse -m --ansi -i -c 'rg --color=always --line-number "{}"']], function(stdout)
---     local lines = vim.split(stdout, "\n", { plain = true, trimempty = true })
---     vim.cmd("bd!")
---     if #lines > 1 then
---       fn.setqflist({}, "r", { lines = lines })
---       vim.cmd("copen")
---     elseif #lines == 1 then
---       vim.cmd("e " .. lines[1])
---     end
---   end)
--- end)
-
 -- >>> COMPLETION
-o.completeopt = "fuzzy,menuone,noselect,noinsert,popup"
+o.completeopt = "fuzzy,menu,menuone,noselect,noinsert,popup,preview"
 o.pumheight = 20
-o.pumwidth = 42
+o.pumwidth = 45
+
+local function pumvisible()
+  return tonumber(vim.fn.pumvisible()) ~= 0
+end
+
+--For replacing certain <C-x>... keymaps.
+local function feedkeys(keys)
+  api.nvim_feedkeys(api.nvim_replace_termcodes(keys, true, false, true), "n", true)
+end
+
+keymap("<c-i>", function()
+  return pumvisible() and "<c-e>" or "<c-i>"
+end, { expr = true, desc = "cancel completion" }, "i")
+
+-- Buffer completions.
+keymap("<C-u>", "<C-x><C-n>", { desc = "Buffer completions" }, "i")
+
+-- Use <c-n> to navigate to the next completion or:
+-- - Trigger LSP completion.
+-- - If there's no one, fallback to vanilla omnifunc.
+keymap("<c-n>", function()
+  if pumvisible() then
+    feedkeys("<c-n>")
+  elseif bo.omnifunc == "" then
+    feedkeys("<c-x><c-n>")
+  else
+    feedkeys("<c-x><c-o>")
+  end
+end, "trigger/next completion", "i")
+
+-- Use <c-k> to navigate to the previous completion or:
+-- - Trigger LSP completion.
+-- - If there's no one, fallback to vanilla omnifunc.
+keymap("<c-e>", function()
+  if pumvisible() then
+    feedkeys("<c-p>")
+  elseif bo.omnifunc == "" then
+    feedkeys("<c-x><c-p>")
+  else
+    feedkeys("<c-x><c-o>")
+  end
+end, "trigger/prev completion", "i")
 
 create_autocmd("LspAttach", {
   callback = function(ev)
-    bo[e.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
-    keymap("gq", diag.setqflist, "setqflist")
-    keymap("gQ", diag.setloclist, "setloclist")
-    keymap("gd", lsp.buf.definition, "goto definition")
-    keymap("gD", lsp.buf.declaration, "goto declaration")
-    keymap("gwd", ":vsplit | lua vim.lsp.buf.definition()<cr>", "goto definition in vsplit")
-    keymap("gwD", ":vsplit | lua vim.lsp.buf.declaration()<cr>", "goto declaration in vsplit")
-    keymap("gt", lsp.buf.type_definition, "goto typedef")
-    keymap("gi", lsp.buf.implementation, "goto impl")
+    -- most of this was lifted from this gist:
+    -- https://gist.github.com/MariaSolOs/2e44a86f569323c478e5a078d0cf98cc#file-builtin-compl-lua
+    local bufnr = ev.buf
+    local client = lsp.get_client_by_id(ev.data.client_id)
 
-    -- keymap("<c-j>", vim.lsp.completion.get, "start completion")
+    local function bufmap(lhs, rhs, opts, mode)
+      opts = type(opts) == "string" and { desc = opts }
+        or vim.tbl_extend("error", opts --[[@as table]], { buffer = bufnr })
+      mode = mode or "n"
+      keymap(lhs, rhs, opts, mode)
+    end
 
-    lsp.completion.enable(true, ev.data.client_id, ev.buf, {
-      convert = function(item)
-        local abbr = item.label
-        abbr = abbr:gsub("%b()", ""):gsub("%b{}", "")
-        abbr = abbr:match("[%w_.]+.*") or abbr
-        abbr = #abbr > 15 and abbr:sub(1, 14) .. "…" or abbr
+    bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
+    bufmap("gq", diag.setqflist, "setqflist")
+    bufmap("gQ", diag.setloclist, "setloclist")
+    bufmap("gd", lsp.buf.definition, "goto definition")
+    bufmap("gD", lsp.buf.declaration, "goto declaration")
+    bufmap("gwd", ":vsplit | lua vim.lsp.buf.definition()<cr>", "goto definition in vsplit")
+    bufmap("gwD", ":vsplit | lua vim.lsp.buf.declaration()<cr>", "goto declaration in vsplit")
+    bufmap("gt", lsp.buf.type_definition, "goto typedef")
+    bufmap("gi", lsp.buf.implementation, "goto impl")
 
-        local menu = item.detail or ""
-        menu = #menu > 15 and menu:sub(1, 14) .. "…" or menu
+    if client and client:supports_method("textDocument/completion") then
+      lsp.completion.enable(true, ev.data.client_id, bufnr, {
+        convert = function(item)
+          local abbr = item.label
+          abbr = abbr:gsub("%b()", ""):gsub("%b{}", "")
+          abbr = abbr:match("[%w_.]+.*") or abbr
+          abbr = #abbr > 15 and abbr:sub(1, 14) .. "…" or abbr
 
-        return { abbr = abbr, menu = menu }
-      end,
-    })
+          local menu = item.detail or ""
+          menu = #menu > 15 and menu:sub(1, 14) .. "…" or menu
+
+          return { abbr = abbr, menu = menu }
+        end,
+      })
+    end
+
+    -- Use <Tab> to navigate between snippet tabstops.
+    -- Do something similar with <S-Tab>.
+    bufmap("<Tab>", function()
+      -- -- example of how to integrate something like copilot
+      -- local copilot = require("copilot.suggestion")
+      --
+      -- if copilot.is_visible() then
+      --   copilot.accept()
+      -- elseif ...
+      if vim.snippet.active({ direction = 1 }) then
+        vim.snippet.jump(1)
+      else
+        feedkeys("<Tab>")
+      end
+    end, {}, { "i", "s" })
+
+    bufmap("<S-Tab>", function()
+      if vim.snippet.active({ direction = -1 }) then
+        vim.snippet.jump(-1)
+      else
+        feedkeys("<S-Tab>")
+      end
+    end, {}, { "i", "s" })
+
+    -- Inside a snippet, use backspace to remove the placeholder.
+    bufmap("<BS>", "<C-o>s", {}, "s")
   end,
 })
 
-lsp.config("lua_ls", {
-  settings = {
-    Lua = {
-      runtime = { version = "LuaJIT" },
-      diagnostics = { globals = { "vim" } },
-      workspace = { library = api.nvim_get_runtime_file("", true) },
-      telemetry = { enable = true },
-    },
-  },
-})
+lsp.enable({ "lua_ls", "pyright", "rust_analyzer" })
 
 local function set_python_path(path)
-  local clients = vim.lsp.get_clients({
-    bufnr = vim.api.nvim_get_current_buf(),
+  local clients = lsp.get_clients({
+    bufnr = api.nvim_get_current_buf(),
     name = "pyright",
   })
   for _, client in ipairs(clients) do
@@ -424,7 +523,7 @@ lsp.config("pyright", {
     },
   },
   on_attach = function(client, bufnr)
-    vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightOrganizeImports", function()
+    api.nvim_buf_create_user_command(bufnr, "LspPyrightOrganizeImports", function()
       client:exec_cmd({
         command = "pyright.organizeimports",
         arguments = { vim.uri_from_bufnr(bufnr) },
@@ -432,22 +531,39 @@ lsp.config("pyright", {
     end, {
       desc = "Organize Imports",
     })
-    vim.api.nvim_buf_create_user_command(bufnr, "LspPyrightSetPythonPath", set_python_path, {
+    api.nvim_buf_create_user_command(bufnr, "LspPyrightSetPythonPath", set_python_path, {
       desc = "Reconfigure pyright with the provided python path",
       nargs = 1,
       complete = "file",
     })
   end,
   on_new_config = function(config, root_dir)
-    local env =
-      vim.trim(vim.fn.system('cd "' .. (root_dir or ".") .. '" │ ; poetry env info --executable 2>/dev/null'))
+    local env = vim.trim(fn.system('cd "' .. (root_dir or ".") .. '" │ ; poetry env info --executable 2>/dev/null'))
     if string.len(env) > 0 then
       config.settings.python.pythonPath = env
     end
   end,
 })
 
-lsp.enable({ "lua_ls", "pyright", "rust_analyzer" })
+lsp.config("lua_ls", {
+  cmd = { "lua-language-server" },
+  filetypes = { "lua" },
+  root_markers = { ".git" },
+  settings = { Lua = { workspace = { library = api.nvim_get_runtime_file("", true) } } },
+})
+
+lsp.config("rust_analyzer", {
+  cmd = { "rust-analyzer" },
+  filetypes = { "rust" },
+  root_markers = { "Cargo.toml", ".git" },
+  -- capabilities = { experimental = { serverStatusNotification = true } },
+  -- before_init = function(init_params, config)
+  --   -- See https://github.com/rust-lang/rust-analyzer/blob/eb5da56d839ae0a9e9f50774fa3eb78eb0964550/docs/dev/lsp-extensions.md?plain=1#L26
+  --   if config.settings and config.settings["rust-analyzer"] then
+  --     init_params.initializationOptions = config.settings["rust-analyzer"]
+  --   end
+  -- end,
+})
 
 -- >>> DAP
 -- local dap, dv = require("dap"), require("dap-view")
@@ -491,3 +607,139 @@ lsp.enable({ "lua_ls", "pyright", "rust_analyzer" })
 --     require("dap-go").debug_test()
 --   end
 -- end, "dap test")
+
+-- >>> IDEAS
+-- taken from Vitaly Kurin on Youtube:
+local function scratch_to_quickfix()
+  local bufnr = api.nvim_get_current_buf()
+  local items = {}
+  for _, line in ipairs(api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
+    if line ~= "" then
+      local filename, lnum, text = line:match("^([^:]+):(%d+):(.*)$")
+      if filename and lnum then
+        -- used for grep filename:line:text
+        table.insert(items, { filename = filename, lnum = tonumber(lnum), text = text })
+      else
+        lnum, text = line:match("^(%d+):(.*)$")
+        if lnum and text then
+          -- used for current buffer grep
+          table.insert(items, { filename = fn.bufname(fn.bufnr("#")), lnum = tonumber(lnum), text = text })
+        else
+          -- only filenames
+          table.insert(items, { filename = fn.fnamemodify(line, ":p"), lnum = 1, text = "" })
+        end
+      end
+    end
+  end
+  api.nvim_buf_delete(bufnr, { force = true })
+  fn.setqflist(items, "r")
+  cmd("copen | cc")
+end
+
+-- the quickfix parameter is useful for linters
+local function extcmd_to_scratch(extcmd, quickfix)
+  local output = {}
+  if type(extcmd) == "table" then
+    output = fn.systemlist(extcmd)
+  else
+    output = { fn.system(vim.split(extcmd, "\n")) }
+  end
+
+  if #output == 0 then
+    return
+  end
+
+  cmd("vnew")
+  api.nvim_buf_set_lines(0, 0, -1, false, output)
+  bo.buftype = "nofile"
+  bo.bufhidden = "wipe"
+  bo.swapfile = false
+
+  if quickfix then
+    scratch_to_quickfix()
+  end
+end
+
+-- use these to dump the output of an external command into a scratchbuffer
+--   - git blame, diff, ...
+--   - grep in file
+--   - linting (which means I can use this for Tcheck)
+-- and if it's in qf format, you can manually edit the list and dump that into
+-- the qflist
+
+keymap("<leader>x", scratch_to_quickfix, "dump buffer content to quickfix")
+
+keymap("<leader>gd", function()
+  extcmd_to_scratch({ "git", "diff" })
+end, "send git diff to scratch")
+
+keymap("<leader>gb", function()
+  extcmd_to_scratch({ "git", "blame", fn.expand("%") })
+end, "send git blame to scratch")
+
+keymap("<leader>gb", function()
+  extcmd_to_scratch({ "git", "blame", fn.expand("%") })
+end, "send git blame to scratch")
+
+create_cmd("Tgrep", function(opts)
+  if is_git_repo() then
+    extcmd_to_scratch({
+      "git",
+      "grep",
+      "-nE",
+      opts.args,
+    }, true)
+  else
+    extcmd_to_scratch({
+      "rg",
+      "--vimgrep",
+      "--no-column",
+      "-ne",
+      opts.args,
+    }, true)
+  end
+end, { nargs = "+", desc = "Format file" })
+
+create_cmd("Tscratch", function(opts)
+  if is_git_repo() then
+    extcmd_to_scratch({
+      "git",
+      "grep",
+      "-nE",
+      opts.args,
+    }, false)
+  else
+    extcmd_to_scratch({
+      "rg",
+      "--vimgrep",
+      "--no-column",
+      "-e",
+      opts.args,
+    }, false)
+  end
+end, { nargs = "+", desc = "Format file" })
+
+-- TODO add visual mode variants that copy the visual selection and grep that.
+-- to do that, i have to yank into a register (maybe v), and copy that
+-- ref: https://www.reddit.com/r/neovim/comments/1bolf8l/search_and_replace_the_visual_selection/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+keymap("<leader>sf", function()
+  vim.ui.input({
+    prompt = "> ",
+  }, function(pat)
+    if pat then
+      cmd("Tgrep " .. pat)
+    end
+  end)
+end, "search pattern with rg, and send to qf")
+
+keymap("<leader>ss", function()
+  vim.ui.input({
+    prompt = "> ",
+  }, function(pat)
+    if pat then
+      cmd("Tscratch " .. pat)
+    end
+  end)
+end, "search pattern with rg, and send to scratch")
+
+-- keymap("<leader>;c", function() extcmd_to_scratch({ "ruff", "check", fn.expand("%") }, true) end)
