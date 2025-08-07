@@ -32,6 +32,12 @@
       url = "github:homebrew/homebrew-bundle";
       flake = false;
     };
+
+    # apps
+    # neovim-nightly-overlay = {
+    #   url = "github:nix-community/neovim-nightly-overlay";
+    #   inputs.nixpkgs.follows = "nixpkgs-unstable";
+    # };
   };
 
   outputs =

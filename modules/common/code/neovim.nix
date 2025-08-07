@@ -24,11 +24,10 @@ in
           bash-language-server
           shellharden
           nodePackages.prettier
-          eslint
-          nixd
           statix
           nixpkgs-fmt
           tree-sitter
+          fnlfmt
         ];
         file = {
           ".luacheckrc".text = ''
@@ -84,14 +83,11 @@ in
                 nvim-treesitter.withAllGrammars
                 nvim-treesitter-context
                 gruvbox-material
-                mini-files
-                mini-pick
-                blink-cmp
-                nvim-lspconfig
-                nvim-dap
-                nvim-dap-view
-                nvim-dap-go
-                nvim-dap-python
+                nfnl
+                # nvim-dap
+                # nvim-dap-view
+                # nvim-dap-go
+                # nvim-dap-python
               ]);
           withNodeJs = false;
           withPython3 = false;
