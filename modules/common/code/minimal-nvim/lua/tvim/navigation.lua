@@ -1,31 +1,13 @@
 vim.opt.grepprg = "rg --vimgrep --ignore-file=.gitignore --iglob='!.git/' --iglob='!**/*.ipynb'"
+require("mini.pick").setup({
+  window = {
+    config = { height = 11, width = vim.o.columns - 2}
+  },
+})
 
-local fuzzy = require("tvim.fuzzy")
+vim.ui.select = MiniPick.ui_select
+vim.keymap.set("n", "<leader>ff", MiniPick.builtin.files)
+vim.keymap.set("n", "<leader>fs", MiniPick.builtin.grep_live)
 
-local function file_search(fd_flags)
-  fuzzy.fuzzy_search("fd -tf " .. fd_flags .. " | fzy", function(stdout)
-    local selected, _ = stdout:gsub("\n", "")
-    vim.cmd("bd!")
-    vim.cmd("e " .. selected)
-  end)
-end
-
-vim.keymap.set("n", "<leader>ff", function()
-  file_search("")
-end)
-vim.keymap.set("n", "<leader>fg", function()
-  file_search("-u")
-end)
-
--- vim.keymap.set("n", "<leader>fs", function()
---   fuzzy.fuzzy_search([[sk --reverse -m --ansi -i -c 'rg --color=always --line-number "{}"']], function(stdout)
---     local lines = vim.split(stdout, "\n", { plain = true, trimempty = true })
---     vim.cmd("bd!")
---     if #lines > 1 then
---       vim.fn.setqflist({}, "r", { lines = lines })
---       vim.cmd("copen")
---     elseif #lines == 1 then
---       vim.cmd("e " .. lines[1])
---     end
---   end)
--- end)
+require("mini.files").setup({})
+vim.keymap.set("n", "<leader>fo", function() MiniFiles.open(vim.api.nvim_buf_get_name(0)) end)

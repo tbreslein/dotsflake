@@ -20,7 +20,7 @@
       # emacs.enable = true;
       neovim = {
         enable = true;
-        nvim-config = "big";
+        nvim-config = "minimal";
       };
       zed.enable = true;
     };

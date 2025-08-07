@@ -83,9 +83,15 @@ in
               (with pkgs.vimPlugins; [
                 nvim-treesitter.withAllGrammars
                 nvim-treesitter-context
-                mini-base16
+                gruvbox-material
                 mini-files
                 mini-pick
+                blink-cmp
+                nvim-lspconfig
+                nvim-dap
+                nvim-dap-view
+                nvim-dap-go
+                nvim-dap-python
               ]);
           withNodeJs = false;
           withPython3 = false;

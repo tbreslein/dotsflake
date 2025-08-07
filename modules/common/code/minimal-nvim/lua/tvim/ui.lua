@@ -13,6 +13,8 @@ require("nvim-treesitter.configs").setup({
   highlight = { enable = true, use_languagetree = true },
   indent = { enable = true },
 })
+require("treesitter-context").setup({ multiline_threshold = 2 })
+vim.cmd([[hi TreesitterContextBottom gui=underline]])
 
 vim.g.borderstyle = "single"
 vim.opt.winborder = vim.g.borderstyle
