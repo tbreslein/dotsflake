@@ -21,7 +21,7 @@ in
           option_as_alt = "Both";
         };
         font = {
-          normal.family = "CommitMono Nerd Font";
+          normal.family = user-conf.monofont;
           size = config.my-system.terminal-font-size;
         };
         cursor.style.blinking = "Never";

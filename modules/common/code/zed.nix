@@ -178,10 +178,8 @@ in
         features = {
           edit_prediction_provider = "zed";
         };
-        buffer_font_family = "Hack Nerd Font";
-        buffer_font_features = {
-          calt = false;
-        };
+        buffer_font_family = user-conf.monofont;
+        buffer_font_features.calt = false;
         buffer_font_size = 17;
         ui_font_family = "Zed Plex Sans";
         ui_font_features = {

@@ -81,7 +81,7 @@ in
     home-manager.users.${user-conf.name} = {
       fonts.fontconfig.enable = cfg.has-gui;
       home = {
-        packages = if cfg.has-gui then [ pkgs.nerd-fonts.commit-mono ] else [ ];
+        packages = if cfg.has-gui then [ pkgs.nerd-fonts.hack ] else [ ];
         sessionVariables = {
           EDITOR = lib.mkDefault "vim";
           VISUAL = lib.mkDefault "vim";

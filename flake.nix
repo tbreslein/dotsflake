@@ -113,7 +113,7 @@
           work-gitlab-name = "Tommy Breslein";
           email = "tommy.breslein@protonmail.com";
           work-email = "tommy.breslein@pailot.com";
-          monofont = "Commit Mono Nerd Font";
+          monofont = "Hack Nerd Font";
           colors = rec {
             primary = {
               background = "1d2021";
