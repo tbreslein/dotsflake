@@ -15,7 +15,7 @@ let
     if [[ ''\$# -eq 1 ]]; then
       selected=''\$1
     else
-      selected=''\$(fd -td --exact-depth 1 . ''\${folders[@]} | fzy)
+      selected=''\$(find ''\${folders[@]} -mindepth 1 -maxdepth 1 -type d | fzf)
     fi
 
     if [[ -z ''\$selected ]]; then

@@ -17,7 +17,7 @@ in
         bash.bashrcExtra = /* bash */ ''
           gco() {
             local my_branch=$(git branch -a --no-color | \
-              sort -u | tr -d " " | fzy)
+              sort -u | tr -d " " | fzf)
 
             if echo "$my_branch" | grep -q "remotes/origin"; then
               my_branch=''${my_branch##remotes/origin/}

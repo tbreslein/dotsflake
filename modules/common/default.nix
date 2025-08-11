@@ -35,6 +35,7 @@ in
 
     environment.systemPackages = with pkgs; [
       vim
+      tree
       wget
       git
       gnumake
@@ -42,7 +43,6 @@ in
       ccrypt
       gnutar
       htop
-      fzy
       bat
       rm-improved
       htop
@@ -96,11 +96,10 @@ in
         shell.enableBashIntegration = true;
         shellAliases = {
           m = "make";
-          ls = "eza --icons=always";
           la = "ls -aa";
           ll = "ls -l";
           lla = "ls -la";
-          lt = "eza --tree";
+          lt = "tree";
           cp = "cp -i";
           mv = "mv -i";
           rm = "rm -i";
@@ -112,18 +111,9 @@ in
         home-manager.enable = true;
         ripgrep.enable = true;
         fastfetch.enable = true;
-        fd.enable = true;
         tealdeer.enable = true;
-
-        eza = {
-          enable = true;
-          enableBashIntegration = true;
-        };
-
-        fzf = {
-          enable = true;
-          enableBashIntegration = true;
-        };
+        fzf.enable = true;
+        fzf.enableBashIntegration = true;
       };
     };
   };

@@ -317,7 +317,7 @@ local function fuzzy_search(_cmd, exit_fn)
   if width > 120 then
     width = 120
   end
-  local height = 11
+  local height = 12
 
   local buf = api.nvim_create_buf(false, true)
   api.nvim_set_option_value("bufhidden", "wipe", { buf = buf })
@@ -351,8 +351,14 @@ local function fuzzy_search(_cmd, exit_fn)
   })
 end
 
-local function file_search(fd_flags)
-  fuzzy_search("fd -tf " .. fd_flags .. " | fzy", function(stdout)
+local function file_search()
+  local _cmd = ""
+  if is_git_repo() then
+    _cmd = "git ls-files"
+  else
+    _cmd = "find . -type f"
+  end
+  fuzzy_search(_cmd .. " | fzf --height=12 --reverse --border=none", function(stdout)
     local selected, _ = stdout:gsub("\n", "")
     if #selected > 0 then
       cmd("bd!")
@@ -360,13 +366,7 @@ local function file_search(fd_flags)
     end
   end)
 end
-
-keymap("<leader>ff", function()
-  file_search("")
-end, "file search")
-keymap("<leader>fg", function()
-  file_search("-u")
-end, "file search hidden")
+keymap("<leader>ff", file_search, "file search")
 
 -- >>> COMPLETION
 o.completeopt = "fuzzy,menu,menuone,noselect,noinsert,popup,preview"
