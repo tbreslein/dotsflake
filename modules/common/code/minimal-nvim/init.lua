@@ -272,19 +272,11 @@ keymap("<m-q>", "`Q", "goto mark Q")
 keymap("<m-b>", "`B", "goto mark B")
 
 -- >>> UI
-g.gruvbox_material_enable_italic = 1
-g.gruvbox_material_enable_bold = 1
-g.gruvbox_material_ui_contrast = "high"
-g.gruvbox_material_transparent_background = 2
-o.background = "dark"
-cmd("silent! colorscheme gruvbox-material")
-
 require("nvim-treesitter.configs").setup({
-  highlight = { enable = true, use_languagetree = true },
+  highlight = { enable = true, additional_vim_regex_highlighting = { "markdown" } },
   indent = { enable = true },
 })
 require("treesitter-context").setup({ multiline_threshold = 2 })
-cmd([[hi TreesitterContextBottom gui=underline]])
 
 opt.winborder = "single"
 
@@ -743,3 +735,180 @@ keymap("<leader>ss", function()
 end, "search pattern with rg, and send to scratch")
 
 -- keymap("<leader>;c", function() extcmd_to_scratch({ "ruff", "check", fn.expand("%") }, true) end)
+
+-- >>> COLORS
+local function cs_gruvsimple()
+  if g.highlights_loaded then
+    return
+  end
+
+  vim.cmd("hi clear")
+
+  local background = "#1d2021"
+  local foreground = "#d4be98"
+  local accent = "#e78a4e"
+  local grey = "#7c6f64"
+  local dark_grey = "#5A524C"
+  local black = "#32302f"
+  local red = "#ea6962"
+  local green = "#a9b665"
+  local yellow = "#d8a657"
+  local blue = "#7daea3"
+  local magenta = "#d3869b"
+  local cyan = "#89b482"
+  local white = "#ddc7a1"
+
+  g.terminal_color_0 = black
+  g.terminal_color_1 = red
+  g.terminal_color_2 = green
+  g.terminal_color_3 = yellow
+  g.terminal_color_4 = blue
+  g.terminal_color_5 = magenta
+  g.terminal_color_6 = cyan
+  g.terminal_color_7 = white
+  g.terminal_color_8 = black
+  g.terminal_color_9 = red
+  g.terminal_color_10 = green
+  g.terminal_color_11 = yellow
+  g.terminal_color_12 = blue
+  g.terminal_color_13 = magenta
+  g.terminal_color_14 = cyan
+  g.terminal_color_15 = white
+
+  local highlights = {
+    -- UI
+    Added = { fg = green },
+    Changed = { fg = blue },
+    ColorColumn = { bg = black },
+    Conceal = {},
+    CurSearch = { link = "Search" },
+    Cursor = { bg = black },
+    CursorLine = { bg = black },
+    DiagnosticError = { fg = red },
+    DiagnosticHint = { fg = blue },
+    DiagnosticInfo = { fg = cyan },
+    DiagnosticOk = { fg = green },
+    DiagnosticWarn = { fg = yellow },
+    DiffAdd = { link = "Added" },
+    DiffChange = { link = "Changed" },
+    DiffDelete = { link = "Removed" },
+    DiffText = { link = "Normal" },
+    DiffLine = { fg = blue, bold = true },
+    DiffFile = { fg = foreground, bold = true },
+    Directory = { fg = blue },
+    EndOfBuffer = { fg = grey, bg = nil },
+    Error = { link = "ErrorMsg" },
+    ErrorMsg = { fg = red, bold = true },
+    FloatBorder = { fg = foreground },
+    FoldColumn = { link = "SignColumn" },
+    Folded = { link = "Comment" },
+    Hint = { link = "HintMsg" },
+    HintMsg = { fg = blue, bold = true },
+    IncSearch = { link = "Search" },
+    Info = { link = "ErrorMsg" },
+    InfoMsg = { fg = cyan, bold = true },
+    LineNr = { bold = true },
+    LineNrAbove = { fg = grey, bold = false },
+    LineNrBelow = { link = "LineNrAbove" },
+    MatchParen = { bold = true },
+    ModeMsg = { link = "Normal", bold = true },
+    MoreMsg = { link = "Normal", bold = true },
+    Normal = { fg = foreground, bg = nil },
+    NormalFloat = { fg = foreground },
+    Pmenu = { bg = black, fg = foreground },
+    PmenuKind = { fg = blue },
+    PmenuKindSel = { bg = dark_grey, fg = blue, bold = true },
+    PmenuSbar = { bg = black, fg = foreground },
+    PmenuSel = { bg = dark_grey, fg = white, bold = true },
+    PmenuThumb = { bg = black, fg = foreground },
+    Question = { fg = yellow, bold = true },
+    QuickFixLine = { fg = yellow },
+    Removed = { fg = green },
+    Search = { bg = yellow, fg = background },
+    SignColumn = { fg = grey, bg = background },
+    SpecialKey = { fg = blue },
+    Title = { link = "NormalFloat" },
+    Todo = { fg = accent },
+    Visual = { bg = dark_grey },
+    Warning = { link = "WarningMsg" },
+    WarningMsg = { fg = yellow, bold = true },
+    WildMenu = { link = "Pmenu" },
+
+    -- statusline
+    LinePrimaryBlock = { fg = black, bg = background },
+    LineSecondaryBlock = { fg = blue, bg = background },
+    LineError = { link = "Error" },
+    LineHint = { link = "Hint" },
+    LineInfo = { link = "Info" },
+    LineWarning = { link = "Warning" },
+    StatusLine = { fg = white, bg = black, bold = true },
+    StatusLineNC = { fg = grey, bg = background },
+    StatusLineTab = { link = "StatusLine" },
+
+    -- Syntax
+    Boolean = { link = "Constant" },
+    Character = { link = "String" },
+    Comment = { fg = grey, italic = true },
+    Constant = { fg = yellow },
+    Delimiter = { link = "Normal" },
+    -- Function = { fg = foreground, bold = true },
+    Function = { fg = cyan },
+    -- Function = { fg = blue },
+    Identifier = { fg = foreground },
+    Include = { fg = accent, bold = true },
+    InstanceVariable = { fg = magenta },
+    Keyword = { fg = red },
+    Label = { link = "Keyword" },
+    Macro = { fg = accent },
+    NonText = { link = "Normal" },
+    Number = { link = "Constant" },
+    Operator = { fg = accent },
+    PreProc = { link = "Include" },
+    Special = { link = "Normal" },
+    Statement = { link = "Keyword" },
+    String = { fg = green },
+    Symbol = { link = "Normal" },
+    Type = { link = "Constant" },
+
+    -- Treesitter
+    ["@variable"] = { link = "Normal" },
+    ["@string.special.url"] = { fg = blue, underline = true },
+    TreesitterContextBottom = { underline = true },
+    TreesitterContextLineNumber = { link = "LineNrAbove" },
+    ["@lsp.type.comment"] = {},
+    ["@markup.heading"] = {},
+    ["@markup.link"] = {},
+
+    -- HTML (many markdown things link to HTML)
+    htmlH1 = { fg = red, bold = true },
+    htmlH2 = { fg = accent, bold = true },
+    htmlH3 = { fg = yellow, bold = true },
+    htmlH4 = { fg = green, bold = true },
+    htmlH5 = { fg = cyan, bold = true },
+    htmlH6 = { fg = blue, bold = true },
+    htmlLink = { fg = blue, underline = true },
+
+    -- Markdown
+    markdownH1Delimiter = { link = "markdownH1" },
+    markdownH2Delimiter = { link = "markdownH2" },
+    markdownH3Delimiter = { link = "markdownH3" },
+    markdownH4Delimiter = { link = "markdownH4" },
+    markdownH5Delimiter = { link = "markdownH5" },
+    markdownH6Delimiter = { link = "markdownH6" },
+    markdownLink = { fg = green, underline = true },
+    markdownUrl = { link = "htmlLink" },
+    markdownCode = { link = "markdownCodeBlock" },
+    markdownCodeDelimiter = { link = "markdownCodeBlock" },
+    markdownCodeBlock = { link = "Comment" },
+    markdownListMarker = { link = "Keyword" },
+    markdownOrderedListMarker = { link = "Keyword" },
+  }
+
+  for group, opts in pairs(highlights) do
+    api.nvim_set_hl(0, group, opts)
+  end
+
+  g.highlights_loaded = true
+end
+
+cs_gruvsimple()

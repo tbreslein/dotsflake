@@ -49,7 +49,6 @@ in
 
         neovim = {
           enable = true;
-          # package = pkgs.neovim-unwrapped;
           package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
           defaultEditor = true;
           plugins =
@@ -83,7 +82,6 @@ in
               (with pkgs.vimPlugins; [
                 nvim-treesitter.withAllGrammars
                 nvim-treesitter-context
-                gruvbox-material
                 nfnl
                 # nvim-dap
                 # nvim-dap-view
