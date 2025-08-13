@@ -173,6 +173,7 @@ if fn.isdirectory(undodir) == 0 then
 end
 opt.undodir = undodir
 opt.undofile = true
+g.grepprg = "git grep -nE"
 
 diag.config({ virtual_text = { current_line = true } })
 
@@ -563,10 +564,10 @@ create_autocmd("LspAttach", {
           local abbr = item.label
           abbr = abbr:gsub("%b()", ""):gsub("%b{}", "")
           abbr = abbr:match("[%w_.]+.*") or abbr
-          abbr = #abbr > 15 and abbr:sub(1, 14) .. "…" or abbr
+          abbr = #abbr > 21 and abbr:sub(1, 20) .. "…" or abbr
 
           local menu = item.detail or ""
-          menu = #menu > 15 and menu:sub(1, 14) .. "…" or menu
+          menu = #menu > 21 and menu:sub(1, 20) .. "…" or menu
 
           return { abbr = abbr, menu = menu }
         end,
@@ -789,7 +790,7 @@ local function cs_gruvsimple()
     EndOfBuffer = { fg = grey, bg = nil },
     Error = { link = "ErrorMsg" },
     ErrorMsg = { fg = red, bold = true },
-    FloatBorder = { fg = foreground },
+    FloatBorder = { fg = foreground, bg = black },
     FoldColumn = { link = "SignColumn" },
     Folded = { link = "Comment" },
     Hint = { link = "HintMsg" },
@@ -804,7 +805,7 @@ local function cs_gruvsimple()
     ModeMsg = { link = "Normal", bold = true },
     MoreMsg = { link = "Normal", bold = true },
     Normal = { fg = foreground, bg = nil },
-    NormalFloat = { fg = foreground },
+    NormalFloat = { fg = foreground, bg = black },
     Pmenu = { bg = black, fg = foreground },
     PmenuKind = { fg = blue },
     PmenuKindSel = { bg = dark_grey, fg = blue, bold = true },
