@@ -1,4 +1,16 @@
--- >>> LOCALS
+-- TODO:
+-- restructure this config as follows:
+--   - put everything that I want to be able to configure in tables at the TOP
+--     of the file (the porcelain)
+--     - the tables do not include simple vim.g and vim.opt settings. those are
+--       simple enough to just be spelt out
+--   - put all functions and other locals in a section below that
+--   - use those functions to apply the config at the bottom
+--
+-- basically, write a config API for my own config, so that extending it becomes
+-- easier
+
+-- >>> PREAMBLE
 local o = vim.o
 local opt = vim.opt
 local g = vim.g
@@ -29,6 +41,118 @@ end
 local function is_git_repo()
   _ = fn.system("git rev-parse --is-inside-work-tree")
   return vim.v.shell_error == 0
+end
+
+-- taken from Vitaly Kurin on Youtube:
+-- use these to dump the output of an external command into a scratchbuffer
+--   - git blame, diff, ...
+--   - grep in file
+--   - linting (which means I can use this for Tcheck)
+-- and if it's in qf format, you can manually edit the list and dump that into
+-- the qflist
+local function scratch_to_quickfix()
+  local bufnr = api.nvim_get_current_buf()
+  local items = {}
+  for _, line in ipairs(api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
+    if line ~= "" then
+      local filename, lnum, text = line:match("^([^:]+):(%d+):(.*)$")
+      if filename and lnum then
+        -- used for grep filename:line:text
+        table.insert(items, { filename = filename, lnum = tonumber(lnum), text = text })
+      else
+        lnum, text = line:match("^(%d+):(.*)$")
+        if lnum and text then
+          -- used for current buffer grep
+          table.insert(items, { filename = fn.bufname(fn.bufnr("#")), lnum = tonumber(lnum), text = text })
+        else
+          -- only filenames
+          table.insert(items, { filename = fn.fnamemodify(line, ":p"), lnum = 1, text = "" })
+        end
+      end
+    end
+  end
+  api.nvim_buf_delete(bufnr, { force = true })
+  fn.setqflist(items, "r")
+  cmd("copen | cc")
+end
+
+-- the quickfix parameter is useful for linters
+local function extcmd_to_scratch(extcmd, quickfix)
+  local output = {}
+  if type(extcmd) == "table" then
+    output = fn.systemlist(extcmd)
+  else
+    output = { fn.system(vim.split(extcmd, "\n")) }
+  end
+
+  if #output == 0 then
+    return
+  end
+
+  cmd("vnew")
+  api.nvim_buf_set_lines(0, 0, -1, false, output)
+  bo.buftype = "nofile"
+  bo.bufhidden = "wipe"
+  bo.swapfile = false
+
+  if quickfix then
+    scratch_to_quickfix()
+  end
+end
+
+local function fuzzy_search(_cmd, exit_fn)
+  local width = o.columns - 2
+  if width > 120 then
+    width = 120
+  end
+  local height = 12
+
+  local buf = api.nvim_create_buf(false, true)
+  api.nvim_set_option_value("bufhidden", "wipe", { buf = buf })
+  api.nvim_set_option_value("modifiable", true, { buf = buf })
+  keymap("<esc>", ":bd!<cr>", { desc = "exit", buffer = buf }, "i")
+
+  api.nvim_open_win(buf, true, {
+    relative = "editor",
+    style = "minimal",
+    noautocmd = true,
+    width = width,
+    height = height,
+    col = math.min((o.columns - width) / 2),
+    row = o.lines - height,
+  })
+  local file = fn.tempname()
+  api.nvim_command("startinsert!")
+
+  fn.jobstart(_cmd .. " > " .. file, {
+    term = true,
+    on_exit = function()
+      local f = io.open(file, "r")
+      if f == nil then
+        return
+      end
+      local stdout = f:read("*all")
+      exit_fn(stdout)
+      f:close()
+      os.remove(file)
+    end,
+  })
+end
+
+local function file_search()
+  local _cmd = ""
+  if is_git_repo() then
+    _cmd = "git ls-files"
+  else
+    _cmd = "find . -type f"
+  end
+  fuzzy_search(_cmd .. " | fzf --height=12 --reverse --border=none", function(stdout)
+    local selected, _ = stdout:gsub("\n", "")
+    if #selected > 0 then
+      cmd("bd!")
+      cmd("e " .. selected)
+    end
+  end)
 end
 
 -- >>> SETTINGS
@@ -89,112 +213,43 @@ create_autocmd({ "BufEnter", "BufNewFile", "BufRead" }, {
   end,
 })
 
-create_autocmd("FileType", {
-  pattern = { "man", "help" },
-  callback = function()
-    keymap("q", ":q<cr>", "quit")
-  end,
-})
+create_cmd("Tgrep", function(opts)
+  if is_git_repo() then
+    extcmd_to_scratch({
+      "git",
+      "grep",
+      "-nE",
+      opts.args,
+    }, true)
+  else
+    extcmd_to_scratch({
+      "rg",
+      "--vimgrep",
+      "--no-column",
+      "-ne",
+      opts.args,
+    }, true)
+  end
+end, { nargs = "+", desc = "Format file" })
 
-create_autocmd("FileType", {
-  pattern = { "bash", "sh" },
-  callback = function()
-    create_cmd("Tform", function(opts)
-      cmd(":silent ! shellharden --replace " .. opts.fargs[1])
-    end, { nargs = 1, desc = "Format file" })
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = { "c", "cpp" },
-  callback = function()
-    create_cmd("Tform", function(opts)
-      cmd(":silent ! clang-format -i " .. opts.fargs[1])
-    end, { nargs = 1, desc = "Format file" })
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = {
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "html",
-    "css",
-    "scss",
-    "json",
-    "jsonc",
-    "markdown",
-  },
-  callback = function()
-    create_cmd("Tform", function(opts)
-      cmd(":silent ! prettier -w " .. opts.fargs[1])
-    end, { nargs = 1, desc = "Format file" })
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = { "lua" },
-  callback = function()
-    create_cmd("Tform", function(opts)
-      cmd(":silent ! stylua " .. opts.fargs[1])
-    end, { nargs = 1, desc = "Format file" })
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = { "nix" },
-  callback = function()
-    create_cmd("Tform", function(opts)
-      cmd(":silent ! nixpkgs-fmt " .. opts.fargs[1])
-    end, { nargs = 1, desc = "Format file" })
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = { "python" },
-  callback = function()
-    create_cmd("Tform", function(opts)
-      local root_dir = find_root({ "pyproject.toml" })
-      cmd(":silent ! poetry --project " .. root_dir .. " run black " .. opts.fargs[1])
-    end, { nargs = 1, desc = "Format file" })
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = { "rust" },
-  callback = function()
-    create_cmd("Tform", function(opts)
-      cmd(":silent ! cargo fmt " .. opts.fargs[1])
-    end, { nargs = 1, desc = "Format file" })
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = { "zig" },
-  callback = function()
-    create_cmd("Tform", function(opts)
-      cmd(":silent ! zig fmt " .. opts.fargs[1])
-    end, { nargs = 1, desc = "Format file" })
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = { "gitcommit" },
-  callback = function()
-    bo.textwidth = 72
-    wo.colorcolumn = "+0"
-    wo.spell = true
-  end,
-})
-
-create_autocmd("FileType", {
-  pattern = { "go", "makefile" },
-  callback = function()
-    bo.expandtab = false
-  end,
-})
+create_cmd("Tscratch", function(opts)
+  if is_git_repo() then
+    extcmd_to_scratch({
+      "git",
+      "grep",
+      "-nE",
+      opts.args,
+    }, false)
+  else
+    extcmd_to_scratch({
+      "rg",
+      "--vimgrep",
+      "--no-column",
+      "-e",
+      opts.args,
+    }, false)
+  end
+end, { nargs = "+", desc = "Format file" })
 
 create_augroup("Git", {})
 create_autocmd("BufEnter", {
@@ -208,6 +263,98 @@ create_autocmd("BufEnter", {
     end
   end,
 })
+
+local ft_autocmds = {
+  {
+    { "c", "cpp" },
+    tform = "clang-format -i",
+  },
+  {
+    "go",
+    misc = function()
+      bo.expandtab = false
+    end,
+  },
+  {
+    "python",
+    tform = function()
+      return "poetry --project " .. find_root({ "pyproject.toml" }) .. " run black"
+    end,
+  },
+  {
+    "rust",
+    tform = "cargo fmt",
+  },
+  {
+    "zig",
+    tform = "zig fmt",
+  },
+  {
+    { "bash", "sh" },
+    tform = "shellharden",
+  },
+  {
+    "lua",
+    tform = "stylua",
+  },
+  {
+    "nix",
+    tform = "nixpkgs-fmt",
+  },
+  {
+    {
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "html",
+      "css",
+      "scss",
+      "json",
+      "jsonc",
+      "markdown",
+    },
+    tform = "prettier -w",
+  },
+  {
+    { "man", "help" },
+    misc = function()
+      keymap("q", ":q<cr>", "quit")
+    end,
+  },
+  {
+    "gitcommit",
+    misc = function()
+      bo.textwidth = 72
+      wo.colorcolumn = "+0"
+      wo.spell = true
+    end,
+  },
+}
+
+for _, v in ipairs(ft_autocmds) do
+  create_autocmd("FileType", {
+    pattern = v[1],
+    callback = function()
+      if v.tform ~= nil then
+        local tform_str = ":silent ! "
+        if type(v.tform) == "function" then
+          tform_str = tform_str .. v.tform()
+        else
+          tform_str = tform_str .. v.tform
+        end
+        create_cmd("Tform", function(opts)
+          cmd(tform_str .. " " .. opts.fargs[1])
+        end, { nargs = 1, desc = "Format file" })
+      end
+
+      if v.misc ~= nil and type(v.misc) == "function" then
+        v.misc()
+      end
+    end,
+  })
+end
+-- keymap("<leader>;c", function() extcmd_to_scratch({ "ruff", "check", fn.expand("%") }, true) end)
 
 -- >>> KEYMAPS
 keymap("<leader>w", ":w<cr>", "write")
@@ -271,6 +418,42 @@ keymap("<m-w>", "`W", "goto mark W")
 keymap("<m-q>", "`Q", "goto mark Q")
 keymap("<m-b>", "`B", "goto mark B")
 
+keymap("<leader>ff", file_search, "file search")
+
+keymap("<leader>x", scratch_to_quickfix, "dump buffer content to quickfix")
+keymap("<leader>gd", function()
+  extcmd_to_scratch({ "git", "diff" })
+end, "send git diff to scratch")
+keymap("<leader>gb", function()
+  extcmd_to_scratch({ "git", "blame", fn.expand("%") })
+end, "send git blame to scratch")
+keymap("<leader>gb", function()
+  extcmd_to_scratch({ "git", "blame", fn.expand("%") })
+end, "send git blame to scratch")
+
+-- TODO add visual mode variants that copy the visual selection and grep that.
+-- to do that, i have to yank into a register (maybe v), and copy that
+-- ref: https://www.reddit.com/r/neovim/comments/1bolf8l/search_and_replace_the_visual_selection/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+keymap("<leader>sf", function()
+  vim.ui.input({
+    prompt = "> ",
+  }, function(pat)
+    if pat then
+      cmd("Tgrep " .. pat)
+    end
+  end)
+end, "search pattern with rg, and send to qf")
+
+keymap("<leader>ss", function()
+  vim.ui.input({
+    prompt = "> ",
+  }, function(pat)
+    if pat then
+      cmd("Tscratch " .. pat)
+    end
+  end)
+end, "search pattern with rg, and send to scratch")
+
 -- >>> UI
 require("nvim-treesitter.configs").setup({
   highlight = { enable = true, additional_vim_regex_highlighting = { "markdown" } },
@@ -298,67 +481,10 @@ o.foldtext = ""
 opt.foldcolumn = "0"
 opt.fillchars:append({ fold = " " })
 
--- >>> NAVIGATION
 g.netrw_banner = 0
 -- g.netrw_browse_split = 4
 -- g.netrw_altv = 1
 g.netrw_liststyle = 3
-
-local function fuzzy_search(_cmd, exit_fn)
-  local width = o.columns - 2
-  if width > 120 then
-    width = 120
-  end
-  local height = 12
-
-  local buf = api.nvim_create_buf(false, true)
-  api.nvim_set_option_value("bufhidden", "wipe", { buf = buf })
-  api.nvim_set_option_value("modifiable", true, { buf = buf })
-  keymap("<esc>", ":bd!<cr>", { desc = "exit", buffer = buf }, "i")
-
-  api.nvim_open_win(buf, true, {
-    relative = "editor",
-    style = "minimal",
-    noautocmd = true,
-    width = width,
-    height = height,
-    col = math.min((o.columns - width) / 2),
-    row = o.lines - height,
-  })
-  local file = fn.tempname()
-  api.nvim_command("startinsert!")
-
-  fn.jobstart(_cmd .. " > " .. file, {
-    term = true,
-    on_exit = function()
-      local f = io.open(file, "r")
-      if f == nil then
-        return
-      end
-      local stdout = f:read("*all")
-      exit_fn(stdout)
-      f:close()
-      os.remove(file)
-    end,
-  })
-end
-
-local function file_search()
-  local _cmd = ""
-  if is_git_repo() then
-    _cmd = "git ls-files"
-  else
-    _cmd = "find . -type f"
-  end
-  fuzzy_search(_cmd .. " | fzf --height=12 --reverse --border=none", function(stdout)
-    local selected, _ = stdout:gsub("\n", "")
-    if #selected > 0 then
-      cmd("bd!")
-      cmd("e " .. selected)
-    end
-  end)
-end
-keymap("<leader>ff", file_search, "file search")
 
 -- >>> COMPLETION
 o.completeopt = "fuzzy,menu,menuone,noselect,noinsert,popup,preview"
@@ -599,142 +725,6 @@ lsp.config("rust_analyzer", {
 --     require("dap-go").debug_test()
 --   end
 -- end, "dap test")
-
--- >>> IDEAS
--- taken from Vitaly Kurin on Youtube:
-local function scratch_to_quickfix()
-  local bufnr = api.nvim_get_current_buf()
-  local items = {}
-  for _, line in ipairs(api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
-    if line ~= "" then
-      local filename, lnum, text = line:match("^([^:]+):(%d+):(.*)$")
-      if filename and lnum then
-        -- used for grep filename:line:text
-        table.insert(items, { filename = filename, lnum = tonumber(lnum), text = text })
-      else
-        lnum, text = line:match("^(%d+):(.*)$")
-        if lnum and text then
-          -- used for current buffer grep
-          table.insert(items, { filename = fn.bufname(fn.bufnr("#")), lnum = tonumber(lnum), text = text })
-        else
-          -- only filenames
-          table.insert(items, { filename = fn.fnamemodify(line, ":p"), lnum = 1, text = "" })
-        end
-      end
-    end
-  end
-  api.nvim_buf_delete(bufnr, { force = true })
-  fn.setqflist(items, "r")
-  cmd("copen | cc")
-end
-
--- the quickfix parameter is useful for linters
-local function extcmd_to_scratch(extcmd, quickfix)
-  local output = {}
-  if type(extcmd) == "table" then
-    output = fn.systemlist(extcmd)
-  else
-    output = { fn.system(vim.split(extcmd, "\n")) }
-  end
-
-  if #output == 0 then
-    return
-  end
-
-  cmd("vnew")
-  api.nvim_buf_set_lines(0, 0, -1, false, output)
-  bo.buftype = "nofile"
-  bo.bufhidden = "wipe"
-  bo.swapfile = false
-
-  if quickfix then
-    scratch_to_quickfix()
-  end
-end
-
--- use these to dump the output of an external command into a scratchbuffer
---   - git blame, diff, ...
---   - grep in file
---   - linting (which means I can use this for Tcheck)
--- and if it's in qf format, you can manually edit the list and dump that into
--- the qflist
-
-keymap("<leader>x", scratch_to_quickfix, "dump buffer content to quickfix")
-
-keymap("<leader>gd", function()
-  extcmd_to_scratch({ "git", "diff" })
-end, "send git diff to scratch")
-
-keymap("<leader>gb", function()
-  extcmd_to_scratch({ "git", "blame", fn.expand("%") })
-end, "send git blame to scratch")
-
-keymap("<leader>gb", function()
-  extcmd_to_scratch({ "git", "blame", fn.expand("%") })
-end, "send git blame to scratch")
-
-create_cmd("Tgrep", function(opts)
-  if is_git_repo() then
-    extcmd_to_scratch({
-      "git",
-      "grep",
-      "-nE",
-      opts.args,
-    }, true)
-  else
-    extcmd_to_scratch({
-      "rg",
-      "--vimgrep",
-      "--no-column",
-      "-ne",
-      opts.args,
-    }, true)
-  end
-end, { nargs = "+", desc = "Format file" })
-
-create_cmd("Tscratch", function(opts)
-  if is_git_repo() then
-    extcmd_to_scratch({
-      "git",
-      "grep",
-      "-nE",
-      opts.args,
-    }, false)
-  else
-    extcmd_to_scratch({
-      "rg",
-      "--vimgrep",
-      "--no-column",
-      "-e",
-      opts.args,
-    }, false)
-  end
-end, { nargs = "+", desc = "Format file" })
-
--- TODO add visual mode variants that copy the visual selection and grep that.
--- to do that, i have to yank into a register (maybe v), and copy that
--- ref: https://www.reddit.com/r/neovim/comments/1bolf8l/search_and_replace_the_visual_selection/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-keymap("<leader>sf", function()
-  vim.ui.input({
-    prompt = "> ",
-  }, function(pat)
-    if pat then
-      cmd("Tgrep " .. pat)
-    end
-  end)
-end, "search pattern with rg, and send to qf")
-
-keymap("<leader>ss", function()
-  vim.ui.input({
-    prompt = "> ",
-  }, function(pat)
-    if pat then
-      cmd("Tscratch " .. pat)
-    end
-  end)
-end, "search pattern with rg, and send to scratch")
-
--- keymap("<leader>;c", function() extcmd_to_scratch({ "ruff", "check", fn.expand("%") }, true) end)
 
 -- >>> COLORS
 local function cs_gruvsimple()
