@@ -33,6 +33,10 @@ in
   environment = {
     shells = with pkgs; [ bashInteractive ];
     systemPackages = with pkgs; [ bashInteractive localsend ];
+    variables = {
+      LANG = "en_US.UTF-8";
+      LC_ALL = "en_US.UTF-8";
+    };
   };
 
   nixpkgs.config.allowUnfree = true;
