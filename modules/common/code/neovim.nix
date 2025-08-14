@@ -27,7 +27,6 @@ in
           statix
           nixpkgs-fmt
           tree-sitter
-          fnlfmt
         ];
         file = {
           ".luacheckrc".text = ''
@@ -78,16 +77,7 @@ in
                 nvim-dap-view
                 nvim-dap-go
                 nvim-dap-python
-              ]) else
-              (with pkgs.vimPlugins; [
-                nvim-treesitter.withAllGrammars
-                nvim-treesitter-context
-                nfnl
-                # nvim-dap
-                # nvim-dap-view
-                # nvim-dap-go
-                # nvim-dap-python
-              ]);
+              ]) else [];
           withNodeJs = false;
           withPython3 = false;
           withRuby = false;
