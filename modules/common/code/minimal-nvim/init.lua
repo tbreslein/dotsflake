@@ -519,7 +519,7 @@ vim
     },
     ["python"] = {
       format = function()
-        return "poetry --project " .. find_root(roots.python) .. "run black"
+        return "poetry --project " .. find_root(roots.python) .. " run black"
       end,
     },
     ["rust"] = {
