@@ -1,7 +1,7 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
--- >>> PREAMBLE
+-- >>> PREAMBLE {{{3
 vim.g.uname = vim.uv.os_uname().sysname
 vim.g.is_darwin = vim.g.uname == "Darwin"
 vim.g.is_linux = vim.g.uname == "Linux"
@@ -11,51 +11,31 @@ else
   vim.g.open_cmd = "xdg-open"
 end
 
+local roots = vim
+  .iter({
+    c = { "makefile" },
+    python = {
+      "pyproject.toml",
+      "setup.py",
+      "setup.cfg",
+      "requirements.txt",
+      "Pipfile",
+      "pyrightconfig.json",
+    },
+    nix = { "flake.nix" },
+    rust = { "Cargo.toml" },
+    javascript = { "package.json" },
+    zig = { "build.zig" },
+  })
+  :fold({}, function(acc, k, v)
+    acc[k] = vim.list_extend(v, { ".git" })
+    return acc
+  end)
+
 local function mkdirp(dir)
   if vim.fn.isdirectory == 0 then
     vim.fn.mkdir(dir, "p")
   end
-end
-
-local function create_command(c)
-  vim.api.nvim_create_user_command(c[1], c[2], c[3])
-end
-
-local function create_aucmd(au)
-  vim.api.nvim_create_autocmd(au.event, {
-    pattern = au.pattern,
-    group = au.group,
-    callback = au.callback,
-  })
-end
-
-local ft_group = vim.api.nvim_create_augroup("UserFT", {})
-
-local function create_ft_aucmd(k, v)
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = vim.split(k, "|", { trimempty = true }),
-    group = ft_group,
-    callback = function()
-      if v.tform ~= nil then
-        local tform_str = ":silent ! "
-        if type(v.tform) == "function" then
-          tform_str = tform_str .. v.tform()
-        else
-          tform_str = tform_str .. v.tform
-        end
-        vim.api.nvim_create_user_command("Tform", function(opts)
-          vim.cmd(tform_str .. " " .. opts.fargs[1])
-        end, { nargs = 1, desc = "Format file" })
-      end
-
-      if v.misc ~= nil and type(v.misc) == "function" then
-        v.misc()
-      end
-
-      -- for Tcheck, maybe use extcmd_to_scratch?
-      -- keymap("<leader>;c", function() extcmd_to_scratch({ "ruff", "check", fn.expand("%") }, true) end)
-    end,
-  })
 end
 
 local function create_keymap(lhs, v)
@@ -72,32 +52,6 @@ local function create_keymap(lhs, v)
       f(_v[1], _v[2], mode)
     end
   end
-end
-
-local function create_lsp_config(ls_server, ls_config)
-  vim.lsp.enable(ls_server)
-  vim.lsp.config(ls_server, ls_config)
-end
-
-local function set_hl(hl_group, hl_config)
-  vim.api.nvim_set_hl(0, hl_group, hl_config)
-end
-
-local function pumvisible()
-  return tonumber(vim.fn.pumvisible()) ~= 0
-end
-
-local function feedkeys(keys)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), "n", true)
-end
-
-local function find_root(additional_markers)
-  return vim.fs.root(0, { additional_markers, ".git/"})
-end
-
-local function is_git_repo()
-  _ = vim.fn.system("git rev-parse --is-inside-work-tree")
-  return vim.v.shell_error == 0
 end
 
 -- taken from Vitaly Kurin on Youtube:
@@ -133,27 +87,28 @@ local function scratch_to_quickfix()
   vim.cmd("copen | cc")
 end
 
-local function extcmd_to_scratch(extcmd, quickfix)
-  local output = {}
-  if type(extcmd) == "table" then
-    output = vim.fn.systemlist(extcmd)
-  else
-    output = { vim.fn.system(vim.split(extcmd, "\n")) }
+local function extcmd_to_scratch(extcmd, quickfix, cwd)
+  local function on_exit(out)
+    if out.stdout == nil or #out.stdout == 0 then
+      return
+    end
+
+    vim.cmd("vnew")
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(out.stdout, "\n", { trimempty = true }))
+    vim.bo.buftype = "nofile"
+    vim.bo.bufhidden = "wipe"
+    vim.bo.swapfile = false
+
+    if quickfix then
+      scratch_to_quickfix()
+    end
   end
 
-  if #output == 0 then
-    return
-  end
-
-  vim.cmd("vnew")
-  vim.api.nvim_buf_set_lines(0, 0, -1, false, output)
-  vim.bo.buftype = "nofile"
-  vim.bo.bufhidden = "wipe"
-  vim.bo.swapfile = false
-
-  if quickfix then
-    scratch_to_quickfix()
-  end
+  -- NOTE: the schedule_wrap ensures that the wrapped function executes back on
+  -- the main thread. vim.system runs async, and in that context you cannot run
+  -- things like vim.cmd and vim.api.*, because those assume that they are
+  -- calleed on the main thread
+  vim.system(extcmd, { cwd = cwd, text = true }, vim.schedule_wrap(on_exit))
 end
 
 local function extcmd_in_floatterm(extcmd, exit_fn)
@@ -193,6 +148,91 @@ local function extcmd_in_floatterm(extcmd, exit_fn)
       os.remove(file)
     end,
   })
+end
+
+local function create_command(c)
+  vim.api.nvim_create_user_command(c[1], c[2], c[3])
+end
+
+local function create_aucmd(au)
+  vim.api.nvim_create_autocmd(au.event, {
+    pattern = au.pattern,
+    group = au.group,
+    callback = au.callback,
+  })
+end
+
+local ft_group = vim.api.nvim_create_augroup("UserFT", {})
+
+local function create_ft_aucmd(k, v)
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = vim.split(k, "|", { trimempty = true }),
+    group = ft_group,
+    callback = function()
+      if v.format ~= nil then
+        local cmd = ":silent ! "
+        if type(v.format) == "function" then
+          cmd = cmd .. v.format()
+        else
+          cmd = cmd .. v.format
+        end
+        vim.api.nvim_create_user_command("Tform", function(opts)
+          vim.cmd(cmd .. " " .. opts.fargs[1])
+        end, { nargs = 1, desc = "run formatter" })
+      end
+
+      -- if v.check ~= nil then
+      --   local cmd_str = ""
+      --   if type(v.check) == "function" then
+      --     cmd_str = cmd_str .. v.check()
+      --   else
+      --     cmd_str = cmd_str .. v.check
+      --   end
+      --   vim.api.nvim_create_user_command("Tcheck", function()
+      --     extcmd_to_scratch(cmd_str, true)
+      --   end, { nargs = 0, desc = "run linter" })
+      -- end
+
+      if v.test ~= nil then
+      end
+
+      if v.make ~= nil then
+      end
+
+      if v.misc ~= nil then
+        v.misc()
+      end
+
+      -- for Tcheck, maybe use extcmd_to_scratch?
+      -- keymap("<leader>;c", function() extcmd_to_scratch({ "ruff", "check", fn.expand("%") }, true) end)
+    end,
+  })
+end
+
+local function create_lsp_config(ls_server, ls_config)
+  vim.lsp.enable(ls_server)
+  vim.lsp.config(ls_server, ls_config)
+end
+
+local function set_hl(hl_group, hl_config)
+  vim.api.nvim_set_hl(0, hl_group, hl_config)
+end
+
+local function pumvisible()
+  return tonumber(vim.fn.pumvisible()) ~= 0
+end
+
+local function feedkeys(keys)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(keys, true, false, true), "n", true)
+end
+
+local function find_root(additional_markers)
+  return vim.fs.root(0, { additional_markers, ".git/" })
+end
+
+local function is_git_repo()
+  _ = vim.fn.system("git rev-parse --is-inside-work-tree")
+  return vim.v.shell_error == 0
 end
 
 local function file_search()
@@ -254,7 +294,7 @@ vim.opt.cursorlineopt = "screenline"
 vim.opt.scrolloff = 5
 vim.opt.laststatus = 3
 
-vim.opt.foldenable = true
+vim.opt.foldenable = false
 vim.opt.foldlevel = 99
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
@@ -343,13 +383,13 @@ vim
 
     ["<leader>gd"] = {
       function()
-        extcmd_to_scratch({ "git", "diff" })
+        extcmd_to_scratch({ "git", "diff" }, false)
       end,
       "send git diff to scratch",
     },
     ["<leader>gb"] = {
       function()
-        extcmd_to_scratch({ "git", "blame", vim.fn.expand("%") })
+        extcmd_to_scratch({ "git", "blame", vim.fn.expand("%") }, false)
       end,
       "send git blame to scratch",
     },
@@ -471,39 +511,59 @@ vim
 -- >>> FT {{{2
 vim
   .iter({
-    ["c|cpp"] = { tform = "clang-format -i" },
+    ["c|cpp"] = { format = "clang-format -i" },
     ["go"] = {
       misc = function()
         vim.bo.expandtab = false
       end,
     },
     ["python"] = {
-      tform = function()
-        return "poetry --project " .. find_root({ "pyproject.toml" }) .. " run black"
+      format = function()
+        return "poetry --project " .. find_root(roots.python) .. "run black"
       end,
     },
-    ["rust"] = { tform = "cargo fmt" },
-    ["zig"] = { tform = "zig fmt" },
+    ["rust"] = {
+      format = "cargo fmt",
+      check = function()
+        return {
+          cmd = { "cargo", "check" },
+          cwd = find_root(roots.rust),
+        }
+      end,
+      -- test = function()
+      --   return {
+      --     cmd = { "cargo", "test" },
+      --     cwd = find_root(roots.rust)
+      --   }
+      -- end,
+      -- make = function()
+      --   return {
+      --     cmd = { "cargo", "build" },
+      --     cwd = find_root(roots.rust)
+      --   }
+      -- end,
+    },
+    ["zig"] = { format = "zig fmt" },
 
-    ["bash|sh"] = { tform = "shellharden" },
+    ["bash|sh"] = { format = "shellharden" },
 
-    ["lua"] = { tform = "stylua" },
-    ["nix"] = { tform = "nixpkgs-fmt" },
+    ["lua"] = { format = "stylua" },
+    ["nix"] = { format = "nixpkgs-fmt" },
 
     ["javascript|javascriptreact|typescript|typescriptreact"] = {
-      tform = "prettier -w",
+      format = "prettier -w",
     },
     ["html|astro"] = {
-      tform = "prettier -w",
+      format = "prettier -w",
     },
     ["css|scss"] = {
-      tform = "prettier -w",
+      format = "prettier -w",
     },
     ["json|jsonc"] = {
-      tform = "prettier -w",
+      format = "prettier -w",
     },
     ["markdown"] = {
-      tform = "prettier -w",
+      format = "prettier -w",
       misc = function()
         create_keymap("<cr>", {
           function()
@@ -539,7 +599,10 @@ vim
         vim.bo.textwidth = 72
         vim.wo.colorcolumn = "+0"
         vim.wo.spell = true
-        create_keymap("<c-c>", { ":wq<cr>", { desc = "write commit", buffer = vim.api.nvim_get_current_buf() }, { "n", "i" } })
+        create_keymap(
+          "<c-c>",
+          { ":wq<cr>", { desc = "write commit", buffer = vim.api.nvim_get_current_buf() }, { "n", "i" } }
+        )
       end,
     },
   })
@@ -681,15 +744,7 @@ vim
     pyright = {
       cmd = { "pyright-langserver", "--stdio" },
       filetypes = { "python" },
-      root_markers = {
-        "pyproject.toml",
-        "setup.py",
-        "setup.cfg",
-        "requirements.txt",
-        "Pipfile",
-        "pyrightconfig.json",
-        ".git",
-      },
+      root_markers = roots.python,
       settings = {
         python = {
           analysis = {
@@ -748,7 +803,7 @@ vim
     rust_analyzer = {
       cmd = { "rust-analyzer" },
       filetypes = { "rust" },
-      root_markers = { "Cargo.toml", ".git" },
+      root_markers = roots.rust,
     },
   })
   :each(create_lsp_config)
