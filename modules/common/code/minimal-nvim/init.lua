@@ -825,9 +825,9 @@ local function cs_gruvsimple()
   local cyan = "#89b482"
   local white = "#ddc7a1"
 
-  local bg_0 = "#1d2021"
   local fg_0 = "#d4be98"
   local fg_1 = "#d4be98"
+  local bg_0 = "#1d2021"
   local bg_1 = black
   local bg_2 = "#5a524c"
   local bg_3 = "#7c6f64"
@@ -978,6 +978,7 @@ local function cs_gruvsimple()
       ["@lsp.type.comment"] = {},
       ["@markup.heading"] = {},
       ["@markup.link"] = {},
+      ["@markup.raw.markdown_inline"] = { bg = bg_1, fg = fg_0, italic = true},
 
       -- HTML (many markdown things link to HTML)
       htmlH1 = { fg = red, bold = true },
