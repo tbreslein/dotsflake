@@ -26,7 +26,7 @@ in
       settings =
         let
           session = "${pkgs.hyprland}/bin/Hyprland";
-          tuigreet = "${pkgs.greetd.tuigreet}/bin/tuigreet";
+          tuigreet = "${pkgs.tuigreet}/bin/tuigreet";
         in
         {
           initial_session = {
