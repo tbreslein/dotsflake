@@ -5,10 +5,8 @@
   boot.kernelPackages = pkgs.linuxPackages_cachyos;
 
   my-system = {
-    ghostty.enable = false;
-    alacritty.enable = false;
-    nixos.foot.enable = true;
-    terminal = "foot";
+    alacritty.enable = true;
+    terminal = "alacritty";
     terminal-font-size = 17;
 
     has-gui = true;
