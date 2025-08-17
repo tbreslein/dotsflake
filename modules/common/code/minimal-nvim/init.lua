@@ -3,13 +3,6 @@ vim.g.maplocalleader = ","
 
 -- >>> PREAMBLE {{{3
 vim.g.uname = vim.uv.os_uname().sysname
-vim.g.is_darwin = vim.g.uname == "Darwin"
-vim.g.is_linux = vim.g.uname == "Linux"
-if vim.g.is_darwin then
-  vim.g.open_cmd = "open"
-else
-  vim.g.open_cmd = "xdg-open"
-end
 
 local roots = vim
   .iter({
@@ -162,51 +155,25 @@ local function create_aucmd(au)
   })
 end
 
-local ft_group = vim.api.nvim_create_augroup("UserFT", {})
+local my_ft_settings = {}
 
-local function create_ft_aucmd(k, v)
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = vim.split(k, "|", { trimempty = true }),
-    group = ft_group,
-    callback = function()
-      if v.format ~= nil then
-        local cmd = ":silent ! "
-        if type(v.format) == "function" then
-          cmd = cmd .. v.format()
-        else
-          cmd = cmd .. v.format
-        end
-        vim.api.nvim_create_user_command("Tform", function(opts)
-          vim.cmd(cmd .. " " .. opts.fargs[1])
-        end, { nargs = 1, desc = "run formatter" })
-      end
+local function setup_filetypes(k, v)
+  local patterns = vim.split(k, "|", { trimempty = true })
+  if v.misc ~= nil then
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = patterns,
+      callback = v.misc,
+    })
+  end
 
-      -- if v.check ~= nil then
-      --   local cmd_str = ""
-      --   if type(v.check) == "function" then
-      --     cmd_str = cmd_str .. v.check()
-      --   else
-      --     cmd_str = cmd_str .. v.check
-      --   end
-      --   vim.api.nvim_create_user_command("Tcheck", function()
-      --     extcmd_to_scratch(cmd_str, true)
-      --   end, { nargs = 0, desc = "run linter" })
-      -- end
-
-      if v.test ~= nil then
-      end
-
-      if v.make ~= nil then
-      end
-
-      if v.misc ~= nil then
-        v.misc()
-      end
-
-      -- for Tcheck, maybe use extcmd_to_scratch?
-      -- keymap("<leader>;c", function() extcmd_to_scratch({ "ruff", "check", fn.expand("%") }, true) end)
-    end,
-  })
+  for _, pat in ipairs(patterns) do
+    my_ft_settings[pat] = {
+      format = v.format,
+      check = v.check,
+      test = v.test,
+      build = v.build,
+    }
+  end
 end
 
 local function create_lsp_config(ls_server, ls_config)
@@ -576,7 +543,7 @@ vim
                 local re = vim.regex([[^\(https\=:\/\/\|www.\)]])
                 local x, _ = re:match_str(dest[1])
                 if x ~= nil then
-                  vim.system({ vim.g.open_cmd, dest[1] })
+                  vim.cmd("Open " .. dest[1])
                 else
                   vim.cmd("e " .. dest[1])
                 end
@@ -606,7 +573,20 @@ vim
       end,
     },
   })
-  :each(create_ft_aucmd)
+  :each(setup_filetypes)
+
+vim.api.nvim_create_user_command("Tform", function(opts)
+  local format = my_ft_settings[vim.bo.filetype].format
+  if format ~= nil then
+    local cmd = ":silent ! "
+    if type(format) == "function" then
+      cmd = cmd .. format()
+    else
+      cmd = cmd .. format
+    end
+    vim.cmd(cmd .. " " .. opts.fargs[1])
+  end
+end, { nargs = 1, desc = "run formatter" })
 
 -- >>> USERCMDS {{2
 vim
@@ -978,7 +958,7 @@ local function cs_gruvsimple()
       ["@lsp.type.comment"] = {},
       ["@markup.heading"] = {},
       ["@markup.link"] = {},
-      ["@markup.raw.markdown_inline"] = { bg = bg_1, fg = fg_0, italic = true},
+      ["@markup.raw.markdown_inline"] = { bg = bg_1, fg = fg_0, italic = true },
 
       -- HTML (many markdown things link to HTML)
       htmlH1 = { fg = red, bold = true },
