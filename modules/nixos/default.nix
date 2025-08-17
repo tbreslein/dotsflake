@@ -22,6 +22,7 @@ in
   config = {
     environment.systemPackages = with pkgs; [
       foot.terminfo
+      gcc
     ];
 
     nix = {
