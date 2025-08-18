@@ -278,14 +278,14 @@ vim
     ["<leader>Y"] = { [["+yg$]], "yank till end of line into clipboard" },
     ["<leader>p"] = { [["+p]], "paste from clipboard", { "n", "v" } },
     ["J"] = { "mzJ`z", "better join" },
-    ["<m-j>"] = {
-      n = { ":m .+1<cr>==", "move line down" },
-      v = { ":m '>+1<cr>gv=gv", "move block down" },
-    },
-    ["<m-k>"] = {
-      n = { ":m .-2<cr>==", "move line down" },
-      v = { ":m '<-2<cr>gv=gv", "move block down" },
-    },
+    -- ["<m-j>"] = {
+    --   n = { ":m .+1<cr>==", "move line down" },
+    --   v = { ":m '>+1<cr>gv=gv", "move block down" },
+    -- },
+    -- ["<m-k>"] = {
+    --   n = { ":m .-2<cr>==", "move line down" },
+    --   v = { ":m '<-2<cr>gv=gv", "move block down" },
+    -- },
     ["<"] = { "<gv", "de-indent", "v" },
     [">"] = { ">gv", "indent", "v" },
     ["<c-h>"] = { "<c-w>h", "move to split left" },
