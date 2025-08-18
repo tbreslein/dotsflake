@@ -33,6 +33,8 @@
     brews = [
       "gcc"
       "node"
+      "pandoc"
+      "tectonic"
     ];
     casks = [
       "1password"

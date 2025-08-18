@@ -97,15 +97,6 @@ in
         launchanim = false;
         magnification = false;
         orientation = "bottom";
-        persistent-apps = [
-          { app = "/Applications/Spotify.app"; }
-          { app = "/Applications/Brave Browser.app"; }
-          { app = "/Applications/Alacritty.app"; }
-          { app = "/Applications/Microsoft Teams.app"; }
-          { app = "/Applications/Microsoft Outlook.app/"; }
-          { app = "/Applications/1Password.app"; }
-          { app = "/System/Applications/System Settings.app"; }
-        ];
         show-recents = false;
         tilesize = 48;
       };
