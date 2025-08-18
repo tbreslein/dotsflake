@@ -59,15 +59,30 @@ local function scratch_to_quickfix()
   vim.cmd("copen | cc")
 end
 
-local function extcmd_to_scratch(extcmd, quickfix, cwd)
+local function extcmd_to_scratch(extcmd, opts)
   local function on_exit(out)
     local output = ""
-    if #out.stderr > 0 then
-      output = out.stderr
-    elseif #out.stdout > 0 then
-      output = out.stdout
-    elseif #out.stdout == 0 and #out.stderr == 0 then
-      return
+
+    if opts.use_stdout ~= nil or opts.use_stderr ~= nil then
+      if opts.use_stdout and opts.use_stderr then
+        output = "STDOUT:\n\n" .. out.stdout .. "\n\nSTDERR:\n\n" .. out.stderr
+      elseif opts.use_stdout then
+        output = out.stdout
+      elseif opts.use_stderr then
+        output = out.stderr
+      else
+        -- TODO: notify that command exited without output
+        return
+      end
+    else
+      if #out.stderr > 0 then
+        output = out.stderr
+      elseif #out.stdout > 0 then
+        output = out.stdout
+      else
+        -- TODO: notify that command exited without output
+        return
+      end
     end
 
     vim.cmd("vnew")
@@ -76,7 +91,7 @@ local function extcmd_to_scratch(extcmd, quickfix, cwd)
     vim.bo.bufhidden = "wipe"
     vim.bo.swapfile = false
 
-    if quickfix then
+    if opts.quickfix then
       scratch_to_quickfix()
     end
   end
@@ -85,7 +100,7 @@ local function extcmd_to_scratch(extcmd, quickfix, cwd)
   -- the main thread. vim.system runs async, and in that context you cannot run
   -- things like vim.cmd and vim.api.*, because those assume that they are
   -- calleed on the main thread
-  vim.system(extcmd, { cwd = cwd, text = true }, vim.schedule_wrap(on_exit))
+  vim.system(extcmd, { cwd = opts.cwd, text = true }, vim.schedule_wrap(on_exit))
 end
 
 local function extcmd_in_floatterm(extcmd, exit_fn)
@@ -305,13 +320,13 @@ vim
 
     ["<leader>gd"] = {
       function()
-        extcmd_to_scratch({ "git", "diff" }, false)
+        extcmd_to_scratch({ "git", "diff" }, { quickfix = false })
       end,
       "send git diff to scratch",
     },
     ["<leader>gb"] = {
       function()
-        extcmd_to_scratch({ "git", "blame", vim.fn.expand("%") }, false)
+        extcmd_to_scratch({ "git", "blame", vim.fn.expand("%") }, { quickfix = false })
       end,
       "send git blame to scratch",
     },
@@ -447,24 +462,9 @@ vim
     },
     ["rust"] = {
       format = "cargo fmt",
-      lint = function()
-        return {
-          cmd = { "cargo", "check" },
-          quickfix = false -- cargo does not format qf-friendly
-        }
-      end,
-      -- test = function()
-      --   return {
-      --     cmd = { "cargo", "test" },
-      --     cwd = find_root(roots.rust)
-      --   }
-      -- end,
-      -- make = function()
-      --   return {
-      --     cmd = { "cargo", "build" },
-      --     cwd = find_root(roots.rust)
-      --   }
-      -- end,
+      lint = { "cargo", "check" },
+      test = { "cargo", "test" },
+      build = { "cargo", "build" },
     },
     ["zig"] = { format = "zig fmt" },
 
@@ -571,6 +571,8 @@ vim.api.nvim_create_user_command("Lint", function()
 
     if type(lint) == "function" then
       lint_table = lint()
+    elseif vim.islist(lint) then
+      lint_table = { cmd = lint }
     else
       lint_table = lint
     end
@@ -585,7 +587,7 @@ vim.api.nvim_create_user_command("Lint", function()
     else
       cwd = find_root(lint_table.cwd)
     end
-    extcmd_to_scratch(lint_table.cmd, lint_table.quickfix, cwd)
+    extcmd_to_scratch(lint_table.cmd, { quickfix = lint_table.quickfix, cwd = cwd })
   end
 end, { desc = "run linter" })
 
@@ -596,6 +598,8 @@ vim.api.nvim_create_user_command("Test", function()
 
     if type(test) == "function" then
       test_table = test()
+    elseif vim.islist(test) then
+      test_table = { cmd = test }
     else
       test_table = test
     end
@@ -610,7 +614,7 @@ vim.api.nvim_create_user_command("Test", function()
     else
       cwd = find_root(test_table.cwd)
     end
-    extcmd_to_scratch(test_table.cmd, test_table.quickfix, cwd)
+    extcmd_to_scratch(test_table.cmd, { quickfix = test_table.quickfix, cwd = cwd, use_stdout = true })
   end
 end, { desc = "run linter" })
 
@@ -646,7 +650,7 @@ vim
           cmd = { "rg", "--vimgrep", "--no-column", "-ne" }
         end
         vim.list_extend(cmd, { opts.args })
-        extcmd_to_scratch(cmd, not opts.bang)
+        extcmd_to_scratch(cmd, { quickfix = not opts.bang })
       end,
       {
         nargs = "+",
