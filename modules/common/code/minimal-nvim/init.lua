@@ -1,29 +1,8 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
--- >>> PREAMBLE {{{3
+-- >>> PREAMBLE
 vim.g.uname = vim.uv.os_uname().sysname
-
-local roots = vim
-  .iter({
-    c = { "makefile" },
-    python = {
-      "pyproject.toml",
-      "setup.py",
-      "setup.cfg",
-      "requirements.txt",
-      "Pipfile",
-      "pyrightconfig.json",
-    },
-    nix = { "flake.nix" },
-    rust = { "Cargo.toml" },
-    javascript = { "package.json" },
-    zig = { "build.zig" },
-  })
-  :fold({}, function(acc, k, v)
-    acc[k] = vim.list_extend(v, { ".git" })
-    return acc
-  end)
 
 local function mkdirp(dir)
   if vim.fn.isdirectory == 0 then
@@ -82,12 +61,17 @@ end
 
 local function extcmd_to_scratch(extcmd, quickfix, cwd)
   local function on_exit(out)
-    if out.stdout == nil or #out.stdout == 0 then
+    local output = ""
+    if #out.stderr > 0 then
+      output = out.stderr
+    elseif #out.stdout > 0 then
+      output = out.stdout
+    elseif #out.stdout == 0 and #out.stderr == 0 then
       return
     end
 
     vim.cmd("vnew")
-    vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(out.stdout, "\n", { trimempty = true }))
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(output, "\n", { trimempty = true }))
     vim.bo.buftype = "nofile"
     vim.bo.bufhidden = "wipe"
     vim.bo.swapfile = false
@@ -143,48 +127,6 @@ local function extcmd_in_floatterm(extcmd, exit_fn)
   })
 end
 
-local function create_command(c)
-  vim.api.nvim_create_user_command(c[1], c[2], c[3])
-end
-
-local function create_aucmd(au)
-  vim.api.nvim_create_autocmd(au.event, {
-    pattern = au.pattern,
-    group = au.group,
-    callback = au.callback,
-  })
-end
-
-local my_ft_settings = {}
-
-local function setup_filetypes(k, v)
-  local patterns = vim.split(k, "|", { trimempty = true })
-  if v.misc ~= nil then
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = patterns,
-      callback = v.misc,
-    })
-  end
-
-  for _, pat in ipairs(patterns) do
-    my_ft_settings[pat] = {
-      format = v.format,
-      check = v.check,
-      test = v.test,
-      build = v.build,
-    }
-  end
-end
-
-local function create_lsp_config(ls_server, ls_config)
-  vim.lsp.enable(ls_server)
-  vim.lsp.config(ls_server, ls_config)
-end
-
-local function set_hl(hl_group, hl_config)
-  vim.api.nvim_set_hl(0, hl_group, hl_config)
-end
-
 local function pumvisible()
   return tonumber(vim.fn.pumvisible()) ~= 0
 end
@@ -218,8 +160,8 @@ local function file_search()
   end)
 end
 
--- >>> SETTINGS {{{1
--- >>> PACK {{{2
+-- >>> SETTINGS
+-- >>> PACK
 vim.pack.add({
   "https://github.com/nvim-treesitter/nvim-treesitter",
   "https://github.com/nvim-treesitter/nvim-treesitter-context",
@@ -234,7 +176,7 @@ require("nvim-treesitter.configs").setup({
 })
 require("treesitter-context").setup({ multiline_threshold = 2 })
 
--- >>> OPTS {{{2
+-- >>> OPTS
 vim.opt.mouse = "a"
 local tabstop = 4
 vim.opt.tabstop = tabstop
@@ -261,18 +203,31 @@ vim.opt.cursorlineopt = "screenline"
 vim.opt.scrolloff = 5
 vim.opt.laststatus = 3
 
-vim.opt.foldenable = false
-vim.opt.foldlevel = 99
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.opt.foldtext = ""
-vim.opt.foldcolumn = "0"
--- vim.opt.fillchars:append({ fold = " " })
-
 vim.g.netrw_banner = 0
 -- vim.g.netrw_browse_split = 4
 -- vim.g.netrw_altv = 1
 vim.g.netrw_liststyle = 3
+
+local roots = vim
+  .iter({
+    c = { "makefile" },
+    python = {
+      "pyproject.toml",
+      "setup.py",
+      "setup.cfg",
+      "requirements.txt",
+      "Pipfile",
+      "pyrightconfig.json",
+    },
+    nix = { "flake.nix" },
+    rust = { "Cargo.toml" },
+    javascript = { "package.json" },
+    zig = { "build.zig" },
+  })
+  :fold({}, function(acc, k, v)
+    acc[k] = vim.list_extend(v, { ".git" })
+    return acc
+  end)
 
 -- >>> COMPLETION
 vim.opt.completeopt = { "fuzzy", "menu", "menuone", "noselect", "noinsert", "popup", "preview" }
@@ -282,7 +237,7 @@ vim.opt.pumwidth = 45
 vim.g.grepprg = "git grep -nE"
 vim.diagnostic.config({ virtual_text = { current_line = true } })
 
--- >>> KEYMAPS {{{2
+-- >>> KEYMAPS
 vim
   .iter({
     ["<leader>w"] = { ":w<cr>", "write" },
@@ -381,9 +336,9 @@ vim
       "grep pattern and send to scratch",
     },
 
-    ["<leader>;f"] = { ":Tform %<cr>", "run formatter" },
-    ["<leader>;t"] = { ":Ttest<cr>", "run tests" },
-    ["<leader>;c"] = { ":Tcheck<cr>", "run lints" },
+    ["<leader>;f"] = { ":Format %<cr>", "run formatter" },
+    ["<leader>;t"] = { ":Test<cr>", "run tests" },
+    ["<leader>;c"] = { ":Lint<cr>", "run lints" },
     ["<leader>;m"] = { ":make<cr>", "run make" },
 
     ["<leader>mp"] = { "mP", "mark P" },
@@ -475,7 +430,8 @@ vim
   })
   :each(create_keymap)
 
--- >>> FT {{{2
+-- >>> FT
+local my_ft_settings = {}
 vim
   .iter({
     ["c|cpp"] = { format = "clang-format -i" },
@@ -491,10 +447,10 @@ vim
     },
     ["rust"] = {
       format = "cargo fmt",
-      check = function()
+      lint = function()
         return {
           cmd = { "cargo", "check" },
-          cwd = find_root(roots.rust),
+          quickfix = false -- cargo does not format qf-friendly
         }
       end,
       -- test = function()
@@ -532,6 +488,8 @@ vim
     ["markdown"] = {
       format = "prettier -w",
       misc = function()
+        vim.wo.spell = true
+        vim.wo.linebreak = true
         create_keymap("<cr>", {
           function()
             local ts_utils = require("nvim-treesitter.ts_utils")
@@ -573,9 +531,26 @@ vim
       end,
     },
   })
-  :each(setup_filetypes)
+  :each(function(k, v)
+    local patterns = vim.split(k, "|", { trimempty = true })
+    if v.misc ~= nil then
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = patterns,
+        callback = v.misc,
+      })
+    end
 
-vim.api.nvim_create_user_command("Tform", function(opts)
+    for _, pat in ipairs(patterns) do
+      my_ft_settings[pat] = {
+        format = v.format,
+        lint = v.lint,
+        test = v.test,
+        build = v.build,
+      }
+    end
+  end)
+
+vim.api.nvim_create_user_command("Format", function(opts)
   local format = my_ft_settings[vim.bo.filetype].format
   if format ~= nil then
     local cmd = ":silent ! "
@@ -588,7 +563,58 @@ vim.api.nvim_create_user_command("Tform", function(opts)
   end
 end, { nargs = 1, desc = "run formatter" })
 
--- >>> USERCMDS {{2
+-- TODO: the contents of the Lint and Test user command are almost identical
+vim.api.nvim_create_user_command("Lint", function()
+  local lint = my_ft_settings[vim.bo.filetype].lint
+  if lint ~= nil then
+    local lint_table = {}
+
+    if type(lint) == "function" then
+      lint_table = lint()
+    else
+      lint_table = lint
+    end
+
+    local cwd = ""
+    if lint_table.cwd == nil then
+      if roots[vim.bo.filetype] == nil then
+        cwd = vim.fn.expand("%:p:h")
+      else
+        cwd = find_root(roots[vim.bo.filetype])
+      end
+    else
+      cwd = find_root(lint_table.cwd)
+    end
+    extcmd_to_scratch(lint_table.cmd, lint_table.quickfix, cwd)
+  end
+end, { desc = "run linter" })
+
+vim.api.nvim_create_user_command("Test", function()
+  local test = my_ft_settings[vim.bo.filetype].test
+  if test ~= nil then
+    local test_table = {}
+
+    if type(test) == "function" then
+      test_table = test()
+    else
+      test_table = test
+    end
+
+    local cwd = ""
+    if test_table.cwd == nil then
+      if roots[vim.bo.filetype] == nil then
+        cwd = vim.fn.expand("%:p:h")
+      else
+        cwd = find_root(roots[vim.bo.filetype])
+      end
+    else
+      cwd = find_root(test_table.cwd)
+    end
+    extcmd_to_scratch(test_table.cmd, test_table.quickfix, cwd)
+  end
+end, { desc = "run linter" })
+
+-- >>> USERCMDS
 vim
   .iter({
     {
@@ -629,9 +655,11 @@ vim
       },
     },
   })
-  :each(create_command)
+  :each(function(c)
+    vim.api.nvim_create_user_command(c[1], c[2], c[3])
+  end)
 
--- >>> AUTOCOMMANDS {{{2
+-- >>> AUTOCOMMANDS
 local user_group = vim.api.nvim_create_augroup("UserConfig", {})
 vim
   .iter({
@@ -681,15 +709,6 @@ vim
       end,
     },
     {
-      event = "BufEnter",
-      group = user_group,
-      pattern = "*nvim/init.lua",
-      callback = function()
-        vim.o.foldmethod = "marker"
-        vim.o.foldlevel = 2
-      end,
-    },
-    {
       event = "LspAttach",
       callback = function(ev)
         -- most of this was lifted from this gist:
@@ -716,9 +735,15 @@ vim
       end,
     },
   })
-  :each(create_aucmd)
+  :each(function(au)
+    vim.api.nvim_create_autocmd(au.event, {
+      pattern = au.pattern,
+      group = au.group,
+      callback = au.callback,
+    })
+  end)
 
--- >>> LSP {{2
+-- >>> LSP
 vim
   .iter({
     pyright = {
@@ -786,9 +811,12 @@ vim
       root_markers = roots.rust,
     },
   })
-  :each(create_lsp_config)
+  :each(function(ls_server, ls_config)
+    vim.lsp.enable(ls_server)
+    vim.lsp.config(ls_server, ls_config)
+  end)
 
--- >>> COLORS {{{3
+-- >>> COLORS
 local function cs_gruvsimple()
   if vim.g.highlights_loaded then
     return
@@ -984,7 +1012,9 @@ local function cs_gruvsimple()
       markdownListMarker = { link = "Keyword" },
       markdownOrderedListMarker = { link = "Keyword" },
     })
-    :each(set_hl)
+    :each(function(hl_group, hl_config)
+      vim.api.nvim_set_hl(0, hl_group, hl_config)
+    end)
 
   vim.g.highlights_loaded = true
 end
