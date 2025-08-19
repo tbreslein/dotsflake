@@ -449,7 +449,7 @@ vim
 local my_ft_settings = {}
 vim
   .iter({
-    ["c|cpp"] = { format = "clang-format -i" },
+    ["c|cpp"] = { format = { "clang-format", "-i" } },
     ["go"] = {
       misc = function()
         vim.bo.expandtab = false
@@ -457,7 +457,9 @@ vim
     },
     ["python"] = {
       format = function()
-        return "poetry --project " .. find_root(roots.python) .. " run black"
+        return {
+          cmd = { "poetry", "--project", find_root(roots.python), "run", "black" },
+        }
       end,
     },
     ["rust"] = {
@@ -466,27 +468,27 @@ vim
       test = { "cargo", "test" },
       build = { "cargo", "build" },
     },
-    ["zig"] = { format = "zig fmt" },
+    ["zig"] = { format = { "zig", "fmt" } },
 
-    ["bash|sh"] = { format = "shellharden" },
+    ["bash|sh"] = { format = { "shellharden" } },
 
     ["lua"] = { format = { "stylua" } },
-    ["nix"] = { format = "nixpkgs-fmt" },
+    ["nix"] = { format = { "nixpkgs-fmt" } },
 
     ["javascript|javascriptreact|typescript|typescriptreact"] = {
-      format = "prettier -w",
+      format = { "prettier", "-w" },
     },
     ["html|astro"] = {
-      format = "prettier -w",
+      format = { "prettier", "-w" },
     },
     ["css|scss"] = {
-      format = "prettier -w",
+      format = { "prettier", "-w" },
     },
     ["json|jsonc"] = {
-      format = "prettier -w",
+      format = { "prettier", "-w" },
     },
     ["markdown"] = {
-      format = "prettier -w",
+      format = { "prettier", "-w" },
       misc = function()
         vim.wo.spell = true
         vim.wo.linebreak = true
