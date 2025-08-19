@@ -351,7 +351,7 @@ vim
       "grep pattern and send to scratch",
     },
 
-    ["<leader>;f"] = { ":Format %<cr>", "run formatter" },
+    ["<leader>;f"] = { ":Format<cr>", "run formatter" },
     ["<leader>;t"] = { ":Test<cr>", "run tests" },
     ["<leader>;c"] = { ":Lint<cr>", "run lints" },
     ["<leader>;m"] = { ":make<cr>", "run make" },
@@ -400,7 +400,7 @@ vim
       "trigger/prev completion",
       "i",
     },
-    ["<C-u>"] = { "<C-x><C-n>", { desc = "Buffer completions" }, "i" },
+    ["<C-l>"] = { "<C-x><C-n>", { desc = "Buffer completions" }, "i" },
     ["<C-f>"] = { "<C-x><C-f>", { desc = "Path completions" }, "i" },
     ["grc"] = { vim.diagnostic.setqflist, "setqflist" },
     ["grC"] = { vim.diagnostic.setloclist, "setloclist" },
@@ -461,7 +461,7 @@ vim
       end,
     },
     ["rust"] = {
-      format = "cargo fmt",
+      format = { cmd = { "cargo", "fmt" }, project_wide = true },
       lint = { "cargo", "check" },
       test = { "cargo", "test" },
       build = { "cargo", "build" },
@@ -470,7 +470,7 @@ vim
 
     ["bash|sh"] = { format = "shellharden" },
 
-    ["lua"] = { format = "stylua" },
+    ["lua"] = { format = { "stylua" } },
     ["nix"] = { format = "nixpkgs-fmt" },
 
     ["javascript|javascriptreact|typescript|typescriptreact"] = {
@@ -550,18 +550,36 @@ vim
     end
   end)
 
-vim.api.nvim_create_user_command("Format", function(opts)
+vim.api.nvim_create_user_command("Format", function()
   local format = my_ft_settings[vim.bo.filetype].format
   if format ~= nil then
-    local cmd = ":silent ! "
+    local cmd_table = {}
     if type(format) == "function" then
-      cmd = cmd .. format()
+      cmd_table = format()
+    elseif vim.islist(format) then
+      cmd_table = { cmd = vim.fn.deepcopy(format) }
     else
-      cmd = cmd .. format
+      cmd_table = format
     end
-    vim.cmd(cmd .. " " .. opts.fargs[1])
+
+    if not cmd_table.project_wide then
+      cmd_table.cmd = vim.list_extend(cmd_table.cmd, { vim.fn.expand("%:p") })
+    end
+
+    if cmd_table.cwd == nil then
+      if roots[vim.bo.filetype] == nil then
+        cmd_table.cwd = vim.fn.expand("%:p:h")
+      else
+        cmd_table.cwd = find_root(roots[vim.bo.filetype])
+      end
+    else
+      cmd_table.cwd = find_root(cmd_table.cwd)
+    end
+
+    vim.system(cmd_table.cmd, { cwd = cmd_table.cwd }):wait()
+    vim.cmd("e")
   end
-end, { nargs = 1, desc = "run formatter" })
+end, { desc = "run formatter" })
 
 -- TODO: the contents of the Lint and Test user command are almost identical
 vim.api.nvim_create_user_command("Lint", function()
@@ -587,6 +605,7 @@ vim.api.nvim_create_user_command("Lint", function()
     else
       cwd = find_root(lint_table.cwd)
     end
+
     extcmd_to_scratch(lint_table.cmd, { quickfix = lint_table.quickfix, cwd = cwd })
   end
 end, { desc = "run linter" })
