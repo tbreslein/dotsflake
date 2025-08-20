@@ -101,6 +101,14 @@ in
               "if".app-id = "com.microsoft.Outlook";
               run = "move-node-to-workspace 4";
             }
+            {
+              "if".app-id = "com.deezer.deezer-desktop";
+              run = "move-node-to-workspace 5";
+            }
+            {
+              "if".app-id = "com.apple.Music";
+              run = "move-node-to-workspace 5";
+            }
           ];
         };
       };

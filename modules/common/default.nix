@@ -47,6 +47,7 @@ in
       rm-improved
       htop
       caligula
+      silver-searcher
 
       alacritty.terminfo
       (

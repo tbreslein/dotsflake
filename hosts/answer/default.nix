@@ -41,6 +41,7 @@
       "anki"
       config.my-system.terminal
       "brave-browser"
+      "deezer"
     ];
   };
 
