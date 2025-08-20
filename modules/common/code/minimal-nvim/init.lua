@@ -38,9 +38,9 @@ local function scratch_to_quickfix()
   local items = {}
   for _, line in ipairs(vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)) do
     if line ~= "" then
-      local filename, lnum, text = line:match("^([^:]+):(%d+):(.*)$")
+      -- matches filename:line:col:text
+      local filename, lnum, _, text = line:match("^([^:]+):(%d+):(%d+):(.*)$")
       if filename and lnum then
-        -- used for grep filename:line:text
         table.insert(items, { filename = filename, lnum = tonumber(lnum), text = text })
       else
         lnum, text = line:match("^(%d+):(.*)$")
@@ -71,7 +71,8 @@ local function extcmd_to_scratch(extcmd, opts)
       elseif opts.use_stderr then
         output = out.stderr
       else
-        -- TODO: notify that command exited without output
+        local cmd_str = vim.iter(extcmd):join(" ")
+        vim.notify_once("command exited without output: " .. cmd_str, vim.log.levels.WARN)
         return
       end
     else
@@ -80,7 +81,8 @@ local function extcmd_to_scratch(extcmd, opts)
       elseif #out.stdout > 0 then
         output = out.stdout
       else
-        -- TODO: notify that command exited without output
+        local cmd_str = vim.iter(extcmd):join(" ")
+        vim.notify_once("command exited without output: " .. cmd_str, vim.log.levels.WARN)
         return
       end
     end
@@ -249,7 +251,7 @@ vim.opt.completeopt = { "fuzzy", "menu", "menuone", "noselect", "noinsert", "pop
 vim.opt.pumheight = 20
 vim.opt.pumwidth = 45
 
-vim.g.grepprg = "git grep -nE"
+vim.g.grepprg = "ag --hidden --vimgrep"
 vim.diagnostic.config({ virtual_text = { current_line = true } })
 
 -- >>> KEYMAPS
@@ -556,12 +558,13 @@ vim.api.nvim_create_user_command("Format", function()
   local format = my_ft_settings[vim.bo.filetype].format
   if format ~= nil then
     local cmd_table = {}
+
     if type(format) == "function" then
       cmd_table = format()
     elseif vim.islist(format) then
       cmd_table = { cmd = vim.fn.deepcopy(format) }
     else
-      cmd_table = format
+      cmd_table = vim.fn.deepcopy(format)
     end
 
     if not cmd_table.project_wide then
@@ -578,7 +581,10 @@ vim.api.nvim_create_user_command("Format", function()
       cmd_table.cwd = find_root(cmd_table.cwd)
     end
 
-    vim.system(cmd_table.cmd, { cwd = cmd_table.cwd }):wait()
+    local out = vim.system(cmd_table.cmd, { cwd = cmd_table.cwd }):wait()
+    if out.stderr then
+      vim.notify_once(out.stderr, vim.log.levels.ERROR)
+    end
     vim.cmd("e")
   end
 end, { desc = "run formatter" })
@@ -592,9 +598,9 @@ vim.api.nvim_create_user_command("Lint", function()
     if type(lint) == "function" then
       lint_table = lint()
     elseif vim.islist(lint) then
-      lint_table = { cmd = lint }
+      lint_table = { cmd = vim.fn.deepcopy(lint) }
     else
-      lint_table = lint
+      lint_table = vim.fn.deepcopy(lint)
     end
 
     local cwd = ""
@@ -620,9 +626,9 @@ vim.api.nvim_create_user_command("Test", function()
     if type(test) == "function" then
       test_table = test()
     elseif vim.islist(test) then
-      test_table = { cmd = test }
+      test_table = { cmd = vim.fn.deepcopy(test) }
     else
-      test_table = test
+      test_table = vim.fn.deepcopy(test)
     end
 
     local cwd = ""
@@ -664,14 +670,7 @@ vim
     {
       "Tgrep",
       function(opts)
-        local cmd = {}
-        if is_git_repo() then
-          cmd = { "git", "grep", "-nE" }
-        else
-          cmd = { "rg", "--vimgrep", "--no-column", "-ne" }
-        end
-        vim.list_extend(cmd, { opts.args })
-        extcmd_to_scratch(cmd, { quickfix = not opts.bang })
+        extcmd_to_scratch({ "ag", "--hidden", "--vimgrep", opts.args }, { quickfix = not opts.bang })
       end,
       {
         nargs = "+",
