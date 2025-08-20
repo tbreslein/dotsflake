@@ -3,6 +3,7 @@ vim.g.maplocalleader = ","
 
 -- >>> PREAMBLE
 vim.g.uname = vim.uv.os_uname().sysname
+local notif_ring_buffer = vim.ringbuf(36)
 
 local function mkdirp(dir)
   if vim.fn.isdirectory == 0 then
@@ -153,7 +154,18 @@ local function feedkeys(keys)
 end
 
 local function find_root(additional_markers)
-  return vim.fs.root(0, { additional_markers, ".git/" })
+  local markers = {}
+  if additional_markers ~= nil then
+    markers = { additional_markers, ".git/" }
+  else
+    markers = { ".git/" }
+  end
+
+  local r = vim.fs.root(0, markers)
+  if r == nil then
+    r = vim.fn.expand("%:p")
+  end
+  return r
 end
 
 local function is_git_repo()
@@ -168,7 +180,7 @@ local function file_search()
   else
     extcmd = "find . -type f"
   end
-  extcmd_in_floatterm(extcmd .. " | fzf --height=12 --reverse --border=none", function(stdout)
+  extcmd_in_floatterm(extcmd .. " | fzf --height=12 --reverse --style=minimal --color=bw", function(stdout)
     local selected, _ = stdout:gsub("\n", "")
     if #selected > 0 then
       vim.cmd("bd!")
@@ -236,6 +248,7 @@ local roots = vim
       "Pipfile",
       "pyrightconfig.json",
     },
+    lua = { ".luacheckrc" },
     nix = { "flake.nix" },
     rust = { "Cargo.toml" },
     javascript = { "package.json" },
@@ -280,14 +293,8 @@ vim
     ["<leader>Y"] = { [["+yg$]], "yank till end of line into clipboard" },
     ["<leader>p"] = { [["+p]], "paste from clipboard", { "n", "v" } },
     ["J"] = { "mzJ`z", "better join" },
-    -- ["<m-j>"] = {
-    --   n = { ":m .+1<cr>==", "move line down" },
-    --   v = { ":m '>+1<cr>gv=gv", "move block down" },
-    -- },
-    -- ["<m-k>"] = {
-    --   n = { ":m .-2<cr>==", "move line down" },
-    --   v = { ":m '<-2<cr>gv=gv", "move block down" },
-    -- },
+    ["<m-j>"] = { ":m '>+1<cr>gv=gv", "move block down" },
+    ["<m-k>"] = { ":m '<-2<cr>gv=gv", "move block down" },
     ["<"] = { "<gv", "de-indent", "v" },
     [">"] = { ">gv", "indent", "v" },
     ["<c-h>"] = { "<c-w>h", "move to split left" },
@@ -318,7 +325,7 @@ vim
 
     ["<leader>fp"] = { ":Explore<cr>", "netrw" },
     ["<leader>ff"] = { file_search, "file search" },
-    ["<leader>sx"] = { scratch_to_quickfix, "dump buffer content to quickfix" },
+    ["<leader>X"] = { scratch_to_quickfix, "dump buffer content to quickfix" },
 
     ["<leader>gd"] = {
       function()
@@ -332,7 +339,8 @@ vim
       end,
       "send git blame to scratch",
     },
-    ["<leader>sf"] = {
+
+    ["<leader>sr"] = {
       function()
         vim.ui.input({ prompt = "> " }, function(pat)
           if pat then
@@ -340,7 +348,7 @@ vim
           end
         end)
       end,
-      "grep pattern and send to qf",
+      "Search Recursively",
     },
     ["<leader>ss"] = {
       function()
@@ -350,7 +358,17 @@ vim
           end
         end)
       end,
-      "grep pattern and send to scratch",
+      "Search into Scratch",
+    },
+    ["<leader>sf"] = {
+      function()
+        vim.ui.input({ prompt = "> " }, function(pat)
+          if pat then
+            vim.cmd("Fgrep " .. pat)
+          end
+        end)
+      end,
+      "Search across fil",
     },
 
     ["<leader>;f"] = { ":Format<cr>", "run formatter" },
@@ -444,6 +462,27 @@ vim
       { "i", "s" },
     },
     ["<BS>"] = { "<C-o>s", "remove snippet placeholder", "s" },
+    ["<leader>N"] = {
+      function()
+        local lines = {}
+        for l in notif_ring_buffer do
+          lines = vim.list_extend(lines, { l })
+        end
+
+        -- NOTE: iterating over a ring buffer clears it, so we need to
+        -- repopulate it now
+        for _, l in ipairs(lines) do
+          notif_ring_buffer:push(l)
+        end
+
+        vim.cmd("vnew")
+        vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+        vim.bo.buftype = "nofile"
+        vim.bo.bufhidden = "wipe"
+        vim.bo.swapfile = false
+      end,
+      "print notification ring buffer",
+    },
   })
   :each(create_keymap)
 
@@ -474,7 +513,13 @@ vim
 
     ["bash|sh"] = { format = { "shellharden" } },
 
-    ["lua"] = { format = { "stylua" } },
+    ["lua"] = {
+      format = { "stylua" },
+      lint = {
+        cmd = { "luacheck", "--formatter", "plain", "." },
+        quickfix = false,
+      },
+    },
     ["nix"] = { format = { "nixpkgs-fmt" } },
 
     ["javascript|javascriptreact|typescript|typescriptreact"] = {
@@ -572,18 +617,17 @@ vim.api.nvim_create_user_command("Format", function()
     end
 
     if cmd_table.cwd == nil then
-      if roots[vim.bo.filetype] == nil then
-        cmd_table.cwd = vim.fn.expand("%:p:h")
-      else
-        cmd_table.cwd = find_root(roots[vim.bo.filetype])
-      end
+      cmd_table.cwd = find_root(roots[vim.bo.filetype])
     else
       cmd_table.cwd = find_root(cmd_table.cwd)
     end
 
     local out = vim.system(cmd_table.cmd, { cwd = cmd_table.cwd }):wait()
+    if out.stdout then
+      vim.notify(out.stderr, vim.log.levels.INFO)
+    end
     if out.stderr then
-      vim.notify_once(out.stderr, vim.log.levels.ERROR)
+      vim.notify(out.stderr, vim.log.levels.ERROR)
     end
     vim.cmd("e")
   end
@@ -614,6 +658,7 @@ vim.api.nvim_create_user_command("Lint", function()
       cwd = find_root(lint_table.cwd)
     end
 
+    vim.notify("Async running command:\n" .. vim.iter(lint_table.cmd):join(" "), vim.log.levels.INFO)
     extcmd_to_scratch(lint_table.cmd, { quickfix = lint_table.quickfix, cwd = cwd })
   end
 end, { desc = "run linter" })
@@ -673,8 +718,19 @@ vim
         extcmd_to_scratch({ "ag", "--hidden", "--vimgrep", opts.args }, { quickfix = not opts.bang })
       end,
       {
-        nargs = "+",
-        desc = "format file",
+        nargs = 1,
+        desc = "grep across project",
+        bang = true,
+      },
+    },
+    {
+      "Fgrep",
+      function(opts)
+        extcmd_to_scratch({ "ag", opts.fargs[1], vim.fn.expand("%") }, { quickfix = not opts.bang })
+      end,
+      {
+        nargs = 1,
+        desc = "grep in current file",
         bang = true,
       },
     },
@@ -738,6 +794,9 @@ vim
         -- most of this was lifted from this gist:
         -- https://gist.github.com/MariaSolOs/2e44a86f569323c478e5a078d0cf98cc#file-builtin-compl-lua
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if client ~= nil then
+          vim.notify("Lsp attached:\n" .. client.name, vim.log.levels.INFO)
+        end
 
         vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
 
@@ -841,6 +900,8 @@ vim
   end)
 
 -- >>> COLORS
+local notif_namespace = vim.api.nvim_create_namespace("notifications")
+
 local function cs_gruvsimple()
   if vim.g.highlights_loaded then
     return
@@ -1035,12 +1096,95 @@ local function cs_gruvsimple()
       markdownCodeBlock = { link = "Comment" },
       markdownListMarker = { link = "Keyword" },
       markdownOrderedListMarker = { link = "Keyword" },
+
+      NotifyBorder = { fg = accent, bg = bg_0 },
+      NotifyText = { fg = fg_0, bg = bg_0 },
     })
     :each(function(hl_group, hl_config)
       vim.api.nvim_set_hl(0, hl_group, hl_config)
+      vim.api.nvim_set_hl(notif_namespace, hl_group, hl_config)
+    end)
+
+  vim
+    .iter({
+      FloatBorder = { link = "NotifyBorder" },
+      NormalFloat = { link = "NotifyText" },
+    })
+    :each(function(hl_group, hl_config)
+      vim.api.nvim_set_hl(notif_namespace, hl_group, hl_config)
     end)
 
   vim.g.highlights_loaded = true
 end
 
 cs_gruvsimple()
+
+local current_notif_height = 0
+local function notify(msg, level, _)
+  local max_width = 36
+  local max_height = 6
+
+  local lines = vim.split(msg, "\n")
+  if #lines == 0 then
+    return
+  end
+
+  local title = nil
+
+  if level == vim.log.levels.DEBUG then
+    title = "Debug"
+  elseif level == vim.log.levels.ERROR then
+    title = "Error"
+  elseif level == vim.log.levels.INFO then
+    title = "Info"
+  elseif level == vim.log.levels.TRACE then
+    title = "Trace"
+  elseif level == vim.log.levels.WARN then
+    title = "Warn"
+  end
+
+  notif_ring_buffer:push("[" .. vim.fn.strftime("%Y-%m-%d %T") .. "|" .. title .. "] " .. msg)
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = buf })
+  vim.api.nvim_set_option_value("modifiable", true, { buf = buf })
+
+  local height = math.min(#lines, max_height)
+  local width = 0
+  for _, l in ipairs(lines) do
+    width = math.max(#l, width)
+  end
+  width = math.min(width, max_width)
+  width = math.max(width, #title + 1)
+
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+  local win = vim.api.nvim_open_win(buf, false, {
+    relative = "laststatus",
+    style = "minimal",
+    title = title,
+    focusable = false,
+    zindex = 100,
+    noautocmd = true,
+    width = width,
+    height = height,
+    anchor = "SE",
+    col = vim.o.columns,
+    row = -current_notif_height,
+  })
+
+  vim.api.nvim_win_set_hl_ns(win, notif_namespace)
+
+  local full_height = height + 3
+  current_notif_height = current_notif_height + full_height
+
+  vim.system(
+    { "sleep", "5" },
+    {},
+    vim.schedule_wrap(function()
+      vim.cmd("bd! " .. buf)
+      current_notif_height = current_notif_height - full_height
+    end)
+  )
+end
+vim.notify = notify
