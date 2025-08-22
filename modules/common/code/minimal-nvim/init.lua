@@ -265,6 +265,7 @@ vim.opt.pumheight = 20
 vim.opt.pumwidth = 45
 
 vim.g.grepprg = "ag --hidden --vimgrep"
+vim.g.grepformat = "%f:%l:%c:%m"
 vim.diagnostic.config({ virtual_text = { current_line = true } })
 
 -- >>> KEYMAPS
@@ -573,10 +574,6 @@ vim
         vim.bo.textwidth = 72
         vim.wo.colorcolumn = "+0"
         vim.wo.spell = true
-        create_keymap(
-          "<c-c>",
-          { ":wq<cr>", { desc = "write commit", buffer = vim.api.nvim_get_current_buf() }, { "n", "i" } }
-        )
       end,
     },
   })
