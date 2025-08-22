@@ -97,6 +97,7 @@ in
         shell.enableBashIntegration = true;
         shellAliases = {
           m = "make";
+          ls = "ls --color=auto";
           la = "ls -aa";
           ll = "ls -l";
           lla = "ls -la";
