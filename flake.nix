@@ -4,7 +4,6 @@
     # repositories
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     # system management
     home-manager-stable = {
@@ -43,7 +42,6 @@
   outputs =
     { nixpkgs-stable
     , nixpkgs-unstable
-    , chaotic
     , home-manager-stable
     , home-manager-unstable
     , nix-darwin
@@ -143,7 +141,7 @@
         in
         { inherit inputs pkgs-stable user-conf; };
 
-      mk-system = version: system: hostname: extraModules:
+      mk-system = version: system: hostname:
         let
           args = mk-args system hostname;
 
@@ -174,15 +172,15 @@
               ./hosts/${hostname}
               sys-module
               hm-module
-            ] ++ extraModules;
+            ];
           };
         };
     in
     {
       nixosConfigurations =
-        (mk-system "unstable" "x86_64-linux" "sol" [ chaotic.nixosModules.default ])
-        // (mk-system "unstable" "x86_64-linux" "ky" [ chaotic.nixosModules.default ])
-        // (mk-system "stable" "aarch64-linux" "elphelt" [ ]);
+        (mk-system "unstable" "x86_64-linux" "sol")
+        // (mk-system "unstable" "x86_64-linux" "ky")
+        // (mk-system "stable" "aarch64-linux" "elphelt");
 
       darwinConfigurations =
         (mk-system "unstable" "aarch64-darwin" "answer" [
