@@ -22,7 +22,6 @@
       enable = true;
       emacs.enable = true;
       neovim.enable = true;
-      neovim.nvim-config = "minimal";
       zed.enable = true;
     };
 

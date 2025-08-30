@@ -18,10 +18,7 @@
     code = {
       enable = true;
       # emacs.enable = true;
-      neovim = {
-        enable = true;
-        nvim-config = "minimal";
-      };
+      neovim.enable = true;
       zed.enable = true;
     };
     tmux.enable = true;

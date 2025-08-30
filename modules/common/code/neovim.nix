@@ -3,13 +3,7 @@ let
   cfg = config.my-system.code.neovim;
 in
 {
-  options.my-system.code.neovim = {
-    enable = lib.mkEnableOption "Enable neovim";
-    nvim-config = lib.mkOption {
-      type = lib.types.enum [ "minimal" "big" ];
-      default = "minimal";
-    };
-  };
+  options.my-system.code.neovim.enable = lib.mkEnableOption "Enable neovim";
 
   config = lib.mkIf cfg.enable {
     home-manager.users.${user-conf.name} = { config, ... }: {
@@ -33,7 +27,7 @@ in
             globals = { "vim" }
           '';
 
-          ".config/nvim".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/common/code/${cfg.nvim-config}-nvim";
+          ".config/nvim/init.lua".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/common/code/neovim.lua";
         };
       };
 
@@ -50,34 +44,6 @@ in
           enable = true;
           package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
           defaultEditor = true;
-          plugins =
-            if cfg.nvim-config == "big" then
-              (with pkgs.vimPlugins; [
-                # ui
-                nvim-treesitter.withAllGrammars
-                nvim-treesitter-context
-                gruvbox-material
-
-                # tooling
-                conform-nvim
-                nvim-lint
-
-                # navigation
-                plenary-nvim
-                telescope-nvim
-                telescope-zf-native-nvim
-
-                # lsp
-                blink-cmp
-                friendly-snippets
-                nvim-lspconfig
-
-                # dap
-                nvim-dap
-                nvim-dap-view
-                nvim-dap-go
-                nvim-dap-python
-              ]) else [];
           withNodeJs = false;
           withPython3 = false;
           withRuby = false;
