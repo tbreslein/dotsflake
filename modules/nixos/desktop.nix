@@ -24,6 +24,9 @@ in
 
     environment.systemPackages = with pkgs; [
       brave
+      vivaldi
+      vivaldi-ffmpeg-codecs
+
       kdePackages.breeze-gtk
       kdePackages.breeze-icons
       capitaine-cursors
