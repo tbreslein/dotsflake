@@ -9,19 +9,6 @@ in
     home-manager.users.${user-conf.name} = { config, ... }: {
       home = {
         shellAliases.v = "nvim";
-        packages = with pkgs; [
-          universal-ctags
-
-          stylua
-          luajitPackages.luacheck
-          lua-language-server
-          bash-language-server
-          shellharden
-          nodePackages.prettier
-          statix
-          nixpkgs-fmt
-          tree-sitter
-        ];
         file = {
           ".luacheckrc".text = ''
             globals = { "vim" }
