@@ -15,8 +15,7 @@
 
 (defcustom my/modal-pkg "meow"
   "which package to use for modal editing"
-  :type '(choice (const :tag "meow" meow)
-                 (const :tag "evil" evil))
+  :type 'string
   :group 'my-config)
   
   (use-package emacs
@@ -124,188 +123,177 @@
 (use-package nerd-icons :ensure t :if (display-graphic-p))
 (use-package diminish :ensure t)
 
-;; meow
-(use-package meow
-  :ensure t
-  :config
-  (defun meow-setup ()
-   (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-   (meow-motion-define-key
-    '("j" . meow-next)
-    '("k" . meow-prev)
-    '("<escape>" . ignore))
-   (meow-leader-define-key
-    ;; Use SPC (0-9) for digit arguments.
-    '("1" . meow-digit-argument)
-    '("2" . meow-digit-argument)
-    '("3" . meow-digit-argument)
-    '("4" . meow-digit-argument)
-    '("5" . meow-digit-argument)
-    '("6" . meow-digit-argument)
-    '("7" . meow-digit-argument)
-    '("8" . meow-digit-argument)
-    '("9" . meow-digit-argument)
-    '("0" . meow-digit-argument)
-    '("/" . meow-keypad-describe-key)
-    '("?" . meow-cheatsheet))
-   (meow-normal-define-key
-    '("0" . meow-expand-0)
-    '("9" . meow-expand-9)
-    '("8" . meow-expand-8)
-    '("7" . meow-expand-7)
-    '("6" . meow-expand-6)
-    '("5" . meow-expand-5)
-    '("4" . meow-expand-4)
-    '("3" . meow-expand-3)
-    '("2" . meow-expand-2)
-    '("1" . meow-expand-1)
-    '("-" . negative-argument)
-    '(";" . meow-reverse)
-    '("," . meow-inner-of-thing)
-    '("." . meow-bounds-of-thing)
-    '("[" . meow-beginning-of-thing)
-    '("]" . meow-end-of-thing)
-    '("a" . meow-append)
-    '("A" . meow-open-below)
-    '("b" . meow-back-word)
-    '("B" . meow-back-symbol)
-    '("c" . meow-change)
-    '("d" . meow-delete)
-    '("D" . meow-backward-delete)
-    '("e" . meow-next-word)
-    '("E" . meow-next-symbol)
-    '("f" . meow-find)
-    '("g" . meow-cancel-selection)
-    '("G" . meow-grab)
-    '("h" . meow-left)
-    '("H" . meow-left-expand)
-    '("i" . meow-insert)
-    '("I" . meow-open-above)
-    '("j" . meow-next)
-    '("J" . meow-next-expand)
-    '("k" . meow-prev)
-    '("K" . meow-prev-expand)
-    '("l" . meow-right)
-    '("L" . meow-right-expand)
-    '("m" . meow-join)
-    '("n" . meow-search)
-    '("o" . meow-block)
-    '("O" . meow-to-block)
-    '("p" . meow-yank)
-    '("q" . meow-quit)
-    '("Q" . meow-goto-line)
-    '("r" . meow-replace)
-    '("R" . meow-swap-grab)
-    '("s" . meow-kill)
-    '("t" . meow-till)
-    '("u" . meow-undo)
-    '("U" . meow-undo-in-selection)
-    '("v" . meow-visit)
-    '("w" . meow-mark-word)
-    '("W" . meow-mark-symbol)
-    '("x" . meow-line)
-    '("X" . meow-goto-line)
-    '("y" . meow-save)
-    '("Y" . meow-sync-grab)
-    '("z" . meow-pop-selection)
-    '("'" . repeat)
-    '("<escape>" . ignore)))
-(meow-setup)
-(meow-global-mode 1))
+  (use-package meow
+    :ensure t
+    :config
+    (defun meow-setup ()
+     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+     (meow-motion-define-key
+      '("j" . meow-next)
+      '("k" . meow-prev)
+      '("<escape>" . ignore))
+     (meow-leader-define-key
+      ;; Use SPC (0-9) for digit arguments.
+      '("1" . meow-digit-argument)
+      '("2" . meow-digit-argument)
+      '("3" . meow-digit-argument)
+      '("4" . meow-digit-argument)
+      '("5" . meow-digit-argument)
+      '("6" . meow-digit-argument)
+      '("7" . meow-digit-argument)
+      '("8" . meow-digit-argument)
+      '("9" . meow-digit-argument)
+      '("0" . meow-digit-argument)
+      '("/" . meow-keypad-describe-key)
+      '("?" . meow-cheatsheet))
+     (meow-normal-define-key
+      '("0" . meow-expand-0)
+      '("9" . meow-expand-9)
+      '("8" . meow-expand-8)
+      '("7" . meow-expand-7)
+      '("6" . meow-expand-6)
+      '("5" . meow-expand-5)
+      '("4" . meow-expand-4)
+      '("3" . meow-expand-3)
+      '("2" . meow-expand-2)
+      '("1" . meow-expand-1)
+      '("-" . negative-argument)
+      '(";" . meow-reverse)
+      '("," . meow-inner-of-thing)
+      '("." . meow-bounds-of-thing)
+      '("[" . meow-beginning-of-thing)
+      '("]" . meow-end-of-thing)
+      '("a" . meow-append)
+      '("A" . meow-open-below)
+      '("b" . meow-back-word)
+      '("B" . meow-back-symbol)
+      '("c" . meow-change)
+      '("d" . meow-delete)
+      '("D" . meow-backward-delete)
+      '("e" . meow-next-word)
+      '("E" . meow-next-symbol)
+      '("f" . meow-find)
+      '("g" . meow-cancel-selection)
+      '("G" . meow-grab)
+      '("h" . meow-left)
+      '("H" . meow-left-expand)
+      '("i" . meow-insert)
+      '("I" . meow-open-above)
+      '("j" . meow-next)
+      '("J" . meow-next-expand)
+      '("k" . meow-prev)
+      '("K" . meow-prev-expand)
+      '("l" . meow-right)
+      '("L" . meow-right-expand)
+      '("m" . meow-join)
+      '("n" . meow-search)
+      '("o" . meow-block)
+      '("O" . meow-to-block)
+      '("p" . meow-yank)
+      '("q" . meow-quit)
+      '("Q" . meow-goto-line)
+      '("r" . meow-replace)
+      '("R" . meow-swap-grab)
+      '("s" . meow-kill)
+      '("t" . meow-till)
+      '("u" . meow-undo)
+      '("U" . meow-undo-in-selection)
+      '("v" . meow-visit)
+      '("w" . meow-mark-word)
+      '("W" . meow-mark-symbol)
+      '("x" . meow-line)
+      '("X" . meow-goto-line)
+      '("y" . meow-save)
+      '("Y" . meow-sync-grab)
+      '("z" . meow-pop-selection)
+      '("'" . repeat)
+      '("<escape>" . ignore)))
+  (meow-setup)
+  (meow-global-mode 1))
 
-;; (use-package undo-tree
-;;   :defer t
-;;   :ensure t
-;;   :hook (after-init . global-undo-tree-mode)
-;;   :init
-;;   (setq undo-tree-visualizer-timestamps t
-;;         undo-tree-visualizer-diff t
-;;         undo-limit 800000
-;;         undo-strong-limit 12000000
-;;         undo-outer-limit 120000000)
-;;   :config
-;;   (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/.cache/undo"))))
-
-;; (use-package evil
-;;   :ensure t
-;;   :defer t
-;;   :hook (after-init . evil-mode)
-;;   :init
-;;   (setq evil-want-integration t
-;;         evil-want-keybinding nil
-;;         evil-want-C-u-scroll t
-;;         evil-want-C-u-delete t)
-;;   :config
-;;   (evil-set-undo-system 'undo-tree)
-;;   (setq evil-leader/in-all-states t
-;;         evil-want-fine-undo t)
-
-;;   (evil-set-leader 'normal (kbd "SPC"))
-;;   (evil-set-leader 'visual (kbd "SPC"))
-
-;;   (evil-define-key 'normal 'global (kbd "<leader> s f") 'consult-find
-;;                                    (kbd "<leader> s g") 'consult-grep
-;;                                    (kbd "<leader> s G") 'consult-git-grep
-;;                                    (kbd "<leader> s r") 'consult-ripgrep
-;;                                    (kbd "<leader> s h") 'consult-info
-;;                                    (kbd "<leader> /") 'consult-line)
-
-;;   (evil-define-key 'normal 'global (kbd "] d") 'flymake-goto-next-error
-;;                                    (kbd "[ d") 'flymake-goto-prev-error
-;;                                    (kbd "<f4>") 'flymake-goto-next-error
-;;                                    (kbd "<f3>") 'flymake-goto-prev-error)
-
-;;   (evil-define-key 'normal 'global (kbd "<leader> x d") 'dired
-;;                                    (kbd "<leader> x j") 'dired-jump
-;;                                    (kbd "<leader> x f") 'find-file)
-
-;;   (evil-define-key 'normal 'global (kbd "] h") 'diff-hl-next-hunk
-;;                                    (kbd "<f11>") 'diff-hl-next-hunk
-;;                                    (kbd "[ h") 'diff-hl-prev-hunk
-;;                                    (kbd "<f12>") 'diff-hl-prev-hunk)
+ ;;  (use-package undo-tree
+ ;;    :defer t
+ ;;    :ensure t
+ ;;    :hook (after-init . global-undo-tree-mode)
+ ;;    :init
+ ;;    (setq undo-tree-visualizer-timestamps t
+ ;;          undo-tree-visualizer-diff t
+ ;;          undo-limit 800000
+ ;;          undo-strong-limit 12000000
+ ;;          undo-outer-limit 120000000)
+ ;;    :config
+ ;;    (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/.cache/undo"))))
   
-;;   (evil-define-key 'normal 'global (kbd "<leader> g g") 'magit-status)
-;;   (evil-define-key 'normal 'global (kbd "<leader> g l") 'magit-log-current)
-;;   (evil-define-key 'normal 'global (kbd "<leader> g d") 'magit-diff-buffer-file)
-;;   (evil-define-key 'normal 'global (kbd "<leader> g D") 'diff-hl-show-hunk)
-;;   (evil-define-key 'normal 'global (kbd "<leader> g b") 'vc-annotate)
-  
-;;   (evil-define-key 'normal 'global (kbd "] b") 'switch-to-next-buffer)
-;;   (evil-define-key 'normal 'global (kbd "[ b") 'switch-to-prev-buffer)
-;;   (evil-define-key 'normal 'global (kbd "<f6>") 'switch-to-next-buffer)
-;;   (evil-define-key 'normal 'global (kbd "<f5>") 'switch-to-prev-buffer)
-;;   (evil-define-key 'normal 'global (kbd "<leader> b i") 'consult-buffer)
-;;   (evil-define-key 'normal 'global (kbd "<leader> b b") 'ibuffer)
-;;   (evil-define-key 'normal 'global (kbd "<leader> b d") 'kill-current-buffer)
-;;   (evil-define-key 'normal 'global (kbd "<leader> b s") 'save-buffer)
+ ;; (use-package evil
+ ;;   :ensure t
+ ;;   :defer t
+ ;;   :hook (after-init . evil-mode)
+ ;;   :init
+ ;;   (setq evil-want-integration t
+ ;;         evil-want-keybinding nil
+ ;;         evil-want-C-u-scroll t
+ ;;         evil-want-C-u-delete t)
+ ;;   :config
+ ;;   (evil-set-undo-system 'undo-tree)
+ ;;   (setq evil-leader/in-all-states t
+ ;;         evil-want-fine-undo t)
+ ;;   (evil-set-leader 'normal (kbd "SPC"))
+ ;;   (evil-set-leader 'visual (kbd "SPC"))
 
-;;   (evil-define-key 'normal 'global (kbd "<leader> p b") 'consult-project-buffer)
-;;   (evil-define-key 'normal 'global (kbd "<leader> p p") 'project-switch-project)
-;;   (evil-define-key 'normal 'global (kbd "<leader> p f") 'project-find-file)
-;;   (evil-define-key 'normal 'global (kbd "<leader> p g") 'project-find-regexp)
-;;   (evil-define-key 'normal 'global (kbd "<leader> p k") 'project-kill-buffers)
-;;   (evil-define-key 'normal 'global (kbd "<leader> p D") 'project-dired)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> s f") 'consult-find
+ ;;                                    (kbd "<leader> s g") 'consult-grep
+ ;;                                    (kbd "<leader> s G") 'consult-git-grep
+ ;;                                    (kbd "<leader> s r") 'consult-ripgrep
+ ;;                                    (kbd "<leader> s h") 'consult-info
+ ;;                                    (kbd "<leader> /") 'consult-line)
 
-;;   (evil-define-key 'normal 'global (kbd "<leader> u") 'undo-tree-visualize)
-
-;;   ;; NOTE: meow has these practically built-in through keypac SPC h
-;;   (evil-define-key 'normal 'global (kbd "<leader> h m") 'describe-mode
-;;                                    (kbd "<leader> h f") 'describe-function
-;;                                    (kbd "<leader> h v") 'describe-variable
-;;                                    (kbd "<leader> h k") 'describe-key)
-  
-;;   (evil-define-key 'normal 'global (kbd "] t") 'tab-next)
-;;   (evil-define-key 'normal 'global (kbd "[ t") 'tab-previous)
-;;   (evil-define-key 'normal 'global (kbd "<f2>") 'tab-next)
-;;   (evil-define-key 'normal 'global (kbd "<f1>") 'tab-previous)
-
-;;   (evil-define-key 'normal 'lsp-mode-map
-;;                    (kbd "grr") 'lsp-find-references
-;;                    (kbd "gra") 'lsp-execute-code-action
-;;                    (kbd "grn") 'lsp-rename
-;;                    (kbd "gri") 'lsp-find-implementation
-;;                    (kbd "gff") 'lsp-format-buffer)
-;;   )
+ ;;   (evil-define-key 'normal 'global (kbd "] d") 'flymake-goto-next-error
+ ;;                                    (kbd "[ d") 'flymake-goto-prev-error
+ ;;                                    (kbd "<f4>") 'flymake-goto-next-error
+ ;;                                    (kbd "<f3>") 'flymake-goto-prev-error)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> x d") 'dired
+ ;;                                    (kbd "<leader> x j") 'dired-jump
+ ;;                                    (kbd "<leader> x f") 'find-file)
+ ;;   (evil-define-key 'normal 'global (kbd "] h") 'diff-hl-next-hunk
+ ;;                                    (kbd "<f11>") 'diff-hl-next-hunk
+ ;;                                    (kbd "[ h") 'diff-hl-prev-hunk
+ ;;                                    (kbd "<f12>") 'diff-hl-prev-hunk)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> g g") 'magit-status)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> g l") 'magit-log-current)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> g d") 'magit-diff-buffer-file)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> g D") 'diff-hl-show-hunk)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> g b") 'vc-annotate)
+ ;;   (evil-define-key 'normal 'global (kbd "] b") 'switch-to-next-buffer)
+ ;;   (evil-define-key 'normal 'global (kbd "[ b") 'switch-to-prev-buffer)
+ ;;   (evil-define-key 'normal 'global (kbd "<f6>") 'switch-to-next-buffer)
+ ;;   (evil-define-key 'normal 'global (kbd "<f5>") 'switch-to-prev-buffer)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> b i") 'consult-buffer)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> b b") 'ibuffer)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> b d") 'kill-current-buffer)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> b s") 'save-buffer)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> p b") 'consult-project-buffer)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> p p") 'project-switch-project)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> p f") 'project-find-file)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> p g") 'project-find-regexp)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> p k") 'project-kill-buffers)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> p D") 'project-dired)
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> u") 'undo-tree-visualize)
+ ;;   ;; NOTE: meow has these practically built-in through keypac SPC h
+ ;;   (evil-define-key 'normal 'global (kbd "<leader> h m") 'describe-mode
+ ;;                                    (kbd "<leader> h f") 'describe-function
+ ;;                                    (kbd "<leader> h v") 'describe-variable
+ ;;                                    (kbd "<leader> h k") 'describe-key)
+ ;;   (evil-define-key 'normal 'global (kbd "] t") 'tab-next)
+ ;;   (evil-define-key 'normal 'global (kbd "[ t") 'tab-previous)
+ ;;   (evil-define-key 'normal 'global (kbd "<f2>") 'tab-next)
+ ;;   (evil-define-key 'normal 'global (kbd "<f1>") 'tab-previous)
+ ;;   (evil-define-key 'normal 'lsp-mode-map
+ ;;                    (kbd "grr") 'lsp-find-references
+ ;;                    (kbd "gra") 'lsp-execute-code-action
+ ;;                    (kbd "grn") 'lsp-rename
+ ;;                    (kbd "gri") 'lsp-find-implementation
+ ;;                    (kbd "gff") 'lsp-format-buffer)
+ ;;   )
   
 ;; (use-package evil
         ;;   :ensure t
