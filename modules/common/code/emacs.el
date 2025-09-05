@@ -1,31 +1,132 @@
-;; straight
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+;; TODO
+;; REFS
+;;   - [ ] https://github.com/MiniApollo/kickstart.emacs
+;;   - [ ] https://github.com/LionyxML/emacs-kick
 
-(straight-use-package 'use-package)
+;; the default is 800 kB (measured in bytes)
+;; reset this to a smaller value at the end for shorter gc pauses
+(setq gc-cons-threshold (* 50 1000 1000))
 
-;; emacs puts “custom config” (i.e. configuration chosen at runtime in contrast
-;; to being read from a config file) into the init.el file, unless you tell it
-;; to use a specific custom file.
-(setq custom-file "~/config/emacs/custom.el")
-(ignore-errors (load custom-file)) ;; It may not yet exist.
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")
+			 ("nongnu" . "http://elpa.nongnu.org/nongnu/")))
+(setq package-quickstart t)
+
+(defcustom my/modal-pkg "meow"
+  "which package to use for modal editing"
+  :type '(choice (const :tag "meow" meow)
+                 (const :tag "evil" evil))
+  :group 'my-config)
+  
+  (use-package emacs
+  :custom
+  (tool-bar-mode nil)
+  (scroll-bar-mode nil)
+  (menu-bar-mode nil)
+  (tooltip-mode nil)
+  (global-display-line-numbers-mode t)
+  (global-hl-line-mode 1)
+  (electric-indent-mode t)
+  (blink-cursor-mode nil)
+  (tab-width 4)
+  (indent-tabs-mode nil)
+  (tab-always-indent 'complete)
+  (scroll-step 1)
+  (scroll-margin 5)
+  (scroll-conservatively 10) ;; 10000
+  (mouse-wheel-progessive-speed nil)
+
+  (savehist-mode t)
+  (history-length 25)
+
+  (use-dialog-box nil)
+  (use-short-answers t)
+  (auto-window-vscroll nil)
+  (display-line-numbers-type 'visual)
+  (display-line-numbers-width-start t)
+
+  (make-backup-files nil)
+  (auto-save-default nil)
+  (create-lockfiles nil)
+
+  (treesit-font-lock-level 4)
+  (truncate-lines t)
+
+  (ring-bell-function 'ignore)
+  (inhibit-startup-screen t)
+  (initial-scratch-message "")
+
+  ;; (frame-title-format nil)
+  (enable-recursive-minibuffers t)
+
+  :hook
+  (prog-mode . display-line-numbers-mode)
+  
+  :config
+  (setopt display-fill-column-indicator-column 80)
+  (global-display-fill-column-indicator-mode +1)
+  (modify-coding-system-alist 'file "" 'utf-8)
+  (global-auto-revert-mode t)
+  (setq read-process-output-max (* 1024 1024 4))
+  ;; (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file 'noerror 'nomessage)
+  (save-place-mode 1)
+  
+  (defun skip-these-buffers (_window buffer _bury-or-kill)
+    "Function for `switch-to-prev-buffer-skip'."
+    (string-match "\\*[^*]+\\*" (buffer-name buffer)))
+  (setq switch-to-prev-buffer-skip 'skip-these-buffers)
+  
+  (set-face-attribute 'default nil :family "Hack Nerd Font" :height (if (eq system-type 'darwin) 170 240))
+  (add-to-list 'default-frame-alist '(alpha-background . 90))
+  (when (eq system-type 'darwin)
+    (setq mac-command-modifier 'meta))
+
+  (add-hook 'after-init-hook
+            (lambda ()
+              (message "Emacs has fully loaded.")
+              (with-current-buffer (get-buffer-create "*scratch*")
+                (insert (format
+                         ";;  Loading time : %s
+;;  Packages     : %s
+"
+                         (emacs-init-time)
+                         (number-to-string (length package-activated-list)))))))
+      
+  :bind (
+	 ([escape] . keyboard-escape-quit)
+	 ("C-+" . text-scale-increase)
+	 ("C--" . text-scale-decrease)
+  )
+  )
+
+(use-package gruber-darker-theme
+  :ensure t
+  :config
+  (load-theme 'gruber-darker t))
+
+;; (use-package doom-themes
+;;   :ensure t
+;;   :config
+;;   (setq doom-themes-enable-bold t
+;;         doom-themes-enable-italic t)
+;;   (load-theme 'doom-gruvbox t)
+;;   (doom-themes-org-config))
+
+(use-package doom-modeline
+  :ensure t
+  :custom
+  (doom-modeline-height 25)
+  :hook (after-init . doom-modeline-mode))
+
+(use-package nerd-icons :ensure t :if (display-graphic-p))
+(use-package diminish :ensure t)
 
 ;; meow
 (use-package meow
-  :straight t
+  :ensure t
   :config
   (defun meow-setup ()
    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
@@ -112,80 +213,175 @@
 (meow-setup)
 (meow-global-mode 1))
 
-;; also, whenever you’re editing, emacs creates backup and autosave files and I don’t like it
-(setq make-backup-files nil)
-(setq backup-directory-alist '(("." . "~/.local/emacs/backups")))
-(setq auto-save-list-file-prefix "~/.emacs.d/autosave/")
-(setq auto-save-file-name-transforms `((".*" "~/.emacs.d/autosave/" t)))
+;; (use-package undo-tree
+;;   :defer t
+;;   :ensure t
+;;   :hook (after-init . global-undo-tree-mode)
+;;   :init
+;;   (setq undo-tree-visualizer-timestamps t
+;;         undo-tree-visualizer-diff t
+;;         undo-limit 800000
+;;         undo-strong-limit 12000000
+;;         undo-outer-limit 120000000)
+;;   :config
+;;   (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/.cache/undo"))))
 
-;; in case I change my mind and want to use backups...
-;; (setq delete-old-versions t)
-;; (setq kept-old-versions 10)
-;; (setq vc-make-backup-files t)
-;; (setq version-control t)
+;; (use-package evil
+;;   :ensure t
+;;   :defer t
+;;   :hook (after-init . evil-mode)
+;;   :init
+;;   (setq evil-want-integration t
+;;         evil-want-keybinding nil
+;;         evil-want-C-u-scroll t
+;;         evil-want-C-u-delete t)
+;;   :config
+;;   (evil-set-undo-system 'undo-tree)
+;;   (setq evil-leader/in-all-states t
+;;         evil-want-fine-undo t)
 
-;; performance
+;;   (evil-set-leader 'normal (kbd "SPC"))
+;;   (evil-set-leader 'visual (kbd "SPC"))
+
+;;   (evil-define-key 'normal 'global (kbd "<leader> s f") 'consult-find
+;;                                    (kbd "<leader> s g") 'consult-grep
+;;                                    (kbd "<leader> s G") 'consult-git-grep
+;;                                    (kbd "<leader> s r") 'consult-ripgrep
+;;                                    (kbd "<leader> s h") 'consult-info
+;;                                    (kbd "<leader> /") 'consult-line)
+
+;;   (evil-define-key 'normal 'global (kbd "] d") 'flymake-goto-next-error
+;;                                    (kbd "[ d") 'flymake-goto-prev-error
+;;                                    (kbd "<f4>") 'flymake-goto-next-error
+;;                                    (kbd "<f3>") 'flymake-goto-prev-error)
+
+;;   (evil-define-key 'normal 'global (kbd "<leader> x d") 'dired
+;;                                    (kbd "<leader> x j") 'dired-jump
+;;                                    (kbd "<leader> x f") 'find-file)
+
+;;   (evil-define-key 'normal 'global (kbd "] h") 'diff-hl-next-hunk
+;;                                    (kbd "<f11>") 'diff-hl-next-hunk
+;;                                    (kbd "[ h") 'diff-hl-prev-hunk
+;;                                    (kbd "<f12>") 'diff-hl-prev-hunk)
+  
+;;   (evil-define-key 'normal 'global (kbd "<leader> g g") 'magit-status)
+;;   (evil-define-key 'normal 'global (kbd "<leader> g l") 'magit-log-current)
+;;   (evil-define-key 'normal 'global (kbd "<leader> g d") 'magit-diff-buffer-file)
+;;   (evil-define-key 'normal 'global (kbd "<leader> g D") 'diff-hl-show-hunk)
+;;   (evil-define-key 'normal 'global (kbd "<leader> g b") 'vc-annotate)
+  
+;;   (evil-define-key 'normal 'global (kbd "] b") 'switch-to-next-buffer)
+;;   (evil-define-key 'normal 'global (kbd "[ b") 'switch-to-prev-buffer)
+;;   (evil-define-key 'normal 'global (kbd "<f6>") 'switch-to-next-buffer)
+;;   (evil-define-key 'normal 'global (kbd "<f5>") 'switch-to-prev-buffer)
+;;   (evil-define-key 'normal 'global (kbd "<leader> b i") 'consult-buffer)
+;;   (evil-define-key 'normal 'global (kbd "<leader> b b") 'ibuffer)
+;;   (evil-define-key 'normal 'global (kbd "<leader> b d") 'kill-current-buffer)
+;;   (evil-define-key 'normal 'global (kbd "<leader> b s") 'save-buffer)
+
+;;   (evil-define-key 'normal 'global (kbd "<leader> p b") 'consult-project-buffer)
+;;   (evil-define-key 'normal 'global (kbd "<leader> p p") 'project-switch-project)
+;;   (evil-define-key 'normal 'global (kbd "<leader> p f") 'project-find-file)
+;;   (evil-define-key 'normal 'global (kbd "<leader> p g") 'project-find-regexp)
+;;   (evil-define-key 'normal 'global (kbd "<leader> p k") 'project-kill-buffers)
+;;   (evil-define-key 'normal 'global (kbd "<leader> p D") 'project-dired)
+
+;;   (evil-define-key 'normal 'global (kbd "<leader> u") 'undo-tree-visualize)
+
+;;   ;; NOTE: meow has these practically built-in through keypac SPC h
+;;   (evil-define-key 'normal 'global (kbd "<leader> h m") 'describe-mode
+;;                                    (kbd "<leader> h f") 'describe-function
+;;                                    (kbd "<leader> h v") 'describe-variable
+;;                                    (kbd "<leader> h k") 'describe-key)
+  
+;;   (evil-define-key 'normal 'global (kbd "] t") 'tab-next)
+;;   (evil-define-key 'normal 'global (kbd "[ t") 'tab-previous)
+;;   (evil-define-key 'normal 'global (kbd "<f2>") 'tab-next)
+;;   (evil-define-key 'normal 'global (kbd "<f1>") 'tab-previous)
+
+;;   (evil-define-key 'normal 'lsp-mode-map
+;;                    (kbd "grr") 'lsp-find-references
+;;                    (kbd "gra") 'lsp-execute-code-action
+;;                    (kbd "grn") 'lsp-rename
+;;                    (kbd "gri") 'lsp-find-implementation
+;;                    (kbd "gff") 'lsp-format-buffer)
+;;   )
+  
+;; (use-package evil
+        ;;   :ensure t
+        ;;   :demand t
+        ;;   :after undo-fu
+;;   :init
+;;   (setq evil-want-keybinding nil)
+;;   (setq evil-undo-system 'undo-fu)
+;;   :config
+;;   (setq evil-want-C-d-scroll t)
+;;   (setq evil-want-C-u-scroll t)
+;;   (setq evil-split-window-below t)
+;;   (setq evil-vsplit-window-right t)
+;;   (setq evil-insert-state-cursor 'box)
+;;   (setq evil-want-Y-yank-to-eol t)
+;;   (evil-set-leader nil (kbd "SPC"))
+;;   (evil-global-set-key 'normal (kbd "C-d") (lambda () (interactive) (evil-scroll-down 0) (recenter)))
+;;   (evil-global-set-key 'normal (kbd "C-u") (lambda () (interactive) (evil-scroll-up 0) (recenter)))
+;;   (evil-global-set-key 'visual (kbd "C-d") (lambda () (interactive) (evil-scroll-down 0) (recenter)))
+;;   (evil-global-set-key 'visual (kbd "C-u") (lambda () (interactive) (evil-scroll-up 0) (recenter)))
+;;   (evil-global-set-key 'normal (kbd "n") (lambda () (interactive) (evil-search-next) (recenter)))
+;;   (evil-global-set-key 'normal (kbd "N") (lambda () (interactive) (evil-search-previous) (recenter)))
+;;   (evil-global-set-key 'visual (kbd "J") (lambda () (interactive) (drag-stuff-down 1) (evil-indent)))
+;;   (evil-global-set-key 'visual (kbd "K") (lambda () (interactive) (drag-stuff-up 1) (evil-indent)))
+;;   (evil-global-set-key 'motion (kbd "j") 'evil-next-visual-line)
+;;   (evil-global-set-key 'motion (kbd "k") 'evil-previous-visual-line)
+;;   (evil-global-set-key 'normal (kbd "M-m") 'compile)
+;;   (evil-global-set-key 'normal (kbd "C-h") 'evil-window-left)
+;;   (evil-global-set-key 'normal (kbd "C-j") 'evil-window-down)
+;;   (evil-global-set-key 'normal (kbd "C-k") 'evil-window-up)
+;;   (evil-global-set-key 'normal (kbd "C-l") 'evil-window-right)
+;;   (evil-global-set-key 'normal (kbd "<leader>gg") 'magit)
+;;   (evil-global-set-key 'normal (kbd "<leader>sj") 'evil-window-new)
+;;   (evil-global-set-key 'normal (kbd "<leader>sl") 'evil-window-vnew)
+;;   (evil-global-set-key 'normal (kbd "<leader>tj") (lambda () (interactive) (evil-window-new 20 "") (vterm)))
+;;   (evil-global-set-key 'normal (kbd "<leader>tl") (lambda () (interactive) (evil-window-vnew nil "") (vterm)))
+;;   (evil-mode))
+
+;; (use-package evil-collection
+;;   :ensure t
+;;   :after evil
+;;   :config
+;;   (evil-collection-init))
+
+;; (use-package evil-commentary
+;;   :ensure t
+;;   :after evil
+;;   :config
+;;   (evil-define-operator +evil-join-a (beg end)
+;;     "Join the selected lines.
+;; This advice improves on `evil-join' by removing comment delimiters when joining
+;; commented lines, by using `fill-region-as-paragraph'.
+;; From https://github.com/emacs-evil/evil/issues/606"
+;;     :motion evil-line
+;;     (let* ((count (count-lines beg end))
+;; 	   (count (if (> count 1) (1- count) count))
+;; 	   (fixup-mark (make-marker)))
+;;       (dotimes (var count)
+;; 	(if (and (bolp) (eolp))
+;; 	    (join-line 1)
+;; 	  (let* ((end (line-beginning-position 3))
+;; 		 (fill-column (1+ (- end beg))))
+;; 	    (set-marker fixup-mark (line-end-position))
+;; 	    (fill-region-as-paragraph beg end nil t)
+;; 	    (goto-char fixup-mark)
+;; 	    (fixup-whitespace))))
+;;       (set-marker fixup-mark nil)))
+;;   (evil-global-set-key 'normal (kbd "J") '+evil-join-a)
+;;   (evil-commentary-mode))
+
+
 (setq gc-cons-threshold (* 2 1000 1000))
-(setq read-process-output-max (* 1024 1024 4))
-(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
-
-;; visuals
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(tooltip-mode -1)
-(scroll-bar-mode -1)
-(global-hl-line-mode 1)
-(setq enable-recursive-minibuffers t)
-;; (setq frame-title-format nil)
-
-(setq ring-bell-function #'ignore)
-(setq inhibit-startup-screen t)
-
-(global-display-line-numbers-mode 1)
-(setq display-line-numbers-type 'visual)
-(setq display-line-numbers-width-start t)
-(setopt display-fill-column-indicator-column 80)
-(global-display-fill-column-indicator-mode +1)
-(blink-cursor-mode -1)
-(setq auto-window-vscroll nil)
-
-(setq use-dialog-box nil)
-(set-face-attribute 'default nil :family "Hack Nerd Font" :height (if (eq system-type 'darwin) 170 200))
-(set-frame-parameter nil 'alpha 96)
-(defun skip-these-buffers (_window buffer _bury-or-kill)
-  "Function for `switch-to-prev-buffer-skip'."
-  (string-match "\\*[^*]+\\*" (buffer-name buffer)))
-(setq switch-to-prev-buffer-skip 'skip-these-buffers
-      ring-bell-function #'ignore)
 
 ;; (use-package volatile-highlights :ensure t :config (volatile-highlights-mode t))
 
- (use-package gruber-darker-theme
-   :straight t
-   :config
-   (load-theme 'gruber-darker t))
 
-;; (use-package doom-themes
-;;   :ensure t
-;;   :config
-;;   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;;   ;; (load-theme 'doom-nord-aurora t)
-;;   (load-theme 'doom-gruvbox t)
-;;   (doom-themes-org-config))
-
-;; editing
-;; (electric-indent-mode -1)
-(save-place-mode 1)
-(global-auto-revert-mode 1)
-(indent-tabs-mode -1)
-(modify-coding-system-alist 'file "" 'utf-8)
-(setq tab-width 4)
-(setq indent-tabs-mode nil)
-(setq tab-always-indent 'complete)
-(setq scroll-step 1)
-(setq scroll-margin 5)
-(setq scroll-conservatively 10000)
 
 ; ;; path and direnv
 ; ;; ensure that emacs sees the same path as the login shell
@@ -203,82 +399,6 @@
 ;   :custom
 ;   (envrc-show-summary-in-minibuffer nil)
 ;   :hook (elpaca-after-init . envrc-global-mode))
-;
-; ;; keybinds
-; (global-set-key (kbd "C-=") 'text-scale-increase)
-; (global-set-key (kbd "C--") 'text-scale-decrease)
-; (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-;
-; ;; (use-package undo-fu :ensure t)
-; ;; (use-package drag-stuff :ensure t)
-; ;; (use-package evil
-;         ;;   :ensure t
-;         ;;   :demand t
-;         ;;   :after undo-fu
-; ;;   :init
-; ;;   (setq evil-want-keybinding nil)
-; ;;   (setq evil-undo-system 'undo-fu)
-; ;;   :config
-; ;;   (setq evil-want-C-d-scroll t)
-; ;;   (setq evil-want-C-u-scroll t)
-; ;;   (setq evil-split-window-below t)
-; ;;   (setq evil-vsplit-window-right t)
-; ;;   (setq evil-insert-state-cursor 'box)
-; ;;   (setq evil-want-Y-yank-to-eol t)
-; ;;   (evil-set-leader nil (kbd "SPC"))
-; ;;   (evil-global-set-key 'normal (kbd "C-d") (lambda () (interactive) (evil-scroll-down 0) (recenter)))
-; ;;   (evil-global-set-key 'normal (kbd "C-u") (lambda () (interactive) (evil-scroll-up 0) (recenter)))
-; ;;   (evil-global-set-key 'visual (kbd "C-d") (lambda () (interactive) (evil-scroll-down 0) (recenter)))
-; ;;   (evil-global-set-key 'visual (kbd "C-u") (lambda () (interactive) (evil-scroll-up 0) (recenter)))
-; ;;   (evil-global-set-key 'normal (kbd "n") (lambda () (interactive) (evil-search-next) (recenter)))
-; ;;   (evil-global-set-key 'normal (kbd "N") (lambda () (interactive) (evil-search-previous) (recenter)))
-; ;;   (evil-global-set-key 'visual (kbd "J") (lambda () (interactive) (drag-stuff-down 1) (evil-indent)))
-; ;;   (evil-global-set-key 'visual (kbd "K") (lambda () (interactive) (drag-stuff-up 1) (evil-indent)))
-; ;;   (evil-global-set-key 'motion (kbd "j") 'evil-next-visual-line)
-; ;;   (evil-global-set-key 'motion (kbd "k") 'evil-previous-visual-line)
-; ;;   (evil-global-set-key 'normal (kbd "M-m") 'compile)
-; ;;   (evil-global-set-key 'normal (kbd "C-h") 'evil-window-left)
-; ;;   (evil-global-set-key 'normal (kbd "C-j") 'evil-window-down)
-; ;;   (evil-global-set-key 'normal (kbd "C-k") 'evil-window-up)
-; ;;   (evil-global-set-key 'normal (kbd "C-l") 'evil-window-right)
-; ;;   (evil-global-set-key 'normal (kbd "<leader>gg") 'magit)
-; ;;   (evil-global-set-key 'normal (kbd "<leader>sj") 'evil-window-new)
-; ;;   (evil-global-set-key 'normal (kbd "<leader>sl") 'evil-window-vnew)
-; ;;   (evil-global-set-key 'normal (kbd "<leader>tj") (lambda () (interactive) (evil-window-new 20 "") (vterm)))
-; ;;   (evil-global-set-key 'normal (kbd "<leader>tl") (lambda () (interactive) (evil-window-vnew nil "") (vterm)))
-; ;;   (evil-mode))
-;
-; ;; (use-package evil-collection
-; ;;   :ensure t
-; ;;   :after evil
-; ;;   :config
-; ;;   (evil-collection-init))
-;
-; ;; (use-package evil-commentary
-; ;;   :ensure t
-; ;;   :after evil
-; ;;   :config
-; ;;   (evil-define-operator +evil-join-a (beg end)
-; ;;     "Join the selected lines.
-; ;; This advice improves on `evil-join' by removing comment delimiters when joining
-; ;; commented lines, by using `fill-region-as-paragraph'.
-; ;; From https://github.com/emacs-evil/evil/issues/606"
-; ;;     :motion evil-line
-; ;;     (let* ((count (count-lines beg end))
-; ;; 	   (count (if (> count 1) (1- count) count))
-; ;; 	   (fixup-mark (make-marker)))
-; ;;       (dotimes (var count)
-; ;; 	(if (and (bolp) (eolp))
-; ;; 	    (join-line 1)
-; ;; 	  (let* ((end (line-beginning-position 3))
-; ;; 		 (fill-column (1+ (- end beg))))
-; ;; 	    (set-marker fixup-mark (line-end-position))
-; ;; 	    (fill-region-as-paragraph beg end nil t)
-; ;; 	    (goto-char fixup-mark)
-; ;; 	    (fixup-whitespace))))
-; ;;       (set-marker fixup-mark nil)))
-; ;;   (evil-global-set-key 'normal (kbd "J") '+evil-join-a)
-; ;;   (evil-commentary-mode))
 ;
 ;
 ; ;; projects
@@ -485,10 +605,7 @@
 ;
 ; (use-package yasnippet :ensure t :config (yas-global-mode 1))
 ;
-; ;; (straight-use-package
-; ;;  '(eglot-booster :type git :host github :repo "jdtsmith/eglot-booster"))
-;
 ; ;; (use-package eglot-booster
-; ;;   ;; :vc (:url "https://github.com/jdtsmith/eglot-booster")
+; ;;   :vc (:url "https://github.com/jdtsmith/eglot-booster.git")
 ; ;;   :after eglot
 ; ;;   :config (eglot-booster-mode))
