@@ -12,8 +12,8 @@ in
       home = {
         packages = [ pkgs.emacs-lsp-booster ];
         file = {
-          ".emacs.el".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/common/code/emacs.el";
-          # ".emacs.d/early-init.el".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/common/code/emacs-early-init.el";
+          ".emacs.d/init.el".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/common/code/emacs.el";
+          ".emacs.d/early-init.el".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/common/code/emacs-early-init.el";
         };
       };
       programs.emacs.enable = true;
