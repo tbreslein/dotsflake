@@ -1,4 +1,26 @@
 ;;;; TODO
+;; - more keymaps (look at evil keymaps)
+;; - magit
+;; - grepping
+;; - learn dired
+;; - setup vterm
+;; - go through emacs-solo
+;; - go through the other ref configs
+;; - go through the other links in my notes
+;; - try to replace apheleia
+;; - set compile, formatting and lint commands per mode
+;; - org-mode and org-roam for notes
+;; - custom theme (nord-theme.el as reference)
+;; - custom modeline
+;; - setup yasnippet
+;;   - snippets for MR logs?
+;; - eshell
+;; - custom notifications?
+;;   - look into using emacs 31, which has floating windows
+;; - function to set up a new work MR using the gitlab CLI
+;; - function to call taskfile tasks
+;; - GNUs
+;; - ewww
 ;;
 ;;;; REFS
 ;; - [ ] https://github.com/MiniApollo/kickstart.emacs
@@ -160,23 +182,23 @@
   :bind (("C-s" . isearch-forward)
          ("C-r" . isearch-backward)))
 
-(use-package vc
-  :ensure nil
-  :defer t
-  :bind
-  (("C-x v d" . vc-dir)
-   ("C-x v =" . vc-diff)
-   ("C-x v D" . vc-root-diff)
-   ("C-x v v" . vc-next-action)))
+;; (use-package vc
+;;   :ensure nil
+;;   :defer t
+;;   :bind
+;;   (("C-x v d" . vc-dir)
+;;    ("C-x v =" . vc-diff)
+;;    ("C-x v D" . vc-root-diff)
+;;    ("C-x v v" . vc-next-action)))
 
-(use-package smerge-mode
-  :ensure nil
-  :defer t
-  :bind (:map smerge-mode-map
-              ("C-c ^ u" . smerge-keep-upper)
-              ("C-c ^ l" . smerge-keep-lower)
-              ("C-c ^ n" . smerge-next)
-              ("C-c ^ p" . smerge-previous)))
+;; (use-package smerge-mode
+;;   :ensure nil
+;;   :defer t
+;;   :bind (:map smerge-mode-map
+;;               ("C-c ^ u" . smerge-keep-upper)
+;;               ("C-c ^ l" . smerge-keep-lower)
+;;               ("C-c ^ n" . smerge-next)
+;;               ("C-c ^ p" . smerge-previous)))
 
 (use-package eldoc
   :ensure nil
@@ -242,9 +264,11 @@
   (setq compilation-scroll-output t))
 
 ;;;; EXTERNAL PLUGINS
-(use-package eldoc-box
-  :ensure t
-  :defer t)
+(use-package transient :ensure t)
+(use-package magit :ensure t)
+(use-package hl-todo :ensure t :config (global-hl-todo-mode 1))
+(use-package magit-todos :ensure t :after '(magit hl-todo) :config (magit-todos-mode 1))
+(use-package eldoc-box :ensure t :defer t)
 
 ;; (use-package gruber-darker-theme
 ;;   :ensure t

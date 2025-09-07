@@ -21,7 +21,6 @@
 (if (fboundp 'tooltip-mode) (tooltip-mode -1))
 (if (fboundp 'fringe-mode) (fringe-mode -1))
 
-
 ;; Avoid raising the *Messages* buffer if anything is still without
 ;; lexical bindings
 (setq warning-minimum-level :error)
