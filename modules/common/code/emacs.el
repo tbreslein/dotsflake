@@ -205,24 +205,55 @@
   :config
   (fido-vertical-mode))
 
-;;;; EXTERNAL PLUGINS
+;; ;; EGLOT SOMEHOW NEEDS THIS TO CORRECTLY DETERMINE THE PROJECT ROOT
+;; ;; This SHOULD take care of the problem that project-root-override tries to solve,
+;; ;; but for some reason it does not work. I have no idea why, but I don't seem to
+;; ;; be the only one.
+;; (setq project-vc-extra-root-markers
+;;       '("Cargo.toml" "pyproject.toml"))
+(defun project-root-override (dir)
+  "Find DIR's project root by searching for a '.project.el' file.
 
+  If this file exists, it marks the project root.  For convenient compatibility
+  with Projectile, '.projectile' is also considered a project root marker.
+
+  https://blog.jmthornton.net/p/emacs-project-override"
+  (let ((root (or (locate-dominating-file dir ".project.el")
+		          (locate-dominating-file dir ".projectile")
+		          (locate-dominating-file dir "Cargo.toml")
+		          (locate-dominating-file dir "setup.py")
+		          (locate-dominating-file dir "requirements.txt")
+		          (locate-dominating-file dir "pyproject.toml")
+		          (locate-dominating-file dir ".git/")))
+	    (backend (ignore-errors (vc-responsible-backend dir))))
+    (when root (list 'vc backend root))))
+
+;; Note that we cannot use :hook here because `project-find-functions' doesn't
+;; end in "-hook", and we can't use this in :init because it won't be defined
+;; yet.
+(use-package project
+  :ensure nil
+  :config
+  (add-hook 'project-find-functions #'project-root-override))
+
+(use-package compile
+  :ensure nil
+  :config
+  (setq compilation-scroll-output t))
+
+;;;; EXTERNAL PLUGINS
 (use-package eldoc-box
   :ensure t
   :defer t)
 
-(use-package gruber-darker-theme
-  :ensure t
-  :config
-  (load-theme 'gruber-darker t))
-
-;; (use-package doom-themes
+;; (use-package gruber-darker-theme
 ;;   :ensure t
 ;;   :config
-;;   (setq doom-themes-enable-bold t
-;;         doom-themes-enable-italic t)
-;;   (load-theme 'doom-gruvbox t)
-;;   (doom-themes-org-config))
+;;   (load-theme 'gruber-darker t))
+
+(use-package gruvbox-theme
+  :ensure t
+  :config (load-theme 'gruvbox-dark-medium))
 
 (use-package doom-modeline
   :ensure t
@@ -272,47 +303,11 @@
   (envrc-show-summary-in-minibuffer nil)
   :hook (after-init . envrc-global-mode))
 
-;; ;; EGLOT SOMEHOW NEEDS THIS TO CORRECTLY DETERMINE THE PROJECT ROOT
-;; ;; This SHOULD take care of the problem that project-root-override tries to solve,
-;; ;; but for some reason it does not work. I have no idea why, but I don't seem to
-;; ;; be the only one.
-;; (setq project-vc-extra-root-markers
-;;       '("Cargo.toml" "pyproject.toml"))
-(defun project-root-override (dir)
-  "Find DIR's project root by searching for a '.project.el' file.
-
-  If this file exists, it marks the project root.  For convenient compatibility
-  with Projectile, '.projectile' is also considered a project root marker.
-
-  https://blog.jmthornton.net/p/emacs-project-override"
-  (let ((root (or (locate-dominating-file dir ".project.el")
-		          (locate-dominating-file dir ".projectile")
-		          (locate-dominating-file dir "Cargo.toml")
-		          (locate-dominating-file dir "setup.py")
-		          (locate-dominating-file dir "requirements.txt")
-		          (locate-dominating-file dir "pyproject.toml")
-		          (locate-dominating-file dir ".git/")))
-	    (backend (ignore-errors (vc-responsible-backend dir))))
-    (when root (list 'vc backend root))))
-
-;; Note that we cannot use :hook here because `project-find-functions' doesn't
-;; end in "-hook", and we can't use this in :init because it won't be defined
-;; yet.
-(use-package project
-  :ensure nil
-  :config
-  (add-hook 'project-find-functions #'project-root-override))
-
-;; (use-package compile
-;;   :ensure nil
-;;   :config
-;;   (setq compilation-scroll-output t))
-
 ;; ;; NAVIGATION
 ;; (use-package perspective
 ;;   :ensure t
-;;   :bind
-;;   ("C-x C-b" . persp-list-buffers)         ; or use a nicer switcher, see below
+;;   ;; :bind
+;;   ;; ("C-x C-b" . persp-list-buffers)         ; or use a nicer switcher, see below
 ;;   :custom
 ;;   (persp-mode-prefix-key (kbd "C-c M-p"))  ; pick your own prefix key here
 ;;   :init
@@ -320,31 +315,35 @@
 
 ;; (use-package persp-projectile :ensure t)
 
-;; (use-package rg :ensure t)
+(use-package rg :ensure t)
 
-;; (use-package projectile
-;;   :ensure t
-;;   :custom
-;;   (projectile-project-search-path
-;;    '(("~/code" . 1)
-;;      ("~/.dotfiles" . 0)
-;;      ("~/notes" . 0)
-;;      ("~/work" . 1)
-;;      ("~/work/repos" . 1)))
-;;   (projectile-require-project-root nil)
-;;   (projectile-sort-order 'recentf)
-;;   :config
-;;   (defcustom projectile-project-root-functions
-;;     '(projectile-root-local
-;;       projectile-root-marked
-;;       projectile-root-top-down
-;;       projectile-root-top-down-recurring
-;;       projectile-root-bottom-up)
-;;     "A list of functions for finding project roots."
-;;     :group 'projectile
-;;     :type '(repeat function))
-;;   ;; (evil-global-set-key 'normal (kbd "<leader>f") 'projectile-command-map)
-;;   (projectile-mode +1))
+(use-package projectile
+  :ensure t
+  :custom
+  (projectile-project-search-path
+   '(("~/code" . 1)
+     ("~/dotflake" . 0)
+     ("~/sync/notes" . 0)
+     ("~/work" . 1)
+     ("~/work/repos" . 1)))
+  (projectile-require-project-root nil)
+  (projectile-sort-order 'recentf)
+  :init
+  (projectile-mode +1)
+  :config
+  (defcustom projectile-project-root-functions
+    '(projectile-root-local
+      projectile-root-marked
+      projectile-root-top-down
+      projectile-root-top-down-recurring
+      projectile-root-bottom-up)
+    "A list of functions for finding project roots."
+    :group 'projectile
+    :type '(repeat function))
+  ;; (evil-global-set-key 'normal (kbd "<leader>f") 'projectile-command-map)
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c C-p" . projectile-command-map)))
 
 (use-package apheleia
   :ensure t
@@ -372,12 +371,17 @@
   ;; 		 "basedpyright-langserver" "--stdio"))
   (eglot-inlay-hints-mode -1))
 
+(use-package fancy-dabbrev
+  :ensure t
+  :init (global-fancy-dabbrev-mode)
+  :bind (("TAB" . 'fancy-dabbrev-expand-or-indent) ("<backtab>" . 'fancy-dabbrev-backward)))
+
 (use-package yasnippet :ensure t :config (yas-global-mode 1))
 
 ;; (use-package eglot-booster
 ;;   :vc (:url "https://github.com/jdtsmith/eglot-booster.git")
 ;;   :after eglot
-                                        ; ;;   :config (eglot-booster-mode))
+;;   :config (eglot-booster-mode))
 
 (use-package meow
   :ensure t
@@ -470,18 +474,16 @@
 (use-package repeat-fu
   :ensure t
   :commands (repeat-fu-mode repeat-fu-execute)
-
   :config
   (setq repeat-fu-preset 'meow)
-
   :hook
   ((meow-mode)
    .
    (lambda ()
      (when (and (not (minibufferp)) (not (derived-mode-p 'special-mode)))
        (repeat-fu-mode)
-       (define-key meow-normal-state-keymap (kbd "C-'") 'repeat-fu-execute)
-       (define-key meow-insert-state-keymap (kbd "C-'") 'repeat-fu-execute)))))
+       (define-key meow-normal-state-keymap (kbd "S-'") 'repeat-fu-execute)
+       (define-key meow-insert-state-keymap (kbd "S-'") 'repeat-fu-execute)))))
 
 ;;  (use-package undo-tree
 ;;    :defer t
