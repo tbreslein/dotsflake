@@ -410,6 +410,18 @@
 (use-package meow
   :ensure t
   :config
+  (defun meow-negative-find ()
+    (interactive)
+    (let ((current-prefix-arg -1)) (call-interactively 'meow-find)))
+
+  (defun meow-negative-till ()
+    (interactive)
+    (let ((current-prefix-arg -1)) (call-interactively 'meow-till)))
+
+  (defun meow-negative-line ()
+    (interactive)
+    (let ((current-prefix-arg -1)) (call-interactively 'meow-line)))
+
   (defun meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     (meow-motion-define-key
@@ -457,6 +469,7 @@
      '("e" . meow-next-word)
      '("E" . meow-next-symbol)
      '("f" . meow-find)
+     '("F" . meow-negative-find)
      '("g" . meow-cancel-selection)
      '("G" . meow-grab)
      '("h" . meow-left)
@@ -486,7 +499,7 @@
      '("w" . meow-mark-word)
      '("W" . meow-mark-symbol)
      '("x" . meow-line)
-     '("X" . meow-goto-line)
+     '("X" . meow-negative-line)
      '("y" . meow-save)
      '("Y" . meow-sync-grab)
      '("z" . meow-pop-selection)

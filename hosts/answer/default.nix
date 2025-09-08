@@ -17,7 +17,7 @@
 
     code = {
       enable = true;
-      # emacs.enable = true;
+      emacs.enable = true;
       neovim.enable = true;
       zed.enable = true;
     };
@@ -32,12 +32,17 @@
       "node"
       "pandoc"
       "tectonic"
+      "emacs-plus"
+    ];
+    taps = [
+      "d12frosted/emacs-plus"
     ];
     casks = [
       "1password"
       "anki"
       config.my-system.terminal
       "brave-browser"
+      "microsoft-edge"
       "deezer"
     ];
   };

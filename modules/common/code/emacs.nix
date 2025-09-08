@@ -16,7 +16,7 @@ in
           ".emacs.d/early-init.el".source = config.lib.file.mkOutOfStoreSymlink "${user-conf.dots-dir}/modules/common/code/emacs-early-init.el";
         };
       };
-      programs.emacs.enable = true;
+      programs.emacs.enable = user-conf.is-linux;
     };
   };
 }

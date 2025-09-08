@@ -172,18 +172,7 @@
               ./hosts/${hostname}
               sys-module
               hm-module
-            ];
-          };
-        };
-    in
-    {
-      nixosConfigurations =
-        (mk-system "unstable" "x86_64-linux" "sol")
-        // (mk-system "unstable" "x86_64-linux" "ky")
-        // (mk-system "stable" "aarch64-linux" "elphelt");
-
-      darwinConfigurations =
-        (mk-system "unstable" "aarch64-darwin" "answer" [
+            ] ++ (if args.user-conf.is-linux then [
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
@@ -197,6 +186,33 @@
               };
             };
           }
-        ]);
+] else []);
+          };
+        };
+    in
+    {
+      nixosConfigurations =
+        (mk-system "unstable" "x86_64-linux" "sol")
+        // (mk-system "unstable" "x86_64-linux" "ky")
+        // (mk-system "stable" "aarch64-linux" "elphelt");
+
+      darwinConfigurations =
+        (mk-system "unstable" "aarch64-darwin" "answer" 
+#[
+#          nix-homebrew.darwinModules.nix-homebrew
+#          {
+#            nix-homebrew = {
+#              enable = true;
+#              enableRosetta = true;
+#              user = "${username}";
+#              taps = {
+#                "homebrew/homebrew-core" = homebrew-core;
+#                "homebrew/homebrew-cask" = homebrew-cask;
+#                "homebrew/homebrew-bundle" = homebrew-bundle;
+#              };
+#            };
+#          }
+#        ]
+);
     };
 }
