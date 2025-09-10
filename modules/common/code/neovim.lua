@@ -1,3 +1,48 @@
+-- # minimal nvim
+--
+-- - write key map cheat sheet
+-- - add keybinds to more quickly jump through change list
+-- - only do the Lsp attach notification once per session
+--
+-- ### debugging
+--
+-- - [zed debugging](https://zed.dev/docs/development/debuggers)
+-- - i MIGHT use a plugin for debugging, if i cannot setup zed for that
+-- - [nvim dap](https://youtu.be/cxpWjlNXeQA?si=vbocJxlP2odku6Yp)
+-- - [](https://www.reddit.com/r/neovim/comments/1jyfsfh/i_cant_see_vector_items_debugging_rust/?utm_source=share&utm_medium=mweb3x&utm_name=mweb3xcss&utm_term=1)
+-- - [](https://youtu.be/lyNfnI-B640?si=hkDQmjJsiB0Uwes5)
+--
+-- ### existing key bindings I should start using
+--
+-- #### netrw
+--
+-- - `%`: new file
+-- - `R`: rename
+-- - `D`: delete
+-- - `d`: new directory
+-- - `mf`: mark file
+-- - `mt`: mark target
+-- - `mc`: copy to target
+-- - `mv`: move to target
+--
+-- #### regular
+--
+-- - 'i': 'C-i' insert tab at cursor
+-- - 'i': 'C-t' indent tab
+-- - 'i': 'C-d' de-indent tab
+-- - 'i': 'C-w' remove last word
+-- - 'i': 'C-h' remove last char
+-- - 'i': 'C-u' remove line, not including current char
+-- - 'i': 'C-v' verbatim insert the next key press (like `<BS>` when pressing backspace)
+-- - 'n': 'C-^' switch to alternate (last) buffer
+-- - 'n': 'C-w +' increase window size vertically
+-- - 'n': 'C-w -' decrease window size vertically
+-- - 'n': 'C-w <' increase window size to the left
+-- - 'n': 'C-w >' increase window size to the right
+-- - 'x': '@:<cr>' repeat last command
+-- - 'x': 'C-r %' paste current file name into command line
+-- - 'x': 'C-r C-l' paste current line into command line
+
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
