@@ -620,10 +620,11 @@ vim.api.nvim_create_user_command("Format", function()
     end
 
     local out = vim.system(cmd_table.cmd, { cwd = cmd_table.cwd }):wait()
-    if out.stdout then
-      vim.notify(out.stderr, vim.log.levels.INFO)
-    end
-    if out.stderr then
+    if out.stdout ~= nil and out.stderr ~= nil and out.stdout == out.stderr then
+      vim.notify(out.stdout, vim.log.levels.INFO)
+    elseif out.stdout ~= nil and #vim.trim(out.stdout) > 0 then
+      vim.notify(out.stdout, vim.log.levels.INFO)
+    elseif out.stderr ~= nil and #vim.trim(out.stderr) > 0 then
       vim.notify(out.stderr, vim.log.levels.ERROR)
     end
     vim.cmd("e")
