@@ -48,6 +48,7 @@ in
       htop
       caligula
       silver-searcher
+      unison
 
       alacritty.terminfo
       (
