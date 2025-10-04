@@ -172,7 +172,7 @@
               ./hosts/${hostname}
               sys-module
               hm-module
-            ] ++ (if args.user-conf.is-linux then [
+            ] ++ (if args.user-conf.is-darwin then [
           nix-homebrew.darwinModules.nix-homebrew
           {
             nix-homebrew = {
@@ -197,22 +197,6 @@
         // (mk-system "stable" "aarch64-linux" "elphelt");
 
       darwinConfigurations =
-        (mk-system "unstable" "aarch64-darwin" "answer" 
-#[
-#          nix-homebrew.darwinModules.nix-homebrew
-#          {
-#            nix-homebrew = {
-#              enable = true;
-#              enableRosetta = true;
-#              user = "${username}";
-#              taps = {
-#                "homebrew/homebrew-core" = homebrew-core;
-#                "homebrew/homebrew-cask" = homebrew-cask;
-#                "homebrew/homebrew-bundle" = homebrew-bundle;
-#              };
-#            };
-#          }
-#        ]
-);
+        (mk-system "unstable" "aarch64-darwin" "answer");
     };
 }
