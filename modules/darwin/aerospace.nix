@@ -92,7 +92,7 @@ in
               run = "move-node-to-workspace 1";
             }
             {
-              "if".app-id = "app.zen-browser.zen";
+              "if".app-id = "net.imput.helium";
               run = "move-node-to-workspace 1";
             }
             {
