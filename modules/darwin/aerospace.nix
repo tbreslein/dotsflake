@@ -21,14 +21,14 @@ in
           key-mapping.preset = "qwerty";
           gaps = {
             inner = {
-              horizontal = 4;
-              vertical = 4;
+              horizontal = 0;
+              vertical = 0;
             };
             outer = {
-              left = 8;
-              bottom = 8;
-              top = 8;
-              right = 8;
+              left = 0;
+              bottom = 0;
+              top = 0;
+              right = 0;
             };
           };
           mode = {
@@ -126,7 +126,7 @@ in
         enable = true;
         active_color = "0xff${user-conf.colors.primary.border}";
         inactive_color = "0xff${user-conf.colors.normal.black}";
-        width = 5.0;
+        width = 3.0;
       };
       karabiner-elements = {
         # enable = true;
