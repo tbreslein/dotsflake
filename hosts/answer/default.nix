@@ -41,10 +41,6 @@
       "1password"
       "anki"
       config.my-system.terminal
-      "brave-browser"
-      "microsoft-edge"
-      "zen"
-      "deezer"
     ];
   };
 
