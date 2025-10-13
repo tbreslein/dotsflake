@@ -56,6 +56,16 @@ in
               cmd-ctrl-r = "move-node-to-workspace 3";
               cmd-ctrl-a = "move-node-to-workspace 4";
               cmd-ctrl-g = "move-node-to-workspace 5";
+              cmd-1 = "workspace 1";
+              cmd-2 = "workspace 2";
+              cmd-3 = "workspace 3";
+              cmd-4 = "workspace 4";
+              cmd-5 = "workspace 5";
+              cmd-ctrl-1 = "move-node-to-workspace 1";
+              cmd-ctrl-2 = "move-node-to-workspace 2";
+              cmd-ctrl-3 = "move-node-to-workspace 3";
+              cmd-ctrl-4 = "move-node-to-workspace 4";
+              cmd-ctrl-5 = "move-node-to-workspace 5";
               cmd-ctrl-n = "move-node-to-monitor --wrap-around next";
 
               cmd-ctrl-f = "fullscreen";
