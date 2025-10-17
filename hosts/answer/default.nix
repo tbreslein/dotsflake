@@ -41,6 +41,7 @@
       "1password"
       "anki"
       config.my-system.terminal
+      "kitty"
     ];
   };
 
