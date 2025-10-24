@@ -29,7 +29,7 @@
       desktop.enable = true;
       hypr.enable = true;
       laptop.enable = false;
-      nvidia.enable = true;
+      nvidia.enable = false;
       gaming.enable = true;
     };
 
