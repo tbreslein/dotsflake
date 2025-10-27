@@ -33,6 +33,7 @@
       "pandoc"
       "tectonic"
       "emacs-plus"
+      "helix"
     ];
     taps = [
       "d12frosted/emacs-plus"
@@ -41,7 +42,6 @@
       "1password"
       "anki"
       config.my-system.terminal
-      "kitty"
     ];
   };
 
